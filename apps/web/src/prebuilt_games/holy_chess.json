@@ -1,0 +1,522 @@
+{
+    "width": 8,
+    "height": 8,
+    "toMove": 0,
+    "tiles": [
+      {
+        "x": 0,
+        "y": 0,
+        "tileType": "w"
+      },
+      {
+        "x": 1,
+        "y": 0,
+        "tileType": "b"
+      },
+      {
+        "x": 2,
+        "y": 0,
+        "tileType": "w"
+      },
+      {
+        "x": 3,
+        "y": 0,
+        "tileType": "b"
+      },
+      {
+        "x": 4,
+        "y": 0,
+        "tileType": "w"
+      },
+      {
+        "x": 5,
+        "y": 0,
+        "tileType": "b"
+      },
+      {
+        "x": 6,
+        "y": 0,
+        "tileType": "w"
+      },
+      {
+        "x": 7,
+        "y": 0,
+        "tileType": "b"
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "tileType": "b"
+      },
+      {
+        "x": 1,
+        "y": 1,
+        "tileType": "w"
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "tileType": "b"
+      },
+      {
+        "x": 3,
+        "y": 1,
+        "tileType": "w"
+      },
+      {
+        "x": 4,
+        "y": 1,
+        "tileType": "b"
+      },
+      {
+        "x": 5,
+        "y": 1,
+        "tileType": "w"
+      },
+      {
+        "x": 6,
+        "y": 1,
+        "tileType": "b"
+      },
+      {
+        "x": 7,
+        "y": 1,
+        "tileType": "w"
+      },
+      {
+        "x": 0,
+        "y": 2,
+        "tileType": "w"
+      },
+      {
+        "x": 1,
+        "y": 2,
+        "tileType": "b"
+      },
+      {
+        "x": 2,
+        "y": 2,
+        "tileType": "w"
+      },
+      {
+        "x": 3,
+        "y": 2,
+        "tileType": "b"
+      },
+      {
+        "x": 4,
+        "y": 2,
+        "tileType": "w"
+      },
+      {
+        "x": 5,
+        "y": 2,
+        "tileType": "b"
+      },
+      {
+        "x": 6,
+        "y": 2,
+        "tileType": "w"
+      },
+      {
+        "x": 7,
+        "y": 2,
+        "tileType": "b"
+      },
+      {
+        "x": 0,
+        "y": 3,
+        "tileType": "b"
+      },
+      {
+        "x": 1,
+        "y": 3,
+        "tileType": "w"
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "tileType": "x"
+      },
+      {
+        "x": 3,
+        "y": 3,
+        "tileType": "w"
+      },
+      {
+        "x": 4,
+        "y": 3,
+        "tileType": "b"
+      },
+      {
+        "x": 5,
+        "y": 3,
+        "tileType": "x"
+      },
+      {
+        "x": 6,
+        "y": 3,
+        "tileType": "b"
+      },
+      {
+        "x": 7,
+        "y": 3,
+        "tileType": "w"
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "tileType": "w"
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "tileType": "b"
+      },
+      {
+        "x": 2,
+        "y": 4,
+        "tileType": "x"
+      },
+      {
+        "x": 3,
+        "y": 4,
+        "tileType": "b"
+      },
+      {
+        "x": 4,
+        "y": 4,
+        "tileType": "w"
+      },
+      {
+        "x": 5,
+        "y": 4,
+        "tileType": "x"
+      },
+      {
+        "x": 6,
+        "y": 4,
+        "tileType": "w"
+      },
+      {
+        "x": 7,
+        "y": 4,
+        "tileType": "b"
+      },
+      {
+        "x": 0,
+        "y": 5,
+        "tileType": "b"
+      },
+      {
+        "x": 1,
+        "y": 5,
+        "tileType": "w"
+      },
+      {
+        "x": 2,
+        "y": 5,
+        "tileType": "b"
+      },
+      {
+        "x": 3,
+        "y": 5,
+        "tileType": "w"
+      },
+      {
+        "x": 4,
+        "y": 5,
+        "tileType": "b"
+      },
+      {
+        "x": 5,
+        "y": 5,
+        "tileType": "w"
+      },
+      {
+        "x": 6,
+        "y": 5,
+        "tileType": "b"
+      },
+      {
+        "x": 7,
+        "y": 5,
+        "tileType": "w"
+      },
+      {
+        "x": 0,
+        "y": 6,
+        "tileType": "w"
+      },
+      {
+        "x": 1,
+        "y": 6,
+        "tileType": "b"
+      },
+      {
+        "x": 2,
+        "y": 6,
+        "tileType": "w"
+      },
+      {
+        "x": 3,
+        "y": 6,
+        "tileType": "b"
+      },
+      {
+        "x": 4,
+        "y": 6,
+        "tileType": "w"
+      },
+      {
+        "x": 5,
+        "y": 6,
+        "tileType": "b"
+      },
+      {
+        "x": 6,
+        "y": 6,
+        "tileType": "w"
+      },
+      {
+        "x": 7,
+        "y": 6,
+        "tileType": "b"
+      },
+      {
+        "x": 0,
+        "y": 7,
+        "tileType": "b"
+      },
+      {
+        "x": 1,
+        "y": 7,
+        "tileType": "w"
+      },
+      {
+        "x": 2,
+        "y": 7,
+        "tileType": "b"
+      },
+      {
+        "x": 3,
+        "y": 7,
+        "tileType": "w"
+      },
+      {
+        "x": 4,
+        "y": 7,
+        "tileType": "b"
+      },
+      {
+        "x": 5,
+        "y": 7,
+        "tileType": "w"
+      },
+      {
+        "x": 6,
+        "y": 7,
+        "tileType": "b"
+      },
+      {
+        "x": 7,
+        "y": 7,
+        "tileType": "w"
+      }
+    ],
+    "pieces": [
+      {
+        "owner": 0,
+        "x": 4,
+        "y": 0,
+        "pieceType": "k"
+      },
+      {
+        "owner": 1,
+        "x": 4,
+        "y": 7,
+        "pieceType": "k"
+      },
+      {
+        "owner": 1,
+        "x": 0,
+        "y": 7,
+        "pieceType": "r"
+      },
+      {
+        "owner": 1,
+        "x": 7,
+        "y": 7,
+        "pieceType": "r"
+      },
+      {
+        "owner": 0,
+        "x": 7,
+        "y": 0,
+        "pieceType": "r"
+      },
+      {
+        "owner": 0,
+        "x": 0,
+        "y": 0,
+        "pieceType": "r"
+      },
+      {
+        "owner": 0,
+        "x": 7,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 6,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 5,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 4,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 3,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 2,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 1,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 0,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 7,
+        "y": 6,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 6,
+        "y": 6,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 5,
+        "y": 6,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 4,
+        "y": 6,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 3,
+        "y": 6,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 2,
+        "y": 6,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 1,
+        "y": 6,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 0,
+        "y": 6,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 3,
+        "y": 7,
+        "pieceType": "q"
+      },
+      {
+        "owner": 1,
+        "x": 6,
+        "y": 7,
+        "pieceType": "n"
+      },
+      {
+        "owner": 1,
+        "x": 1,
+        "y": 7,
+        "pieceType": "n"
+      },
+      {
+        "owner": 0,
+        "x": 1,
+        "y": 0,
+        "pieceType": "n"
+      },
+      {
+        "owner": 0,
+        "x": 6,
+        "y": 0,
+        "pieceType": "n"
+      },
+      {
+        "owner": 0,
+        "x": 2,
+        "y": 0,
+        "pieceType": "b"
+      },
+      {
+        "owner": 0,
+        "x": 5,
+        "y": 0,
+        "pieceType": "b"
+      },
+      {
+        "owner": 1,
+        "x": 5,
+        "y": 7,
+        "pieceType": "b"
+      },
+      {
+        "owner": 1,
+        "x": 2,
+        "y": 7,
+        "pieceType": "b"
+      },
+      {
+        "owner": 0,
+        "x": 3,
+        "y": 0,
+        "pieceType": "q"
+      }
+    ],
+    "movementPatterns": {}
+  }

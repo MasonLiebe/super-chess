@@ -1,0 +1,206 @@
+{
+    "width": 4,
+    "height": 5,
+    "toMove": 0,
+    "tiles": [
+      {
+        "x": 0,
+        "y": 0,
+        "tileType": "w"
+      },
+      {
+        "x": 1,
+        "y": 0,
+        "tileType": "b"
+      },
+      {
+        "x": 2,
+        "y": 0,
+        "tileType": "w"
+      },
+      {
+        "x": 3,
+        "y": 0,
+        "tileType": "b"
+      },
+      {
+        "x": 0,
+        "y": 1,
+        "tileType": "b"
+      },
+      {
+        "x": 1,
+        "y": 1,
+        "tileType": "w"
+      },
+      {
+        "x": 2,
+        "y": 1,
+        "tileType": "b"
+      },
+      {
+        "x": 3,
+        "y": 1,
+        "tileType": "w"
+      },
+      {
+        "x": 0,
+        "y": 2,
+        "tileType": "w"
+      },
+      {
+        "x": 1,
+        "y": 2,
+        "tileType": "b"
+      },
+      {
+        "x": 2,
+        "y": 2,
+        "tileType": "w"
+      },
+      {
+        "x": 3,
+        "y": 2,
+        "tileType": "b"
+      },
+      {
+        "x": 0,
+        "y": 3,
+        "tileType": "b"
+      },
+      {
+        "x": 1,
+        "y": 3,
+        "tileType": "w"
+      },
+      {
+        "x": 2,
+        "y": 3,
+        "tileType": "b"
+      },
+      {
+        "x": 3,
+        "y": 3,
+        "tileType": "w"
+      },
+      {
+        "x": 0,
+        "y": 4,
+        "tileType": "w"
+      },
+      {
+        "x": 1,
+        "y": 4,
+        "tileType": "b"
+      },
+      {
+        "x": 2,
+        "y": 4,
+        "tileType": "w"
+      },
+      {
+        "x": 3,
+        "y": 4,
+        "tileType": "b"
+      }
+    ],
+    "pieces": [
+      {
+        "owner": 0,
+        "x": 0,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 1,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 2,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 3,
+        "y": 1,
+        "pieceType": "p"
+      },
+      {
+        "owner": 0,
+        "x": 1,
+        "y": 0,
+        "pieceType": "b"
+      },
+      {
+        "owner": 0,
+        "x": 0,
+        "y": 0,
+        "pieceType": "r"
+      },
+      {
+        "owner": 1,
+        "x": 0,
+        "y": 3,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 1,
+        "y": 3,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 2,
+        "y": 3,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 3,
+        "y": 3,
+        "pieceType": "p"
+      },
+      {
+        "owner": 1,
+        "x": 0,
+        "y": 4,
+        "pieceType": "k"
+      },
+      {
+        "owner": 1,
+        "x": 1,
+        "y": 4,
+        "pieceType": "n"
+      },
+      {
+        "owner": 1,
+        "x": 2,
+        "y": 4,
+        "pieceType": "b"
+      },
+      {
+        "owner": 1,
+        "x": 3,
+        "y": 4,
+        "pieceType": "r"
+      },
+      {
+        "owner": 0,
+        "x": 2,
+        "y": 0,
+        "pieceType": "n"
+      },
+      {
+        "owner": 0,
+        "x": 3,
+        "y": 0,
+        "pieceType": "k"
+      }
+    ],
+    "movementPatterns": {}
+  }
