@@ -1,8 +1,8 @@
 [package]
 name = "protochess-common"
-version = "0.1.0"
-authors = ["raymond <raytran@mit.edu>"]
-edition = "2018"
+version = "0.2.0"
+authors = []
+edition = "2026"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
