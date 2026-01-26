@@ -147,11 +147,13 @@ export function EditorBoard() {
           const displayX = tile.x;
           const displayY = height - 1 - tile.y;
 
+          // Compute color from coordinates for consistency
+          const isLightSquare = (tile.x + tile.y) % 2 === 0;
           let backgroundColor: string;
           if (tile.tileType === 'x') {
             backgroundColor = COLORS.DISABLED;
           } else {
-            backgroundColor = tile.tileType === 'w' ? COLORS.SQUARE_LIGHT : COLORS.SQUARE_DARK;
+            backgroundColor = isLightSquare ? COLORS.SQUARE_LIGHT : COLORS.SQUARE_DARK;
           }
 
           return (

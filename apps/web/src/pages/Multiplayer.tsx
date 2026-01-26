@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGameStore } from '../stores/gameStore';
-import { useWebSocket } from '../hooks/useWebSocket';
-import { DEFAULT_GAME_STATE } from '../lib/constants';
+import { useWebSocket } from '../contexts/WebSocketContext';
 
 export function Multiplayer() {
   const navigate = useNavigate();
   const { sendMessage } = useWebSocket();
-  const { connected, roomList, currentRoom } = useGameStore();
+  const { connected, roomList } = useGameStore();
 
   // Request room list on mount
   useEffect(() => {
@@ -16,29 +15,9 @@ export function Multiplayer() {
     }
   }, [connected, sendMessage]);
 
-  // Navigate to room when we join one
-  useEffect(() => {
-    if (currentRoom) {
-      navigate(`/room/${currentRoom}`);
-    }
-  }, [currentRoom, navigate]);
-
-  const handleCreateRoom = () => {
-    sendMessage({
-      type: 'CreateRoom',
-      content: {
-        allow_edits: true,
-        is_public: true,
-        init_game_state: DEFAULT_GAME_STATE,
-      },
-    });
-  };
-
   const handleJoinRoom = (roomId: string) => {
-    sendMessage({
-      type: 'JoinRoom',
-      content: roomId,
-    });
+    // Navigate to the room page - Room component will send the JoinRoom message
+    navigate(`/room/${roomId}`);
   };
 
   return (
@@ -66,13 +45,14 @@ export function Multiplayer() {
         </div>
 
         {/* Create room button */}
-        <button
-          onClick={handleCreateRoom}
-          disabled={!connected}
-          className="w-full mb-6 bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-x-0 disabled:hover:translate-y-0 disabled:hover:shadow-[4px_4px_0px_#2d3436]"
+        <Link
+          to="/create-room"
+          className={`block w-full mb-6 bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] text-center hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all ${
+            !connected ? 'opacity-50 pointer-events-none' : ''
+          }`}
         >
           CREATE NEW ROOM
-        </button>
+        </Link>
 
         {/* Room list */}
         <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436]">
@@ -93,10 +73,37 @@ export function Multiplayer() {
                 >
                   <div>
                     <p className="font-bold text-[#2d3436]">{room.room_id}</p>
-                    <p className="text-sm text-[#636e72]">
-                      {room.num_clients} player{room.num_clients !== 1 ? 's' : ''} •{' '}
-                      {room.editable ? 'Editable' : 'Locked'}
-                    </p>
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="text-[#636e72]">
+                        {room.num_clients} player{room.num_clients !== 1 ? 's' : ''}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <span
+                          className={`inline-block w-3 h-3 rounded-full border border-[#2d3436] ${
+                            room.white_taken ? 'bg-[#ff6b6b]' : 'bg-white'
+                          }`}
+                          title={room.white_taken ? 'White taken' : 'White available'}
+                        />
+                        <span
+                          className={`inline-block w-3 h-3 rounded-full border border-[#2d3436] ${
+                            room.black_taken ? 'bg-[#ff6b6b]' : 'bg-[#2d3436]'
+                          }`}
+                          title={room.black_taken ? 'Black taken' : 'Black available'}
+                        />
+                      </span>
+                      {!room.white_taken && !room.black_taken && (
+                        <span className="text-[#4ecdc4] font-medium">Both seats open!</span>
+                      )}
+                      {(room.white_taken && !room.black_taken) && (
+                        <span className="text-[#636e72]">Black open</span>
+                      )}
+                      {(!room.white_taken && room.black_taken) && (
+                        <span className="text-[#636e72]">White open</span>
+                      )}
+                      {room.white_taken && room.black_taken && (
+                        <span className="text-[#636e72]">Spectate only</span>
+                      )}
+                    </div>
                   </div>
                   <button
                     onClick={() => handleJoinRoom(room.room_id)}

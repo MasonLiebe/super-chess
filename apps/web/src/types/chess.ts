@@ -48,15 +48,17 @@ export interface GameState {
   movementPatterns: Record<string, MovementPattern>;
 }
 
+export type Seat = 'white' | 'black' | 'spectator';
+
 export interface RoomInfo {
   room_id: string;
   num_clients: number;
   is_public: boolean;
-  editable: boolean;
+  white_taken: boolean;
+  black_taken: boolean;
 }
 
 export interface GameInfo {
-  editable: boolean;
   winner: string | null;
   to_move_in_check: boolean;
   in_check_kings: Piece[] | null;
@@ -64,10 +66,15 @@ export interface GameInfo {
   state: GameState;
 }
 
+export interface PlayerInfo {
+  name: string;
+  seat: Seat;
+}
+
 export interface PlayerList {
-  player_num: number;
+  your_seat: Seat;
   you: string;
-  names: string[];
+  players: PlayerInfo[];
 }
 
 export interface MovesFrom {
@@ -87,16 +94,15 @@ export type ClientResponse =
   | { type: "PlayerList"; content: PlayerList }
   | { type: "MovesFrom"; content: MovesFrom };
 
+// Note: content types are loose to allow for conversion to Rust snake_case format
 export type ClientRequest =
   | { type: "ListRooms" }
-  | { type: "CreateRoom"; content: { allow_edits: boolean; is_public: boolean; init_game_state: GameState } }
-  | { type: "JoinRoom"; content: string }
+  | { type: "CreateRoom"; content: { is_public: boolean; init_game_state: unknown; seat: Seat } }
+  | { type: "JoinRoom"; content: { room_id: string; seat: Seat } }
   | { type: "LeaveRoom" }
+  | { type: "SelectSeat"; content: Seat }
   | { type: "ChatMessage"; content: string }
-  | { type: "TakeTurn"; content: Turn }
+  | { type: "TakeTurn"; content: unknown }
   | { type: "MovesFrom"; content: [number, number] }
   | { type: "ListPlayers" }
-  | { type: "SwitchLeader"; content: number }
-  | { type: "EditGameState"; content: GameState }
-  | { type: "DisableEdits" }
   | { type: "GameState" };

@@ -83,7 +83,6 @@ impl RoomManager {
         &self,
         room_id: String,
         is_public: bool,
-        editable: bool,
         init_gamestate: GameState,
     ) -> Result<mpsc::UnboundedSender<RoomMessage>, ()> {
         // Check if room already exists
@@ -101,11 +100,10 @@ impl RoomManager {
         };
 
         let (room_tx, room_rx) = mpsc::unbounded_channel();
-        let mut new_room = Room::new(room_rx, is_public, editable);
+        let mut new_room = Room::new(room_rx, is_public);
 
-        // We need to set initial game state on the room's game
-        // This requires accessing the game field which is private
-        // For now, we'll handle this in the room constructor or via a method
+        // Set the initial game state
+        new_room.set_initial_state(movements, valid_squares, valid_pieces);
 
         let room_id_clone = room_id.clone();
         let rmtx = self.room_manager_tx.clone();
@@ -125,7 +123,8 @@ impl RoomManager {
                     room_id,
                     num_clients: 0,
                     is_public,
-                    editable,
+                    white_taken: false,
+                    black_taken: false,
                 },
                 room_tx: room_tx.clone(),
             },

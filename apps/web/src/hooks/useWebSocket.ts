@@ -1,6 +1,7 @@
 import { useEffect, useRef, useCallback } from 'react';
 import { useGameStore } from '../stores/gameStore';
-import type { ClientRequest, ClientResponse } from '../types/chess';
+import { fromRustGameInfo, fromRustMovesFrom } from '../lib/convert';
+import type { ClientRequest } from '../types/chess';
 
 const WS_URL = import.meta.env.DEV
   ? `ws://${window.location.hostname}:3030/ws`
@@ -61,7 +62,8 @@ export function useWebSocket() {
 
     ws.onmessage = (event) => {
       try {
-        const message: ClientResponse = JSON.parse(event.data);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const message: any = JSON.parse(event.data);
         handleMessage(message);
       } catch (e) {
         console.error('Failed to parse message:', e);
@@ -70,7 +72,8 @@ export function useWebSocket() {
   }, [setConnected]);
 
   const handleMessage = useCallback(
-    (message: ClientResponse) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (message: any) => {
       switch (message.type) {
         case 'RoomList':
           setRoomList(message.content);
@@ -85,7 +88,8 @@ export function useWebSocket() {
           break;
 
         case 'GameInfo':
-          setGameInfo(message.content);
+          // Convert from Rust snake_case to TypeScript camelCase
+          setGameInfo(fromRustGameInfo(message.content));
           break;
 
         case 'PlayerList':
@@ -93,7 +97,8 @@ export function useWebSocket() {
           break;
 
         case 'MovesFrom':
-          setMovesFrom(message.content);
+          // Convert from Rust format
+          setMovesFrom(fromRustMovesFrom(message.content));
           break;
 
         case 'ChatMessage':

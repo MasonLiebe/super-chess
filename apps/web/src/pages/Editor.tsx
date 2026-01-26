@@ -32,6 +32,7 @@ export function Editor() {
   const [showExport, setShowExport] = useState(false);
   const [showIconSelector, setShowIconSelector] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [showStartOptions, setShowStartOptions] = useState(false);
   const customPieceImageRefs = useRef<Map<string, HTMLImageElement>>(new Map());
 
   // Get list of custom pieces that are placed on the board
@@ -92,9 +93,19 @@ export function Editor() {
       alert('Both players need a King (k) piece!');
       return;
     }
-    // Navigate to VS AI page with the custom game
+    // Show options modal
+    setShowStartOptions(true);
+  }, [pieces, unregisteredPieces]);
+
+  const handlePlayVsAI = useCallback(() => {
+    setShowStartOptions(false);
     navigate('/singleplayer?from=editor');
-  }, [pieces, unregisteredPieces, navigate]);
+  }, [navigate]);
+
+  const handleCreateMultiplayerRoom = useCallback(() => {
+    setShowStartOptions(false);
+    navigate('/create-room?from=editor');
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] p-4">
@@ -452,6 +463,37 @@ export function Editor() {
                   <li>• Custom pieces must have patterns before starting</li>
                 </ul>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Start Game Options Modal */}
+      {showStartOptions && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] max-w-sm w-full">
+            <div className="flex items-center justify-between p-4 border-b-4 border-[#2d3436]">
+              <h2 className="text-xl font-black text-[#2d3436]">START GAME</h2>
+              <button
+                onClick={() => setShowStartOptions(false)}
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-4 space-y-3">
+              <button
+                onClick={handlePlayVsAI}
+                className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              >
+                PLAY VS AI
+              </button>
+              <button
+                onClick={handleCreateMultiplayerRoom}
+                className="w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              >
+                CREATE MULTIPLAYER ROOM
+              </button>
             </div>
           </div>
         </div>

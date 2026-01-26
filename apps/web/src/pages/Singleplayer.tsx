@@ -10,9 +10,9 @@ import type { GameState, Turn, Piece } from '../types/chess';
 
 // AI Difficulty levels with search depth
 const DIFFICULTY_LEVELS = [
-  { id: 'easy', name: 'Easy', depth: 3, color: '#4ecdc4', description: 'Quick moves, beginner friendly' },
-  { id: 'medium', name: 'Medium', depth: 6, color: '#ffe66d', description: 'Balanced gameplay' },
-  { id: 'hard', name: 'Hard', depth: 7, color: '#ff9f43', description: 'Challenging opponent' },
+  { id: 'easy', name: 'Easy', depth: 2, color: '#4ecdc4', description: 'Quick moves, beginner friendly' },
+  { id: 'medium', name: 'Medium', depth: 4, color: '#ffe66d', description: 'Balanced gameplay' },
+  { id: 'hard', name: 'Hard', depth: 6, color: '#ff9f43', description: 'Challenging opponent' },
   { id: 'max', name: 'Max', depth: 8, color: '#ff6b6b', description: 'Maximum strength' },
 ] as const;
 
@@ -37,6 +37,7 @@ export function Singleplayer() {
   const [isCustomGame, setIsCustomGame] = useState(false);
   const [difficulty, setDifficulty] = useState<DifficultyId>('medium');
   const [difficultyDropdownOpen, setDifficultyDropdownOpen] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Check if we're loading a custom game from the editor
@@ -180,13 +181,38 @@ export function Singleplayer() {
       setStatus(`AI thinking... (${difficultyLevel.name})`);
       setIsThinking(true);
 
+      // Get state before AI move to detect what moved
+      const stateBeforeAi = getState();
+
       // Time-limited search based on difficulty
       const aiSuccess = await playAiMove(difficultyLevel.depth);
 
       if (aiSuccess) {
-        const prevState = getState();
         updateGameState();
         const newState = getState();
+
+        // Detect AI's move by comparing piece positions
+        if (stateBeforeAi && newState) {
+          // Find a piece that moved (was at one position, now at another)
+          for (const oldPiece of stateBeforeAi.pieces.filter(p => p.owner === 1)) {
+            const stillThere = newState.pieces.some(
+              p => p.owner === 1 && p.x === oldPiece.x && p.y === oldPiece.y && p.pieceType === oldPiece.pieceType
+            );
+            if (!stillThere) {
+              // This piece moved - find where it went
+              const newPiece = newState.pieces.find(
+                p => p.owner === 1 && p.pieceType === oldPiece.pieceType &&
+                !stateBeforeAi.pieces.some(op => op.owner === 1 && op.x === p.x && op.y === p.y && op.pieceType === p.pieceType)
+              );
+              if (newPiece) {
+                setLastTurn({ from: [oldPiece.x, oldPiece.y], to: [newPiece.x, newPiece.y], promoteTo: null });
+                break;
+              }
+            }
+          }
+        }
+
+        const prevState = stateBeforeAi;
 
         // Play sound for AI's move
         if (prevState && newState && prevState.pieces.length > newState.pieces.length) {
@@ -262,8 +288,6 @@ export function Singleplayer() {
     navigate('/editor');
   }, [editorStore, previewState, navigate]);
 
-  const selectedGame = PREBUILT_GAMES.find((g) => g.id === selectedGameId);
-
   return (
     <div className="min-h-screen bg-[#f8f9fa] p-4">
       <div className="max-w-5xl mx-auto">
@@ -277,14 +301,23 @@ export function Singleplayer() {
           </Link>
           <h1 className="text-2xl font-black text-[#2d3436]">VS AI</h1>
           {gameStarted ? (
-            <button
-              onClick={handleNewGame}
-              className="bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
-            >
-              NEW
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowHelpModal(true)}
+                className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-3 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                title="How to play"
+              >
+                ?
+              </button>
+              <button
+                onClick={handleNewGame}
+                className="bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              >
+                NEW
+              </button>
+            </div>
           ) : (
-            <div className="w-16" />
+            <div className="w-24" />
           )}
         </div>
 
@@ -471,17 +504,6 @@ export function Singleplayer() {
                   )}
                 </div>
 
-                {/* Board info */}
-                <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-                  <h2 className="font-bold text-[#2d3436] mb-2">GAME</h2>
-                  <p className="text-[#636e72]">
-                    {isCustomGame ? 'Custom Game' : selectedGame?.name || 'Unknown'}
-                  </p>
-                  <p className="text-sm text-[#636e72]">
-                    {gameState?.width}×{gameState?.height}
-                  </p>
-                </div>
-
                 {/* Difficulty indicator */}
                 {(() => {
                   const level = DIFFICULTY_LEVELS.find((d) => d.id === difficulty)!;
@@ -496,36 +518,44 @@ export function Singleplayer() {
                     </div>
                   );
                 })()}
-
-                {/* Turn indicator */}
-                <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-                  <h2 className="font-bold text-[#2d3436] mb-2">TURN</h2>
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-6 h-6 rounded-full border-2 border-[#2d3436] ${
-                        gameState?.toMove === 0 ? 'bg-white' : 'bg-[#2d3436]'
-                      }`}
-                    />
-                    <span className="font-medium">
-                      {gameState?.toMove === 0 ? 'White (You)' : 'Black (AI)'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Instructions */}
-                <div className="bg-[#f8f9fa] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-                  <h2 className="font-bold text-[#2d3436] mb-2">HOW TO PLAY</h2>
-                  <ul className="text-sm text-[#636e72] space-y-1">
-                    <li>• Click a piece to see moves</li>
-                    <li>• Click a highlighted square to move</li>
-                    <li>• AI plays as Black</li>
-                  </ul>
-                </div>
               </>
             )}
           </div>
         </div>
       </div>
+
+      {/* Help Modal */}
+      {showHelpModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] p-6 max-w-sm w-full mx-4">
+            <h2 className="font-bold text-[#2d3436] text-xl mb-4 text-center">HOW TO PLAY</h2>
+            <ul className="text-[#636e72] space-y-2 mb-4">
+              <li className="flex items-start gap-2">
+                <span className="text-[#2d3436]">•</span>
+                <span>Click a piece to see available moves</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#2d3436]">•</span>
+                <span>Click a highlighted square to move</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#2d3436]">•</span>
+                <span>You play as White, AI plays as Black</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-[#2d3436]">•</span>
+                <span>Drag and drop also works</span>
+              </li>
+            </ul>
+            <button
+              onClick={() => setShowHelpModal(false)}
+              className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            >
+              GOT IT
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

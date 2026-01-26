@@ -2,9 +2,9 @@ use std::sync::Arc;
 use tokio::sync::mpsc;
 use uuid::Uuid;
 
-use protochess_common::{serialize_game_state, validate_gamestate_request, Piece, Turn};
+use protochess_common::{serialize_game_state, Piece, Turn};
 
-use crate::game::messages::{Client, ClientRequest, ClientResponse, RoomMessage};
+use crate::game::messages::{Client, ClientRequest, ClientResponse, PlayerInfo, RoomMessage, Seat};
 
 lazy_static::lazy_static! {
     static ref MOVEGEN: protochess_engine_rs::MoveGenerator = {
@@ -13,7 +13,6 @@ lazy_static::lazy_static! {
 }
 
 pub struct Room {
-    pub editable: bool,
     pub is_public: bool,
     game: protochess_engine_rs::Game,
     to_move_in_check: bool,
@@ -23,12 +22,13 @@ pub struct Room {
     rx: mpsc::UnboundedReceiver<RoomMessage>,
 }
 
+const MAX_SPECTATORS: usize = 8;
+
 impl Room {
-    pub fn new(rx: mpsc::UnboundedReceiver<RoomMessage>, is_public: bool, editable: bool) -> Room {
+    pub fn new(rx: mpsc::UnboundedReceiver<RoomMessage>, is_public: bool) -> Room {
         Room {
             game: protochess_engine_rs::Game::default(),
             to_move_in_check: false,
-            editable,
             is_public,
             winner: None,
             clients: Vec::new(),
@@ -39,6 +39,37 @@ impl Room {
 
     pub fn client_count(&self) -> usize {
         self.clients.len()
+    }
+
+    /// Check if a seat is available
+    pub fn is_seat_available(&self, seat: Seat) -> bool {
+        match seat {
+            Seat::White => !self.clients.iter().any(|c| c.seat == Seat::White),
+            Seat::Black => !self.clients.iter().any(|c| c.seat == Seat::Black),
+            Seat::Spectator => {
+                self.clients.iter().filter(|c| c.seat == Seat::Spectator).count() < MAX_SPECTATORS
+            }
+        }
+    }
+
+    /// Get client by seat
+    fn get_client_by_seat(&self, seat: Seat) -> Option<&Arc<Client>> {
+        self.clients.iter().find(|c| c.seat == seat)
+    }
+
+    /// Get mutable client by ID
+    fn get_client_index(&self, id: Uuid) -> Option<usize> {
+        self.clients.iter().position(|c| c.id == id)
+    }
+
+    /// Set the initial game state from validated data
+    pub fn set_initial_state(
+        &mut self,
+        movements: std::collections::HashMap<char, protochess_engine_rs::MovementPatternExternal>,
+        valid_squares: Vec<(u8, u8)>,
+        pieces: Vec<(u8, u8, u8, char)>,
+    ) {
+        self.game.set_state(movements, valid_squares, pieces);
     }
 
     pub async fn run(&mut self) {
@@ -70,18 +101,23 @@ impl Room {
     }
 
     fn handle_client_message(&mut self, requester_id: Uuid, request: ClientRequest) {
-        let Some(player_num) = self.clients.iter().position(|x| x.id == requester_id) else {
+        let Some(client_idx) = self.get_client_index(requester_id) else {
             tracing::warn!("External room request from unknown client");
             return;
         };
 
-        let requester_client = &self.clients[player_num];
+        let requester_client = &self.clients[client_idx];
+        let requester_seat = requester_client.seat;
 
         match request {
-            ClientRequest::DisableEdits => {
-                if player_num == 0 {
-                    self.editable = false;
-                    self.broadcast_game_update();
+            ClientRequest::SelectSeat(new_seat) => {
+                // Check if seat is available (or if they already have it)
+                if requester_seat == new_seat || self.is_seat_available(new_seat) {
+                    // Update the client's seat
+                    let mut client = (*self.clients[client_idx]).clone();
+                    client.seat = new_seat;
+                    self.clients[client_idx] = Arc::new(client);
+                    self.broadcast_player_list();
                 }
             }
             ClientRequest::ChatMessage(m) => {
@@ -97,8 +133,12 @@ impl Room {
                 let from = turn.from;
                 let to = turn.to;
 
-                // Check if it's this player's turn
-                if player_num as u8 == self.game.get_whos_turn() {
+                // Check if it's this player's turn based on their seat
+                let whos_turn = self.game.get_whos_turn();
+                let can_move = (whos_turn == 0 && requester_seat == Seat::White)
+                    || (whos_turn == 1 && requester_seat == Seat::Black);
+
+                if can_move {
                     let (x1, y1) = from;
                     let (x2, y2) = to;
                     let move_gen: &protochess_engine_rs::MoveGenerator = &MOVEGEN;
@@ -126,35 +166,23 @@ impl Room {
             ClientRequest::GameState => {
                 let _ = requester_client.sender.send(self.serialize_game());
             }
-            ClientRequest::EditGameState(request_game_state) => {
-                if self.editable && player_num < 2 {
-                    if let Some((movements, valid_squares, valid_pieces)) =
-                        validate_gamestate_request(
-                            request_game_state.tiles,
-                            request_game_state.pieces,
-                            request_game_state.movement_patterns,
-                        )
-                    {
-                        self.game.set_state(movements, valid_squares, valid_pieces);
-                        self.broadcast_game_update();
-                    }
-                }
-            }
-            ClientRequest::SwitchLeader(new_leader) => {
-                if player_num == 0 && (new_leader as usize) < self.clients.len() {
-                    self.clients.swap(0, new_leader as usize);
-                    self.broadcast_player_list();
-                }
-            }
             ClientRequest::ListPlayers => {
                 let _ = requester_client.sender.send(ClientResponse::PlayerList {
-                    player_num: player_num as u8,
+                    your_seat: requester_seat,
                     you: requester_client.name.clone(),
-                    names: self.clients.iter().map(|x| x.name.clone()).collect(),
+                    players: self.clients.iter().map(|c| PlayerInfo {
+                        name: c.name.clone(),
+                        seat: c.seat,
+                    }).collect(),
                 });
             }
             ClientRequest::MovesFrom(x, y) => {
-                if player_num as u8 == self.game.get_whos_turn() {
+                // Check if it's this player's turn based on their seat
+                let whos_turn = self.game.get_whos_turn();
+                let can_move = (whos_turn == 0 && requester_seat == Seat::White)
+                    || (whos_turn == 1 && requester_seat == Seat::Black);
+
+                if can_move {
                     let mut possible_moves = Vec::new();
                     let move_gen: &protochess_engine_rs::MoveGenerator = &MOVEGEN;
 
@@ -204,7 +232,6 @@ impl Room {
         };
 
         ClientResponse::GameInfo {
-            editable: self.editable,
             winner: self.winner.clone(),
             last_turn: self.last_turn.clone(),
             to_move_in_check,
@@ -228,11 +255,16 @@ impl Room {
     }
 
     fn broadcast_player_list(&self) {
-        for (i, client) in self.clients.iter().enumerate() {
+        let players: Vec<PlayerInfo> = self.clients.iter().map(|c| PlayerInfo {
+            name: c.name.clone(),
+            seat: c.seat,
+        }).collect();
+
+        for client in self.clients.iter() {
             let _ = client.sender.send(ClientResponse::PlayerList {
-                player_num: i as u8,
+                your_seat: client.seat,
                 you: client.name.clone(),
-                names: self.clients.iter().map(|x| x.name.clone()).collect(),
+                players: players.clone(),
             });
         }
     }

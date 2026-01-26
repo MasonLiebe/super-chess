@@ -10,7 +10,7 @@ use std::sync::Arc;
 use tokio::sync::{mpsc, RwLock};
 use uuid::Uuid;
 
-use crate::game::{Client, ClientRequest, ClientResponse, RoomManager, RoomMessage};
+use crate::game::{Client, ClientRequest, ClientResponse, RoomManager, RoomMessage, Seat};
 
 pub type AppState = Arc<RwLock<RoomManager>>;
 
@@ -38,11 +38,17 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
     // Client properties
     let my_id = Uuid::new_v4();
     let name = generate_name();
-    let my_client = Client {
-        name,
+
+    // Helper to create client with a given seat
+    let make_client = |seat: Seat| Client {
+        name: name.clone(),
         id: my_id,
+        seat,
         sender: tx.clone(),
     };
+
+    // Default client for lobby (seat doesn't matter until joining a room)
+    let lobby_client = make_client(Seat::Spectator);
 
     // Track which room this client is in
     let mut my_room: Option<(String, mpsc::UnboundedSender<RoomMessage>)> = None;
@@ -50,7 +56,7 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
     // Register client to receive room list updates
     {
         let room_manager = rooms.read().await;
-        room_manager.register_broadcast_rooms(my_client.clone()).await;
+        room_manager.register_broadcast_rooms(lobby_client.clone()).await;
     }
 
     // Main message loop
@@ -78,10 +84,18 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
             continue;
         };
 
-        let Ok(request) = serde_json::from_str::<ClientRequest>(&text) else {
-            // Invalid JSON - disconnect client
-            tracing::warn!("Invalid JSON from client {}: {}", my_id, text);
-            break;
+        tracing::debug!("Received message from {}: {}", my_id, text);
+
+        let request = match serde_json::from_str::<ClientRequest>(&text) {
+            Ok(req) => {
+                tracing::debug!("Parsed request: {:?}", req);
+                req
+            }
+            Err(e) => {
+                // Invalid JSON - disconnect client
+                tracing::error!("Invalid JSON from client {}: {} - Error: {}", my_id, text, e);
+                break;
+            }
         };
 
         match request {
@@ -92,9 +106,9 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
             }
 
             ClientRequest::CreateRoom {
-                allow_edits,
                 is_public,
                 init_game_state,
+                seat,
             } => {
                 if my_room.is_none() {
                     let room_id = {
@@ -106,15 +120,16 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
 
                     let room_manager = rooms.read().await;
                     match room_manager
-                        .new_room(room_id.clone(), is_public, allow_edits, init_game_state)
+                        .new_room(room_id.clone(), is_public, init_game_state)
                         .await
                     {
                         Ok(_) => {
                             let _ = tx.send(ClientResponse::RoomCreateSuccess(room_id.clone()));
 
-                            // Join the room we just created
+                            // Join the room we just created with the selected seat
+                            let client_with_seat = make_client(seat);
                             match room_manager
-                                .add_client_to_room(&room_id, my_client.clone())
+                                .add_client_to_room(&room_id, client_with_seat)
                                 .await
                             {
                                 Ok(room_tx) => {
@@ -134,13 +149,14 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
                 }
             }
 
-            ClientRequest::JoinRoom(room_id) => {
-                tracing::info!("Join room requested: {}", room_id);
+            ClientRequest::JoinRoom { room_id, seat } => {
+                tracing::info!("Join room requested: {} with seat {:?}", room_id, seat);
 
                 if my_room.is_none() {
                     let room_manager = rooms.read().await;
+                    let client_with_seat = make_client(seat);
                     match room_manager
-                        .add_client_to_room(&room_id, my_client.clone())
+                        .add_client_to_room(&room_id, client_with_seat)
                         .await
                     {
                         Ok(room_tx) => {
@@ -161,7 +177,7 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
                     room_manager.remove_client_from_room(&room_id, &my_id).await;
 
                     // Re-register for room list updates
-                    room_manager.register_broadcast_rooms(my_client.clone()).await;
+                    room_manager.register_broadcast_rooms(lobby_client.clone()).await;
                 }
                 let _ = tx.send(ClientResponse::RemovedFromRoom);
             }

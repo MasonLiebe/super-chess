@@ -1,12 +1,28 @@
 use serde::{Deserialize, Serialize};
 use protochess_common::{GameState, Piece, Turn};
 
+/// Seat in a game room
+#[derive(Clone, Copy, Serialize, Deserialize, Debug, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum Seat {
+    White,
+    Black,
+    Spectator,
+}
+
 #[derive(Clone, Serialize, Deserialize, Debug)]
 pub struct RoomInfo {
     pub room_id: String,
     pub num_clients: usize,
     pub is_public: bool,
-    pub editable: bool,
+    pub white_taken: bool,
+    pub black_taken: bool,
+}
+
+#[derive(Clone, Serialize, Deserialize, Debug)]
+pub struct PlayerInfo {
+    pub name: String,
+    pub seat: Seat,
 }
 
 /// Message from the server to client
@@ -23,7 +39,6 @@ pub enum ClientResponse {
         content: String,
     },
     GameInfo {
-        editable: bool,
         winner: Option<String>,
         to_move_in_check: bool,
         in_check_kings: Option<Vec<Piece>>,
@@ -31,9 +46,9 @@ pub enum ClientResponse {
         state: GameState,
     },
     PlayerList {
-        player_num: u8,
+        your_seat: Seat,
         you: String,
-        names: Vec<String>,
+        players: Vec<PlayerInfo>,
     },
     MovesFrom {
         from: (u8, u8),
@@ -47,19 +62,20 @@ pub enum ClientResponse {
 pub enum ClientRequest {
     ListRooms,
     CreateRoom {
-        allow_edits: bool,
         is_public: bool,
         init_game_state: GameState,
+        seat: Seat,
     },
-    JoinRoom(String),
+    JoinRoom {
+        room_id: String,
+        seat: Seat,
+    },
     LeaveRoom,
+    SelectSeat(Seat),
     ChatMessage(String),
     TakeTurn(Turn),
     MovesFrom(u8, u8),
     ListPlayers,
-    SwitchLeader(u8),
-    EditGameState(GameState),
-    DisableEdits,
     GameState,
 }
 
@@ -79,5 +95,6 @@ pub enum RoomMessage {
 pub struct Client {
     pub id: uuid::Uuid,
     pub name: String,
+    pub seat: Seat,
     pub sender: tokio::sync::mpsc::UnboundedSender<ClientResponse>,
 }
