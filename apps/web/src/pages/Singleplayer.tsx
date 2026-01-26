@@ -1,11 +1,22 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Board } from '../components/chess/Board';
 import { useChessEngine } from '../hooks/useChessEngine';
 import { useGameStore } from '../stores/gameStore';
 import { useEditorStore } from '../stores/editorStore';
 import { PREBUILT_GAMES, DEFAULT_GAME } from '../prebuilt_games';
+import { playMoveSound, playCaptureSound, playCheckSound, playGameOverSound } from '../lib/sounds';
 import type { GameState, Turn, Piece } from '../types/chess';
+
+// AI Difficulty levels with search depth
+const DIFFICULTY_LEVELS = [
+  { id: 'easy', name: 'Easy', depth: 3, color: '#4ecdc4', description: 'Quick moves, beginner friendly' },
+  { id: 'medium', name: 'Medium', depth: 6, color: '#ffe66d', description: 'Balanced gameplay' },
+  { id: 'hard', name: 'Hard', depth: 7, color: '#ff9f43', description: 'Challenging opponent' },
+  { id: 'max', name: 'Max', depth: 8, color: '#ff6b6b', description: 'Maximum strength' },
+] as const;
+
+type DifficultyId = typeof DIFFICULTY_LEVELS[number]['id'];
 
 export function Singleplayer() {
   const navigate = useNavigate();
@@ -18,12 +29,15 @@ export function Singleplayer() {
   const [previewState, setPreviewState] = useState<GameState>(DEFAULT_GAME.state);
   const [selectedGameId, setSelectedGameId] = useState(DEFAULT_GAME.id);
   const [status, setStatus] = useState('Loading engine...');
-  const [lastTurn, setLastTurn] =  useState<Turn | null>(null);
+  const [lastTurn, setLastTurn] = useState<Turn | null>(null);
   const [inCheckKings, setInCheckKings] = useState<Piece[] | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [isCustomGame, setIsCustomGame] = useState(false);
+  const [difficulty, setDifficulty] = useState<DifficultyId>('medium');
+  const [difficultyDropdownOpen, setDifficultyDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Check if we're loading a custom game from the editor
   useEffect(() => {
@@ -51,6 +65,17 @@ export function Singleplayer() {
       setStatus(`Error: ${error.message}`);
     }
   }, [error]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDifficultyDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Handle game selection change
   const handleGameSelect = useCallback((gameId: string) => {
@@ -121,13 +146,23 @@ export function Singleplayer() {
 
   const handleMove = useCallback(
     async (from: [number, number], to: [number, number]) => {
-      if (isThinking || winner || !gameStarted) return;
+      if (isThinking || winner || !gameStarted || !gameState) return;
+
+      // Check if this is a capture (piece on target square)
+      const isCapture = gameState.pieces.some((p) => p.x === to[0] && p.y === to[1]);
 
       const success = makeMove(from[0], from[1], to[0], to[1]);
       if (!success) {
         setSelectedSquare(null);
         setMovesFrom(null);
         return;
+      }
+
+      // Play sound for player's move
+      if (isCapture) {
+        playCaptureSound();
+      } else {
+        playMoveSound();
       }
 
       setLastTurn({ from, to, promoteTo: null });
@@ -141,15 +176,24 @@ export function Singleplayer() {
       }
 
       // AI's turn
-      setStatus('AI thinking...');
+      const difficultyLevel = DIFFICULTY_LEVELS.find((d) => d.id === difficulty)!;
+      setStatus(`AI thinking... (${difficultyLevel.name})`);
       setIsThinking(true);
 
-      // Time-limited search in milliseconds - interrupts mid-depth when time runs out
-      const aiSuccess = await playAiMove(2000);
+      // Time-limited search based on difficulty
+      const aiSuccess = await playAiMove(difficultyLevel.depth);
 
       if (aiSuccess) {
+        const prevState = getState();
         updateGameState();
         const newState = getState();
+
+        // Play sound for AI's move
+        if (prevState && newState && prevState.pieces.length > newState.pieces.length) {
+          playCaptureSound();
+        } else {
+          playMoveSound();
+        }
 
         if (newState && isInCheck()) {
           // Check if player is in checkmate
@@ -166,9 +210,11 @@ export function Singleplayer() {
           if (!hasLegalMoves) {
             setWinner('AI');
             setStatus('Checkmate! AI wins.');
+            playGameOverSound(false);
             setIsThinking(false);
             return;
           }
+          playCheckSound();
           setStatus('Check! Your turn.');
         } else {
           setStatus('Your turn');
@@ -177,6 +223,7 @@ export function Singleplayer() {
         // AI couldn't move - player wins
         setWinner('Player');
         setStatus('Checkmate! You win!');
+        playGameOverSound(true);
       }
 
       setIsThinking(false);
@@ -193,6 +240,8 @@ export function Singleplayer() {
       isThinking,
       winner,
       gameStarted,
+      gameState,
+      difficulty,
     ]
   );
 
@@ -315,14 +364,6 @@ export function Singleplayer() {
                   </div>
                 </div>
 
-                {/* Game Info */}
-                {selectedGame && (
-                  <div className="bg-[#f8f9fa] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-                    <h3 className="font-bold text-[#2d3436] mb-2">{selectedGame.name}</h3>
-                    <p className="text-sm text-[#636e72]">{selectedGame.description}</p>
-                  </div>
-                )}
-
                 {isCustomGame && selectedGameId === 'custom' && (
                   <div className="bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
                     <h3 className="font-bold text-[#2d3436] mb-2">Custom Game</h3>
@@ -331,6 +372,61 @@ export function Singleplayer() {
                     </p>
                   </div>
                 )}
+
+                {/* Difficulty Selection Dropdown */}
+                <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
+                  <span className="font-bold text-[#2d3436] block mb-2">AI DIFFICULTY</span>
+                  <div ref={dropdownRef} className="relative">
+                    {/* Dropdown trigger */}
+                    <button
+                      onClick={() => setDifficultyDropdownOpen(!difficultyDropdownOpen)}
+                      className="w-full p-3 border-3 border-[#2d3436] bg-white font-bold text-[#2d3436] cursor-pointer flex items-center justify-between transition-all hover:bg-[#f8f9fa]"
+                      style={{
+                        backgroundColor: DIFFICULTY_LEVELS.find((d) => d.id === difficulty)?.color,
+                      }}
+                    >
+                      <span>
+                        {DIFFICULTY_LEVELS.find((d) => d.id === difficulty)?.name}
+                        <span className="font-normal text-sm ml-2 opacity-75">
+                          (Depth {DIFFICULTY_LEVELS.find((d) => d.id === difficulty)?.depth})
+                        </span>
+                      </span>
+                      <svg
+                        className={`w-5 h-5 transition-transform ${difficultyDropdownOpen ? 'rotate-180' : ''}`}
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="3"
+                        viewBox="0 0 24 24"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </button>
+
+                    {/* Dropdown menu */}
+                    {difficultyDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1 border-3 border-[#2d3436] bg-white shadow-[4px_4px_0px_#2d3436] z-10">
+                        {DIFFICULTY_LEVELS.map((level) => (
+                          <button
+                            key={level.id}
+                            onClick={() => {
+                              setDifficulty(level.id);
+                              setDifficultyDropdownOpen(false);
+                            }}
+                            className={`w-full p-3 text-left font-bold text-[#2d3436] flex items-center justify-between transition-colors hover:brightness-95 ${
+                              difficulty === level.id ? 'border-l-4 border-l-[#2d3436]' : ''
+                            }`}
+                            style={{ backgroundColor: level.color }}
+                          >
+                            <span>{level.name}</span>
+                            <span className="font-normal text-sm opacity-75">
+                              Depth {level.depth}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
 
                 {/* Start button */}
                 <button
@@ -385,6 +481,21 @@ export function Singleplayer() {
                     {gameState?.width}×{gameState?.height}
                   </p>
                 </div>
+
+                {/* Difficulty indicator */}
+                {(() => {
+                  const level = DIFFICULTY_LEVELS.find((d) => d.id === difficulty)!;
+                  return (
+                    <div
+                      className="border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4"
+                      style={{ backgroundColor: level.color }}
+                    >
+                      <h2 className="font-bold text-[#2d3436] mb-1">DIFFICULTY</h2>
+                      <p className="text-[#2d3436] font-medium">{level.name}</p>
+                      <p className="text-xs text-[#2d3436] opacity-75">{level.description}</p>
+                    </div>
+                  );
+                })()}
 
                 {/* Turn indicator */}
                 <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">

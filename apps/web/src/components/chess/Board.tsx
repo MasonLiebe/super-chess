@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useGameStore } from '../../stores/gameStore';
 import { COLORS } from '../../lib/constants';
 import type { GameState, Piece as PieceType, Turn } from '../../types/chess';
@@ -29,6 +29,8 @@ export function Board({
   disabled = false,
 }: BoardProps) {
   const { movesFrom, selectedSquare, setSelectedSquare, setMovesFrom } = useGameStore();
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragFrom, setDragFrom] = useState<[number, number] | null>(null);
 
   const { width, height } = gameState;
 
@@ -86,9 +88,80 @@ export function Board({
     ]
   );
 
+  // Drag and drop handlers
+  const handleDragStart = useCallback(
+    (e: React.DragEvent, piece: PieceType) => {
+      if (disabled || piece.owner !== playerNum || gameState.toMove !== playerNum) {
+        e.preventDefault();
+        return;
+      }
+
+      // Set drag data
+      e.dataTransfer.setData('text/plain', JSON.stringify({ x: piece.x, y: piece.y }));
+      e.dataTransfer.effectAllowed = 'move';
+
+      // Use custom drag image (just the piece)
+      const img = e.currentTarget.querySelector('img');
+      if (img) {
+        // Create a clone for the drag image, positioned off-screen to avoid layout shift
+        const dragImg = img.cloneNode(true) as HTMLImageElement;
+        dragImg.style.position = 'absolute';
+        dragImg.style.top = '-9999px';
+        dragImg.style.left = '-9999px';
+        dragImg.style.width = `${tileSize * 0.85}px`;
+        dragImg.style.height = `${tileSize * 0.85}px`;
+        document.body.appendChild(dragImg);
+        e.dataTransfer.setDragImage(dragImg, tileSize * 0.425, tileSize * 0.425);
+        // Clean up after drag starts
+        requestAnimationFrame(() => document.body.removeChild(dragImg));
+      }
+
+      // Request moves for this piece
+      setSelectedSquare([piece.x, piece.y]);
+      setDragFrom([piece.x, piece.y]);
+      setIsDragging(true);
+      onRequestMoves?.(piece.x, piece.y);
+    },
+    [disabled, playerNum, gameState.toMove, tileSize, setSelectedSquare, onRequestMoves]
+  );
+
+  const handleDragEnd = useCallback(() => {
+    setIsDragging(false);
+    setDragFrom(null);
+    // Don't clear selection/moves here - let drop or click handle it
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent, targetX: number, targetY: number) => {
+      e.preventDefault();
+      setIsDragging(false);
+      setDragFrom(null);
+
+      if (disabled) return;
+
+      // Check if this is a valid move
+      if (movesFrom && selectedSquare) {
+        const isValidMove = movesFrom.to.some(([mx, my]) => mx === targetX && my === targetY);
+        if (isValidMove) {
+          onMove?.(selectedSquare, [targetX, targetY]);
+        }
+      }
+
+      setSelectedSquare(null);
+      setMovesFrom(null);
+    },
+    [disabled, movesFrom, selectedSquare, onMove, setSelectedSquare, setMovesFrom]
+  );
+
   const isHighlightedFrom = (x: number, y: number) => {
     if (lastTurn && lastTurn.from[0] === x && lastTurn.from[1] === y) return true;
     if (selectedSquare && selectedSquare[0] === x && selectedSquare[1] === y) return true;
+    if (dragFrom && dragFrom[0] === x && dragFrom[1] === y) return true;
     return false;
   };
 
@@ -148,6 +221,8 @@ export function Board({
                 backgroundColor,
               }}
               onClick={() => handleTileClick(tile.x, tile.y)}
+              onDragOver={handleDragOver}
+              onDrop={(e) => handleDrop(e, tile.x, tile.y)}
             >
               {isPossibleMove(tile.x, tile.y) && (
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -166,17 +241,25 @@ export function Board({
           const displayX = flipped ? width - 1 - piece.x : piece.x;
           const displayY = flipped ? piece.y : height - 1 - piece.y;
           const color = piece.owner === 0 ? 'white' : 'black';
+          const canDrag = !disabled && piece.owner === playerNum && gameState.toMove === playerNum;
+          const isBeingDragged = isDragging && dragFrom && dragFrom[0] === piece.x && dragFrom[1] === piece.y;
 
           return (
             <div
               key={`piece-${index}-${piece.x}-${piece.y}`}
-              className="absolute pointer-events-none flex items-center justify-center"
+              className={`absolute flex items-center justify-center ${
+                canDrag ? 'cursor-grab active:cursor-grabbing' : 'pointer-events-none'
+              } ${isBeingDragged ? 'opacity-50' : ''}`}
               style={{
                 left: displayX * tileSize,
                 top: displayY * tileSize,
                 width: tileSize,
                 height: tileSize,
               }}
+              draggable={canDrag}
+              onDragStart={(e) => handleDragStart(e, piece)}
+              onDragEnd={handleDragEnd}
+              onClick={() => handleTileClick(piece.x, piece.y)}
             >
               <img
                 src={`/images/chess_pieces/${color}/${piece.pieceType.toLowerCase()}.svg`}

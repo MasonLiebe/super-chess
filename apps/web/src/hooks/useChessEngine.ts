@@ -62,7 +62,7 @@ interface UseChessEngineResult {
   getState: () => GameState | null;
   makeMove: (x1: number, y1: number, x2: number, y2: number) => boolean;
   getMovesFrom: (x: number, y: number) => [number, number][];
-  playAiMove: (timeoutMs?: number) => Promise<boolean>;
+  playAiMove: (depth?: number) => Promise<boolean>;
   isInCheck: () => boolean;
   setState: (state: GameState) => boolean;
   reset: () => void;
@@ -123,16 +123,16 @@ export function useChessEngine(): UseChessEngineResult {
     }
   }, [engine]);
 
-  const playAiMove = useCallback(async (timeoutMs: number = 2000): Promise<boolean> => {
+  const playAiMove = useCallback(async (depth: number = 5): Promise<boolean> => {
     if (!engine) return false;
 
     return new Promise((resolve) => {
       // Use setTimeout to not block the UI
       setTimeout(() => {
         try {
-          // Time-limited search in milliseconds - will interrupt mid-depth if time runs out
-          const depth = engine.play_best_move_timeout(timeoutMs);
-          resolve(depth >= 0);
+          // Depth-based search
+          const success = engine.play_best_move(depth);
+          resolve(success);
         } catch {
           resolve(false);
         }
