@@ -19,7 +19,12 @@ pub(crate) struct Searcher {
     //Counter for the number of nodes searched
     nodes_searched: usize,
     nodes_fail_high_first:usize,
-    nodes_fail_high: usize
+    nodes_fail_high: usize,
+
+    // Timeout tracking for interruptible search
+    search_start: Option<Instant>,
+    search_max_time: Option<Duration>,
+    search_aborted: bool,
 }
 
 impl Searcher {
@@ -30,8 +35,29 @@ impl Searcher {
             history_moves: [[0;256];256],
             nodes_searched: 0,
             nodes_fail_high: 0,
-            nodes_fail_high_first: 0
+            nodes_fail_high_first: 0,
+            search_start: None,
+            search_max_time: None,
+            search_aborted: false,
         }
+    }
+
+    // Check if search should be aborted due to timeout
+    // Only check every 1024 nodes to minimize overhead
+    #[inline]
+    fn should_abort(&mut self) -> bool {
+        if self.search_aborted {
+            return true;
+        }
+        if self.nodes_searched & 1023 == 0 {
+            if let (Some(start), Some(max_time)) = (self.search_start, self.search_max_time) {
+                if start.elapsed() >= max_time {
+                    self.search_aborted = true;
+                    return true;
+                }
+            }
+        }
+        false
     }
 
 
@@ -57,22 +83,36 @@ impl Searcher {
         }
     }
 
-    pub fn get_best_move_timeout(&mut self, position: &mut Position, eval: &mut Evaluator, movegen: &MoveGenerator, time_sec: u64)
+    pub fn get_best_move_timeout(&mut self, position: &mut Position, eval: &mut Evaluator, movegen: &MoveGenerator, time_ms: u64)
         -> Option<(Move, u8)>{
-        //Iterative deepening
+        //Iterative deepening with interruptible search
         self.clear_heuristics();
         self.transposition_table.set_ancient();
+
+        // Set up timeout tracking
+        self.search_start = Some(Instant::now());
+        self.search_max_time = Some(Duration::from_millis(time_ms));
+        self.search_aborted = false;
+
         let mut d = 1;
-        let start = instant::Instant::now();
-        let max_time = instant::Duration::from_secs(time_sec);
+        let mut last_completed_depth = 0;
+
         loop {
-            if start.elapsed() >= max_time {
+            // Check timeout before starting new depth
+            if self.should_abort() {
                 break;
             }
 
             let alpha = -isize::MAX;
             let beta = isize::MAX;
-            let best_score = self.alphabeta(position, eval, movegen, d,alpha, beta, true);
+            let best_score = self.alphabeta(position, eval, movegen, d, alpha, beta, true);
+
+            // If search was aborted mid-depth, don't count this depth as completed
+            if self.search_aborted {
+                break;
+            }
+
+            last_completed_depth = d;
 
             //Print PV info
             let ordering_percentage:f64 = if self.nodes_fail_high != 0 { (self.nodes_fail_high_first as f64) / (self.nodes_fail_high as f64) } else { 0.0 };
@@ -80,10 +120,20 @@ impl Searcher {
 
             self.clear_search_stats();
             d += 1;
+
+            // Safety limit to prevent infinite loops
+            if d > 64 {
+                break;
+            }
         }
 
+        // Clean up timeout tracking
+        self.search_start = None;
+        self.search_max_time = None;
+        self.search_aborted = false;
+
         match self.transposition_table.retrieve(position.get_zobrist()){
-            Some(entry) => {Some(((&entry.move_).to_owned(), d))}
+            Some(entry) => {Some(((&entry.move_).to_owned(), last_completed_depth))}
             None => None
         }
     }
@@ -91,6 +141,11 @@ impl Searcher {
     fn alphabeta(&mut self, position: &mut Position, eval: &mut Evaluator, movegen: &MoveGenerator,
                      depth: u8, mut alpha: isize, beta: isize, do_null: bool) -> isize {
         self.nodes_searched += 1;
+
+        // Check for timeout periodically
+        if self.should_abort() {
+            return 0; // Return immediately, result will be discarded
+        }
 
         if depth <= 0 {
             return self.quiesce(position, eval, movegen, 0, alpha, beta);
@@ -256,6 +311,12 @@ impl Searcher {
     fn quiesce(&mut self, position: &mut Position, eval: &mut Evaluator, movegen: &MoveGenerator,
                  depth:u8, mut alpha: isize, beta: isize) -> isize {
         self.nodes_searched += 1;
+
+        // Check for timeout periodically
+        if self.should_abort() {
+            return 0;
+        }
+
         let score = eval.evaluate(position, movegen);
         if score >= beta{
             return beta;

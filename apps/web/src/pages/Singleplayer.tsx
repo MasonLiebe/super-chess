@@ -1,31 +1,47 @@
 import { useState, useCallback, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Board } from '../components/chess/Board';
 import { useChessEngine } from '../hooks/useChessEngine';
 import { useGameStore } from '../stores/gameStore';
-import { createGameState, BOARD_SIZE } from '../lib/constants';
+import { useEditorStore } from '../stores/editorStore';
+import { PREBUILT_GAMES, DEFAULT_GAME } from '../prebuilt_games';
 import type { GameState, Turn, Piece } from '../types/chess';
 
 export function Singleplayer() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { isReady, error, getState, makeMove, getMovesFrom, playAiMove, isInCheck, setState } = useChessEngine();
   const { setMovesFrom, setSelectedSquare } = useGameStore();
+  const editorStore = useEditorStore();
 
   const [gameState, setGameState] = useState<GameState | null>(null);
+  const [previewState, setPreviewState] = useState<GameState>(DEFAULT_GAME.state);
+  const [selectedGameId, setSelectedGameId] = useState(DEFAULT_GAME.id);
   const [status, setStatus] = useState('Loading engine...');
-  const [lastTurn, setLastTurn] = useState<Turn | null>(null);
+  const [lastTurn, setLastTurn] =  useState<Turn | null>(null);
   const [inCheckKings, setInCheckKings] = useState<Piece[] | null>(null);
   const [isThinking, setIsThinking] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
+  const [isCustomGame, setIsCustomGame] = useState(false);
 
-  // Board customization state
-  const [boardWidth, setBoardWidth] = useState(8);
-  const [boardHeight, setBoardHeight] = useState(8);
+  // Check if we're loading a custom game from the editor
+  useEffect(() => {
+    const fromEditor = searchParams.get('from') === 'editor';
+    if (fromEditor) {
+      const customState = editorStore.getGameState();
+      if (customState.pieces.length > 0) {
+        setPreviewState(customState);
+        setSelectedGameId('custom');
+        setIsCustomGame(true);
+      }
+    }
+  }, [searchParams, editorStore]);
 
-  // Initialize game state when engine is ready
+  // Initialize when engine is ready
   useEffect(() => {
     if (isReady && !gameStarted) {
-      setStatus('Configure your board and click Start Game');
+      setStatus('Select a game variant and click Start Game');
     }
   }, [isReady, gameStarted]);
 
@@ -36,11 +52,24 @@ export function Singleplayer() {
     }
   }, [error]);
 
+  // Handle game selection change
+  const handleGameSelect = useCallback((gameId: string) => {
+    if (gameId === 'custom') {
+      // Keep current custom state
+      return;
+    }
+    const game = PREBUILT_GAMES.find((g) => g.id === gameId);
+    if (game) {
+      setSelectedGameId(gameId);
+      setPreviewState(game.state);
+      setIsCustomGame(false);
+    }
+  }, []);
+
   const startGame = useCallback(() => {
     if (!isReady) return;
 
-    const customState = createGameState(boardWidth, boardHeight);
-    const success = setState(customState as GameState);
+    const success = setState(previewState);
 
     if (success) {
       const state = getState();
@@ -53,9 +82,9 @@ export function Singleplayer() {
         setInCheckKings(null);
       }
     } else {
-      setStatus('Failed to set custom board. Try standard 8x8.');
+      setStatus('Failed to start game. Please try a different variant.');
     }
-  }, [isReady, boardWidth, boardHeight, setState, getState]);
+  }, [isReady, previewState, setState, getState]);
 
   const updateGameState = useCallback(() => {
     const state = getState();
@@ -115,6 +144,7 @@ export function Singleplayer() {
       setStatus('AI thinking...');
       setIsThinking(true);
 
+      // Time-limited search in milliseconds - interrupts mid-depth when time runs out
       const aiSuccess = await playAiMove(2000);
 
       if (aiSuccess) {
@@ -174,11 +204,16 @@ export function Singleplayer() {
     setGameState(null);
     setSelectedSquare(null);
     setMovesFrom(null);
-    setStatus('Configure your board and click Start Game');
+    setStatus('Select a game variant and click Start Game');
   }, [setSelectedSquare, setMovesFrom]);
 
-  // Preview game state for configuration
-  const previewState = createGameState(boardWidth, boardHeight);
+  const handleCreateCustomGame = useCallback(() => {
+    // Load current preview state into editor
+    editorStore.loadGameState(previewState);
+    navigate('/editor');
+  }, [editorStore, previewState, navigate]);
+
+  const selectedGame = PREBUILT_GAMES.find((g) => g.id === selectedGameId);
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] p-4">
@@ -192,15 +227,16 @@ export function Singleplayer() {
             BACK
           </Link>
           <h1 className="text-2xl font-black text-[#2d3436]">VS AI</h1>
-          {gameStarted && (
+          {gameStarted ? (
             <button
               onClick={handleNewGame}
               className="bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
             >
               NEW
             </button>
+          ) : (
+            <div className="w-16" />
           )}
-          {!gameStarted && <div className="w-16" />}
         </div>
 
         {/* Game area */}
@@ -208,7 +244,7 @@ export function Singleplayer() {
           {/* Board */}
           <div className="flex-shrink-0">
             {!isReady ? (
-              <div className="w-[500px] h-[500px] bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] flex items-center justify-center">
+              <div className="w-[560px] h-[560px] bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] flex items-center justify-center">
                 <div className="text-center">
                   <div className="animate-spin w-8 h-8 border-4 border-[#2d3436] border-t-transparent rounded-full mx-auto mb-4" />
                   <p className="font-bold text-[#636e72]">Loading engine...</p>
@@ -227,7 +263,7 @@ export function Singleplayer() {
               />
             ) : (
               <Board
-                gameState={previewState as GameState}
+                gameState={previewState}
                 playerNum={0}
                 flipped={false}
                 disabled={true}
@@ -239,74 +275,62 @@ export function Singleplayer() {
           <div className="w-full lg:w-72 space-y-4">
             {!gameStarted ? (
               <>
-                {/* Board Configuration */}
+                {/* Game Selection */}
                 <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-                  <h2 className="font-bold text-[#2d3436] mb-4">BOARD SIZE</h2>
+                  <h2 className="font-bold text-[#2d3436] mb-4">SELECT GAME</h2>
 
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-[#636e72] mb-1">
-                        Width: {boardWidth}
-                      </label>
-                      <input
-                        type="range"
-                        min={BOARD_SIZE.MIN}
-                        max={BOARD_SIZE.MAX}
-                        value={boardWidth}
-                        onChange={(e) => setBoardWidth(Number(e.target.value))}
-                        className="w-full h-2 bg-[#ddd] rounded-lg appearance-none cursor-pointer accent-[#4ecdc4]"
-                      />
-                      <div className="flex justify-between text-xs text-[#636e72]">
-                        <span>{BOARD_SIZE.MIN}</span>
-                        <span>{BOARD_SIZE.MAX}</span>
-                      </div>
-                    </div>
+                  <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                    {PREBUILT_GAMES.map((game) => (
+                      <button
+                        key={game.id}
+                        onClick={() => handleGameSelect(game.id)}
+                        className={`w-full p-2 text-left border-2 border-[#2d3436] transition-colors ${
+                          selectedGameId === game.id
+                            ? 'bg-[#4ecdc4]'
+                            : 'bg-white hover:bg-[#f8f9fa]'
+                        }`}
+                      >
+                        <div className="font-bold text-sm">{game.name}</div>
+                        <div className="text-xs text-[#636e72]">
+                          {game.state.width}×{game.state.height}
+                        </div>
+                      </button>
+                    ))}
 
-                    <div>
-                      <label className="block text-sm font-medium text-[#636e72] mb-1">
-                        Height: {boardHeight}
-                      </label>
-                      <input
-                        type="range"
-                        min={BOARD_SIZE.MIN}
-                        max={BOARD_SIZE.MAX}
-                        value={boardHeight}
-                        onChange={(e) => setBoardHeight(Number(e.target.value))}
-                        className="w-full h-2 bg-[#ddd] rounded-lg appearance-none cursor-pointer accent-[#4ecdc4]"
-                      />
-                      <div className="flex justify-between text-xs text-[#636e72]">
-                        <span>{BOARD_SIZE.MIN}</span>
-                        <span>{BOARD_SIZE.MAX}</span>
-                      </div>
-                    </div>
-
-                    {/* Quick presets */}
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        { w: 4, h: 4, label: '4×4' },
-                        { w: 6, h: 6, label: '6×6' },
-                        { w: 8, h: 8, label: '8×8' },
-                        { w: 10, h: 10, label: '10×10' },
-                        { w: 12, h: 12, label: '12×12' },
-                      ].map(({ w, h, label }) => (
-                        <button
-                          key={label}
-                          onClick={() => {
-                            setBoardWidth(w);
-                            setBoardHeight(h);
-                          }}
-                          className={`px-3 py-1 text-sm font-bold border-2 border-[#2d3436] ${
-                            boardWidth === w && boardHeight === h
-                              ? 'bg-[#4ecdc4]'
-                              : 'bg-white hover:bg-[#f8f9fa]'
-                          }`}
-                        >
-                          {label}
-                        </button>
-                      ))}
-                    </div>
+                    {isCustomGame && (
+                      <button
+                        onClick={() => handleGameSelect('custom')}
+                        className={`w-full p-2 text-left border-2 border-[#2d3436] transition-colors ${
+                          selectedGameId === 'custom'
+                            ? 'bg-[#ffe66d]'
+                            : 'bg-white hover:bg-[#f8f9fa]'
+                        }`}
+                      >
+                        <div className="font-bold text-sm">Custom Game</div>
+                        <div className="text-xs text-[#636e72]">
+                          {previewState.width}×{previewState.height} (from editor)
+                        </div>
+                      </button>
+                    )}
                   </div>
                 </div>
+
+                {/* Game Info */}
+                {selectedGame && (
+                  <div className="bg-[#f8f9fa] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
+                    <h3 className="font-bold text-[#2d3436] mb-2">{selectedGame.name}</h3>
+                    <p className="text-sm text-[#636e72]">{selectedGame.description}</p>
+                  </div>
+                )}
+
+                {isCustomGame && selectedGameId === 'custom' && (
+                  <div className="bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
+                    <h3 className="font-bold text-[#2d3436] mb-2">Custom Game</h3>
+                    <p className="text-sm text-[#2d3436]">
+                      Board created in the editor with {previewState.pieces.length} pieces.
+                    </p>
+                  </div>
+                )}
 
                 {/* Start button */}
                 <button
@@ -317,13 +341,13 @@ export function Singleplayer() {
                   START GAME
                 </button>
 
-                {/* Info */}
-                <div className="bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-                  <p className="text-sm text-[#2d3436]">
-                    Customize your board size from {BOARD_SIZE.MIN}×{BOARD_SIZE.MIN} to{' '}
-                    {BOARD_SIZE.MAX}×{BOARD_SIZE.MAX}. Pieces will be arranged automatically.
-                  </p>
-                </div>
+                {/* Create Custom Game button */}
+                <button
+                  onClick={handleCreateCustomGame}
+                  className="w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                >
+                  CREATE CUSTOM GAME
+                </button>
               </>
             ) : (
               <>
@@ -353,8 +377,11 @@ export function Singleplayer() {
 
                 {/* Board info */}
                 <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-                  <h2 className="font-bold text-[#2d3436] mb-2">BOARD</h2>
+                  <h2 className="font-bold text-[#2d3436] mb-2">GAME</h2>
                   <p className="text-[#636e72]">
+                    {isCustomGame ? 'Custom Game' : selectedGame?.name || 'Unknown'}
+                  </p>
+                  <p className="text-sm text-[#636e72]">
                     {gameState?.width}×{gameState?.height}
                   </p>
                 </div>

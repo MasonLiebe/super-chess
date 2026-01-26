@@ -1,6 +1,58 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import init, { Protochess } from 'protochess-engine-wasm';
-import type { GameState } from '../types/chess';
+import type { GameState, MovementPattern } from '../types/chess';
+
+// Convert TypeScript camelCase GameState to Rust snake_case format
+// Rust structs expect: to_move, tile_type, piece_type, movement_patterns
+// MovementPattern has #[serde(rename_all = "camelCase")] so those fields stay camelCase
+function toRustGameState(state: GameState): unknown {
+  return {
+    width: state.width,
+    height: state.height,
+    to_move: state.toMove,
+    tiles: state.tiles.map((tile) => ({
+      x: tile.x,
+      y: tile.y,
+      tile_type: tile.tileType,
+    })),
+    pieces: state.pieces.map((piece) => ({
+      owner: piece.owner,
+      x: piece.x,
+      y: piece.y,
+      piece_type: piece.pieceType,
+    })),
+    // MovementPattern fields stay camelCase due to #[serde(rename_all = "camelCase")] in Rust
+    movement_patterns: state.movementPatterns,
+  };
+}
+
+// Convert Rust snake_case GameState to TypeScript camelCase format
+function fromRustGameState(rustState: {
+  width: number;
+  height: number;
+  to_move: number;
+  tiles: { x: number; y: number; tile_type: string }[];
+  pieces: { owner: number; x: number; y: number; piece_type: string }[];
+  movement_patterns: Record<string, MovementPattern>;
+}): GameState {
+  return {
+    width: rustState.width,
+    height: rustState.height,
+    toMove: rustState.to_move,
+    tiles: rustState.tiles.map((tile) => ({
+      x: tile.x,
+      y: tile.y,
+      tileType: tile.tile_type,
+    })),
+    pieces: rustState.pieces.map((piece) => ({
+      owner: piece.owner,
+      x: piece.x,
+      y: piece.y,
+      pieceType: piece.piece_type,
+    })),
+    movementPatterns: rustState.movement_patterns,
+  };
+}
 
 interface UseChessEngineResult {
   engine: Protochess | null;
@@ -45,7 +97,8 @@ export function useChessEngine(): UseChessEngineResult {
   const getState = useCallback((): GameState | null => {
     if (!engine) return null;
     try {
-      return engine.get_state() as GameState;
+      const rustState = engine.get_state();
+      return fromRustGameState(rustState);
     } catch {
       return null;
     }
@@ -77,6 +130,7 @@ export function useChessEngine(): UseChessEngineResult {
       // Use setTimeout to not block the UI
       setTimeout(() => {
         try {
+          // Time-limited search in milliseconds - will interrupt mid-depth if time runs out
           const depth = engine.play_best_move_timeout(timeoutMs);
           resolve(depth >= 0);
         } catch {
@@ -98,8 +152,10 @@ export function useChessEngine(): UseChessEngineResult {
   const setState = useCallback((state: GameState): boolean => {
     if (!engine) return false;
     try {
-      return engine.set_state(state);
-    } catch {
+      const rustState = toRustGameState(state);
+      return engine.set_state(rustState);
+    } catch (err) {
+      console.error('Failed to set state:', err);
       return false;
     }
   }, [engine]);

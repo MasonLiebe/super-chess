@@ -47,8 +47,10 @@ impl Protochess {
         self.engine.make_move(x1,y1,x2,y2)
     }
 
-    pub fn play_best_move_timeout(&mut self, time: usize) -> i8 {
-        let (success, search_depth) = self.engine.play_best_move_timeout(time as u64);
+    /// Play the best move with a time limit in milliseconds
+    /// The search will be interrupted mid-depth if time runs out
+    pub fn play_best_move_timeout(&mut self, time_ms: usize) -> i8 {
+        let (success, search_depth) = self.engine.play_best_move_timeout(time_ms as u64);
         if !success {
             return -1;
         }else{

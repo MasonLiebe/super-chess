@@ -294,12 +294,12 @@ impl Engine {
         }
     }
 
-    ///Calculates and plays the best move found
-    pub fn play_best_move_timeout(&mut self, max_sec:u64) -> (bool, u8) {
+    ///Calculates and plays the best move found (time limit in milliseconds)
+    pub fn play_best_move_timeout(&mut self, time_ms:u64) -> (bool, u8) {
         if let Some((best, depth)) = self.searcher.get_best_move_timeout(&mut self.current_position,
                                                                          &mut self.evaluator,
                                                                          &self.move_generator,
-                                                                         max_sec){
+                                                                         time_ms){
             let (x1, y1) = from_index(best.get_from() as usize);
             let (x2, y2) = from_index(best.get_to() as usize);
             (self.make_move(x1, y1, x2, y2), depth)
@@ -308,12 +308,12 @@ impl Engine {
         }
     }
 
-    ///Returns ((fromX,fromY,toX,toY), depth)
-    pub fn get_best_move_timeout(&mut self, max_sec: u64) -> Option<((u8, u8, u8, u8), u8)> {
+    ///Returns ((fromX,fromY,toX,toY), depth) with time limit in milliseconds
+    pub fn get_best_move_timeout(&mut self, time_ms: u64) -> Option<((u8, u8, u8, u8), u8)> {
         if let Some((best, depth)) = self.searcher.get_best_move_timeout(&mut self.current_position,
                                                                          &mut self.evaluator,
                                                                          &self.move_generator,
-                                                                         max_sec){
+                                                                         time_ms){
             let (x1, y1) = from_index(best.get_from() as usize);
             let (x2, y2) = from_index(best.get_to() as usize);
             Some(((x1, y1, x2, y2), depth))

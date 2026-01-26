@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { EditorBoard } from '../components/chess/EditorBoard';
 import { PieceSelector } from '../components/editor/PieceSelector';
 import { PieceEditorModal } from '../components/editor/PieceEditorModal';
@@ -8,6 +8,7 @@ import { useEditorStore, STANDARD_PIECES } from '../stores/editorStore';
 import { BOARD_SIZE } from '../lib/constants';
 
 export function Editor() {
+  const navigate = useNavigate();
   const {
     width,
     height,
@@ -91,9 +92,9 @@ export function Editor() {
       alert('Both players need a King (k) piece!');
       return;
     }
-    // TODO: Navigate to game with this state
-    alert('Game starting feature coming soon! Export the state for now.');
-  }, [pieces, unregisteredPieces]);
+    // Navigate to VS AI page with the custom game
+    navigate('/singleplayer?from=editor');
+  }, [pieces, unregisteredPieces, navigate]);
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] p-4">

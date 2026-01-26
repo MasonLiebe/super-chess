@@ -6,10 +6,10 @@ export function Home() {
       <div className="max-w-md w-full">
         <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] p-8">
           <h1 className="text-4xl font-black text-[#2d3436] mb-2 text-center">
-            PROTOCHESS
+            CUSTOMCHESS
           </h1>
           <p className="text-[#2d3436] text-center mb-8 font-medium">
-            A customizable chess engine
+            A customizable chess game engine
           </p>
 
           <div className="space-y-4">
