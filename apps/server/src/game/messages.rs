@@ -62,6 +62,8 @@ pub enum ClientResponse {
 pub enum ClientRequest {
     ListRooms,
     CreateRoom {
+        #[serde(default)]
+        room_name: Option<String>,
         is_public: bool,
         init_game_state: GameState,
         seat: Seat,

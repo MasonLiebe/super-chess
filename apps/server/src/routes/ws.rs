@@ -106,14 +106,19 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
             }
 
             ClientRequest::CreateRoom {
+                room_name,
                 is_public,
                 init_game_state,
                 seat,
             } => {
                 if my_room.is_none() {
-                    let room_id = {
-                        let room_manager = rooms.read().await;
-                        room_manager.get_new_id().await
+                    // Use custom name if provided and non-empty, otherwise generate one
+                    let room_id = match &room_name {
+                        Some(name) if !name.trim().is_empty() => name.trim().to_string(),
+                        _ => {
+                            let room_manager = rooms.read().await;
+                            room_manager.get_new_id().await
+                        }
                     };
 
                     tracing::info!("Creating room: {}", room_id);
