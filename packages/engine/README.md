@@ -28,8 +28,7 @@ Unlike traditional chess engines that rely on static, compile-time piece-square 
 
 Material values are derived from each piece’s mobility (number of available move directions), and piece-square tables are computed by summing all legal moves from every square on the board. This allows the engine to adapt automatically to entirely new piece types without manual tuning.
 
-Because of this design, the evaluation function is intentionally generic. It does **not** heavily optimize for standard chess concepts like pawn structure or king safety. Despite that, it still plays classical chess competently—well enough to consistently beat its author (a casual player).
-
+Because of this design, the evaluation function is intentionally generic. It does **not** heavily optimize for standard chess concepts like pawn structure or king safety. Despite that, it still plays classical chess competently.
 The primary goal here is flexibility and experimentation rather than peak Elo in orthodox chess.
 
 ## Roadmap / Future Improvements
