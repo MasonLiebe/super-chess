@@ -1,25 +1,38 @@
-# Protochess Engine
-## This crate contains all the actual chess/chess engine logic.
+Yep — here’s a cleaner, more professional README with tighter language, clearer structure, and a bit more narrative flow. I kept your technical tone but made it feel more “open-source ready”:
 
-The engine features:
-* Bitboard representation using 256 bit integers for up to 16x16 sized boards.
-* Kindergarden-based move generation using Rust iterators
-* Zobrist Hashing 
-* Transposition Tables
-* Principal Variation Search in an Iterative-Deepening framework
-* Quiescence search
-* History Heuristic
-* Killer Heuristic
-* Null-move pruning
-* Late move reductions
- 
+---
 
-## Differences from a standard engine
-Instead of standard piece-square-tables that are compile time constants, the engine dynamically generates piece square tables as well as material value for custom pieces. Custom pieces are assigned material values as a function of how many move directions they have. All pieces, custom or not, have their piece square tables generated dynamically simply by summing up all the possible moves from each square. 
+# Custom Chess Engine
 
-This evaluation is not at all optimized for standard chess (factors like king safety, pawn structure are mostly ignored), but it still plays a standard game well enough to beat me every time (as a casual chess player).
+This crate implements the core logic for a custom chess engine designed to support arbitrary board sizes and non-standard pieces. It’s built with performance in mind, while remaining flexible enough to experiment with novel chess variants.
 
-## Future improvements
-* Multithreading with Lazy SMP (...might break WASM integration)
-* Better time management
-* UCI compliance for standard games
+## Features
+
+* **Bitboard representation** using 256-bit integers (supports boards up to 16×16)
+* **Kindergarten-style move generation** implemented with Rust iterators
+* **Zobrist hashing**
+* **Transposition tables**
+* **Principal Variation Search** with iterative deepening
+* **Quiescence search**
+* **History heuristic**
+* **Killer heuristic**
+* **Null-move pruning**
+* **Late Move Reductions (LMR)**
+
+## What Makes This Engine Different
+
+Unlike traditional chess engines that rely on static, compile-time piece-square tables, this engine dynamically generates both:
+
+* Piece-square tables
+* Material values for *custom* pieces
+
+Material values are derived from each piece’s mobility (number of available move directions), and piece-square tables are computed by summing all legal moves from every square on the board. This allows the engine to adapt automatically to entirely new piece types without manual tuning.
+
+Because of this design, the evaluation function is intentionally generic. It does **not** heavily optimize for standard chess concepts like pawn structure or king safety. Despite that, it still plays classical chess competently—well enough to consistently beat its author (a casual player).
+
+The primary goal here is flexibility and experimentation rather than peak Elo in orthodox chess.
+
+## Roadmap / Future Improvements
+
+* Multithreading via Lazy SMP (may conflict with WASM integration)
+* Time management
