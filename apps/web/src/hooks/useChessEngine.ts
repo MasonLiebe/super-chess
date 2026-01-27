@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import init, { Protochess } from 'protochess-engine-wasm';
+import init, { CustomChess } from 'protochess-engine-wasm';
 import type { GameState, MovementPattern } from '../types/chess';
 
 // Convert TypeScript camelCase GameState to Rust snake_case format
@@ -55,7 +55,7 @@ function fromRustGameState(rustState: {
 }
 
 interface UseChessEngineResult {
-  engine: Protochess | null;
+  engine: CustomChess | null;
   isReady: boolean;
   error: Error | null;
   // Convenience methods
@@ -69,7 +69,7 @@ interface UseChessEngineResult {
 }
 
 export function useChessEngine(): UseChessEngineResult {
-  const [engine, setEngine] = useState<Protochess | null>(null);
+  const [engine, setEngine] = useState<CustomChess | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const initRef = useRef(false);
@@ -82,8 +82,8 @@ export function useChessEngine(): UseChessEngineResult {
       try {
         // Try to initialize with the WASM file from public folder
         await init({ module_or_path: '/protochess_engine_wasm_bg.wasm' });
-        const protochess = new Protochess();
-        setEngine(protochess);
+        const customChess = new CustomChess();
+        setEngine(customChess);
         setIsReady(true);
       } catch (err) {
         console.error('Failed to initialize chess engine:', err);
@@ -165,7 +165,7 @@ export function useChessEngine(): UseChessEngineResult {
       engine.free();
     }
     try {
-      const newEngine = new Protochess();
+      const newEngine = new CustomChess();
       setEngine(newEngine);
     } catch (err) {
       console.error('Failed to reset engine:', err);

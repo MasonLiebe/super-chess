@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Board } from '../components/chess/Board';
 import { useGameStore } from '../stores/gameStore';
@@ -13,6 +13,7 @@ export function Room() {
   const { sendMessage } = useWebSocket();
   const { gameInfo, playerList, currentRoom, reset } = useGameStore();
   const prevGameInfoRef = useRef<GameInfo | null>(null);
+  const [copied, setCopied] = useState(false);
 
   // Join room if not already in one (default to spectator, user can switch seats once in)
   useEffect(() => {
@@ -262,9 +263,25 @@ export function Room() {
             {/* Share link */}
             <div className="bg-[#f8f9fa] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
               <h2 className="font-bold text-[#2d3436] mb-2">SHARE</h2>
-              <p className="text-sm text-[#636e72] break-all">
-                {window.location.href}
-              </p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  readOnly
+                  value={window.location.href}
+                  className="flex-1 min-w-0 p-2 text-sm text-[#636e72] bg-white border-2 border-[#2d3436] truncate"
+                  onClick={(e) => (e.target as HTMLInputElement).select()}
+                />
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="px-3 py-2 bg-[#4ecdc4] border-2 border-[#2d3436] font-bold text-sm text-[#2d3436] hover:bg-[#45b7aa] transition-colors whitespace-nowrap"
+                >
+                  {copied ? 'COPIED!' : 'COPY'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

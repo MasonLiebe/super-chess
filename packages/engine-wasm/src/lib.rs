@@ -18,19 +18,19 @@ extern {
 
 #[wasm_bindgen]
 pub fn greet() {
-    alert("Hello, protochess-engine-wasm!");
+    alert("Hello, customchess-engine-wasm!");
 }
 
 #[wasm_bindgen]
-pub struct Protochess {
+pub struct CustomChess {
     engine: Engine
 }
 
 #[wasm_bindgen]
-impl Protochess {
+impl CustomChess {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Protochess {
-        Protochess{
+    pub fn new() -> CustomChess {
+        CustomChess{
             engine: Engine::default()
         }
     }

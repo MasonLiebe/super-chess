@@ -5,13 +5,8 @@ import { BOARD_SIZE } from '../lib/constants';
 // Standard pieces that have predefined movement
 export const STANDARD_PIECES = ['k', 'q', 'r', 'b', 'n', 'p'] as const;
 
-// All available piece characters (a-z)
-export const ALL_PIECE_CHARS = 'abcdefghijklmnopqrstuvwxyz'.split('');
-
-// Custom pieces are any letter not in STANDARD_PIECES
-export const CUSTOM_PIECE_CHARS = ALL_PIECE_CHARS.filter(
-  (c) => !STANDARD_PIECES.includes(c as typeof STANDARD_PIECES[number])
-);
+// Custom piece icons that have images available (non-standard pieces with SVGs)
+export const CUSTOM_PIECE_CHARS = ['a', 'c', 'd', 'e', 'f', 'g', 'u', 'y', 'z'] as const;
 
 export type EditorTool = 'placePiece' | 'toggleTile';
 export type PieceOwner = 0 | 1;

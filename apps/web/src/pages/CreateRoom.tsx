@@ -61,13 +61,14 @@ export function CreateRoom() {
     sendMessage({
       type: 'CreateRoom',
       content: {
+        room_name: roomName.trim() || null,
         is_public: isPublic,
         init_game_state: toRustGameState(previewState),
         seat,
       },
     });
     setShowSeatModal(false);
-  }, [connected, sendMessage, previewState, isPublic]);
+  }, [connected, sendMessage, previewState, isPublic, roomName]);
 
   const handleCreateCustomGame = useCallback(() => {
     editorStore.loadGameState(previewState);

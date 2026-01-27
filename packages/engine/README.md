@@ -1,4 +1,4 @@
-# Protochess Engine
+# CustomChess Engine
 ## This crate contains all the actual chess/chess engine logic.
 
 The engine features:

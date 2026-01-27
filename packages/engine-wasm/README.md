@@ -1,2 +1,2 @@
-## Rust -> WASM Bindings for Protochess
-This crate uses wasm-bindgen to compile the protochess-engine to web assembly.
+## Rust -> WASM Bindings for CustomChess
+This crate uses wasm-bindgen to compile the customchess-engine to web assembly.

@@ -9,7 +9,7 @@ export function Home() {
             CUSTOMCHESS
           </h1>
           <p className="text-[#2d3436] text-center mb-8 font-medium">
-            A customizable chess game engine
+            A customizable chess game   engine
           </p>
 
           <div className="space-y-4">
@@ -37,7 +37,7 @@ export function Home() {
         </div>
 
         <p className="text-center text-sm text-[#636e72] mt-4">
-          Built with Rust + React
+          Built by Mason Liebe
         </p>
       </div>
     </div>

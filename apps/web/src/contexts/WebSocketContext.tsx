@@ -4,10 +4,13 @@ import { fromRustGameInfo, fromRustMovesFrom } from '../lib/convert';
 import type { ClientRequest } from '../types/chess';
 
 // Use ws:// for localhost, wss:// for production with HTTPS
+// Can be overridden with VITE_WS_URL environment variable
 const isSecure = window.location.protocol === 'https:';
-const WS_URL = import.meta.env.DEV
-  ? `ws://${window.location.hostname}:3030/ws`
-  : `${isSecure ? 'wss' : 'ws'}://${window.location.host}/ws`;
+const WS_URL = import.meta.env.VITE_WS_URL
+  ? import.meta.env.VITE_WS_URL
+  : import.meta.env.DEV
+    ? `ws://${window.location.hostname}:3030/ws`
+    : `${isSecure ? 'wss' : 'ws'}://${window.location.host}/ws`;
 
 interface WebSocketContextValue {
   sendMessage: (request: ClientRequest) => void;

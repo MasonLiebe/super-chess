@@ -1,4 +1,4 @@
-// Types mirroring protochess-common Rust types
+// Types mirroring customchess-common Rust types
 
 export interface Slides {
   north: boolean;
@@ -97,7 +97,7 @@ export type ClientResponse =
 // Note: content types are loose to allow for conversion to Rust snake_case format
 export type ClientRequest =
   | { type: "ListRooms" }
-  | { type: "CreateRoom"; content: { is_public: boolean; init_game_state: unknown; seat: Seat } }
+  | { type: "CreateRoom"; content: { room_name: string | null; is_public: boolean; init_game_state: unknown; seat: Seat } }
   | { type: "JoinRoom"; content: { room_id: string; seat: Seat } }
   | { type: "LeaveRoom" }
   | { type: "SelectSeat"; content: Seat }
