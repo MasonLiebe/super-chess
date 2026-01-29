@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-# CustomChess Engine
-## This crate contains all the actual chess/chess engine logic
 
----
 
 # Custom Chess Engine
 
