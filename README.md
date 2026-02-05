@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # CustomChess
 
 A chess variant engine supporting arbitrary board dimensions (up to 16x16), custom piece movement patterns, and configurable tile layouts with disableable squares. Play against an AI opponent, create multiplayer rooms, or design your own variants in the board editor.
@@ -123,3 +124,8 @@ cargo run            # ws://localhost:3030/ws
 # Docker (full stack)
 docker compose up    # http://localhost:3030
 ```
+=======
+Playable at [customchess.io](https://customchess.io)
+
+The engine, built in rust, is [here](https://github.com/MasonLiebe/super-chess/tree/main/packages/engine)
+>>>>>>> 3002d35f0a4f55bfde408ff2197a741539fb8eac
