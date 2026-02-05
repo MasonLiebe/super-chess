@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-# CustomChess Engine
-## This crate contains all the actual chess/chess engine logic.
-=======
-Yep — here’s a cleaner, more professional README with tighter language, clearer structure, and a bit more narrative flow. I kept your technical tone but made it feel more “open-source ready”:
->>>>>>> b43cdb8ec545171ef64339e27f776dd211c083aa
 
----
 
 # Custom Chess Engine
 
