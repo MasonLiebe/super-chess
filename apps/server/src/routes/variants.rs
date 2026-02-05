@@ -101,7 +101,13 @@ pub async fn list_variants(
 
     if let Some(ref q) = params.q {
         let search = format!("%{}%", q.trim());
-        conditions.push(format!("(v.name LIKE ?{} OR v.description LIKE ?{})", bind_values.len() + 1, bind_values.len() + 2));
+        conditions.push(format!(
+            "(v.name LIKE ?{} OR v.description LIKE ?{} OR u.username LIKE ?{})",
+            bind_values.len() + 1,
+            bind_values.len() + 2,
+            bind_values.len() + 3
+        ));
+        bind_values.push(search.clone());
         bind_values.push(search.clone());
         bind_values.push(search);
     }
