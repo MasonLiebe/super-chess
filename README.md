@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # CustomChess
 
 A chess variant engine supporting arbitrary board dimensions (up to 16x16), custom piece movement patterns, and configurable tile layouts with disableable squares. Play against an AI opponent, create multiplayer rooms, or design your own variants in the board editor.
