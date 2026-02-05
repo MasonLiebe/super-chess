@@ -16,7 +16,7 @@ RUN npm run build
 
 # Stage 2: Build backend
 FROM rust:1.75-alpine AS backend
-RUN apk add --no-cache musl-dev
+RUN apk add --no-cache musl-dev sqlite-dev
 
 WORKDIR /app
 
@@ -50,7 +50,7 @@ RUN cargo build --release
 FROM alpine:latest
 
 # Install runtime dependencies
-RUN apk add --no-cache ca-certificates
+RUN apk add --no-cache ca-certificates sqlite-libs && mkdir -p /srv/data
 
 # Copy built artifacts
 COPY --from=backend /app/apps/server/target/release/protochess-server /usr/local/bin/
@@ -60,6 +60,8 @@ WORKDIR /srv
 
 # Set environment variables
 ENV RUST_LOG=info
+ENV DATABASE_URL=sqlite:/srv/data/protochess.db?mode=rwc
+ENV JWT_SECRET=change-me
 
 # Expose port
 EXPOSE 3030

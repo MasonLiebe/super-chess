@@ -32,3 +32,9 @@ Cargo.lock
 
 # Testing
 coverage/
+
+# Database
+*.db
+*.db-journal
+*.db-wal
+data/

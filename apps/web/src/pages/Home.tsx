@@ -37,6 +37,13 @@ export function Home() {
               BOARD EDITOR
             </Link>
 
+            <Link
+              to="/browse"
+              className="block w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 text-center font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            >
+              BROWSE VARIANTS
+            </Link>
+
             <button
               onClick={() => setShowAbout(true)}
               className="block w-full bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 text-center font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"

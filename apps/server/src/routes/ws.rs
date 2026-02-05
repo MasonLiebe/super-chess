@@ -1,24 +1,41 @@
 use axum::{
     extract::{
         ws::{Message, WebSocket},
-        State, WebSocketUpgrade,
+        Query, State, WebSocketUpgrade,
     },
     response::Response,
 };
 use futures_util::{SinkExt, StreamExt};
+use serde::Deserialize;
 use std::sync::Arc;
-use tokio::sync::{mpsc, RwLock};
+use tokio::sync::mpsc;
 use uuid::Uuid;
 
-use crate::game::{Client, ClientRequest, ClientResponse, RoomManager, RoomMessage, Seat};
+use crate::game::{Client, ClientRequest, ClientResponse, RoomMessage, Seat};
+use crate::AppStateInner;
 
-pub type AppState = Arc<RwLock<RoomManager>>;
+pub type AppState = Arc<AppStateInner>;
 
-pub async fn ws_handler(ws: WebSocketUpgrade, State(state): State<AppState>) -> Response {
-    ws.on_upgrade(|socket| handle_socket(socket, state))
+#[derive(Deserialize, Default)]
+pub struct WsQuery {
+    pub token: Option<String>,
 }
 
-async fn handle_socket(socket: WebSocket, rooms: AppState) {
+pub async fn ws_handler(
+    ws: WebSocketUpgrade,
+    State(state): State<AppState>,
+    Query(query): Query<WsQuery>,
+) -> Response {
+    // Try to extract username from token if provided
+    let username = query.token.and_then(|t| {
+        crate::auth::decode_token(&t, &state.jwt_secret)
+            .ok()
+            .map(|claims| claims.username)
+    });
+    ws.on_upgrade(|socket| handle_socket(socket, state, username))
+}
+
+async fn handle_socket(socket: WebSocket, state: AppState, auth_username: Option<String>) {
     let (mut ws_sender, mut ws_receiver) = socket.split();
 
     // Create channel for sending messages to this client
@@ -35,9 +52,9 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
         }
     });
 
-    // Client properties
+    // Client properties - use authenticated username if available
     let my_id = Uuid::new_v4();
-    let name = generate_name();
+    let name = auth_username.unwrap_or_else(generate_name);
 
     // Helper to create client with a given seat
     let make_client = |seat: Seat| Client {
@@ -55,7 +72,7 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
 
     // Register client to receive room list updates
     {
-        let room_manager = rooms.read().await;
+        let room_manager = state.room_manager.read().await;
         room_manager.register_broadcast_rooms(lobby_client.clone()).await;
     }
 
@@ -100,7 +117,7 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
 
         match request {
             ClientRequest::ListRooms => {
-                let room_manager = rooms.read().await;
+                let room_manager = state.room_manager.read().await;
                 let public_rooms = room_manager.get_public_rooms().await;
                 let _ = tx.send(ClientResponse::RoomList(public_rooms));
             }
@@ -116,14 +133,14 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
                     let room_id = match &room_name {
                         Some(name) if !name.trim().is_empty() => name.trim().to_string(),
                         _ => {
-                            let room_manager = rooms.read().await;
+                            let room_manager = state.room_manager.read().await;
                             room_manager.get_new_id().await
                         }
                     };
 
                     tracing::info!("Creating room: {}", room_id);
 
-                    let room_manager = rooms.read().await;
+                    let room_manager = state.room_manager.read().await;
                     match room_manager
                         .new_room(room_id.clone(), is_public, init_game_state)
                         .await
@@ -158,7 +175,7 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
                 tracing::info!("Join room requested: {} with seat {:?}", room_id, seat);
 
                 if my_room.is_none() {
-                    let room_manager = rooms.read().await;
+                    let room_manager = state.room_manager.read().await;
                     let client_with_seat = make_client(seat);
                     match room_manager
                         .add_client_to_room(&room_id, client_with_seat)
@@ -178,7 +195,7 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
 
             ClientRequest::LeaveRoom => {
                 if let Some((room_id, _)) = my_room.take() {
-                    let room_manager = rooms.read().await;
+                    let room_manager = state.room_manager.read().await;
                     room_manager.remove_client_from_room(&room_id, &my_id).await;
 
                     // Re-register for room list updates
@@ -203,11 +220,11 @@ async fn handle_socket(socket: WebSocket, rooms: AppState) {
     tracing::info!("Client disconnected: {}", my_id);
 
     if let Some((room_id, _)) = my_room {
-        let room_manager = rooms.read().await;
+        let room_manager = state.room_manager.read().await;
         room_manager.remove_client_from_room(&room_id, &my_id).await;
     }
 
-    let room_manager = rooms.read().await;
+    let room_manager = state.room_manager.read().await;
     room_manager.unregister_broadcast_rooms(&my_id).await;
 
     // Abort the send task

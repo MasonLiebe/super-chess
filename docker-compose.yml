@@ -7,4 +7,11 @@ services:
       - "3030:3030"
     environment:
       - RUST_LOG=info
+      - DATABASE_URL=sqlite:/srv/data/protochess.db?mode=rwc
+      - JWT_SECRET=${JWT_SECRET:-please-set-a-secret}
+    volumes:
+      - db-data:/srv/data
     restart: unless-stopped
+
+volumes:
+  db-data:

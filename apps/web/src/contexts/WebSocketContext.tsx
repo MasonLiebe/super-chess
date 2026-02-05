@@ -1,12 +1,13 @@
 import { createContext, useContext, useEffect, useRef, useCallback, type ReactNode } from 'react';
 import { useGameStore } from '../stores/gameStore';
+import { useAuthStore } from '../stores/authStore';
 import { fromRustGameInfo, fromRustMovesFrom } from '../lib/convert';
 import type { ClientRequest } from '../types/chess';
 
 // Use ws:// for localhost, wss:// for production with HTTPS
 // Can be overridden with VITE_WS_URL environment variable
 const isSecure = window.location.protocol === 'https:';
-const WS_URL = import.meta.env.VITE_WS_URL
+const WS_BASE = import.meta.env.VITE_WS_URL
   ? import.meta.env.VITE_WS_URL
   : import.meta.env.DEV
     ? `ws://${window.location.hostname}:3030/ws`
@@ -80,7 +81,10 @@ export function WebSocketProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const ws = new WebSocket(WS_URL);
+    // Append auth token to WebSocket URL so server can use username
+    const token = useAuthStore.getState().token;
+    const wsUrl = token ? `${WS_BASE}?token=${encodeURIComponent(token)}` : WS_BASE;
+    const ws = new WebSocket(wsUrl);
     wsRef.current = ws;
 
     ws.onopen = () => {

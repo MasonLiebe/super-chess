@@ -199,7 +199,7 @@ export function Board({
           const displayY = flipped ? tile.y : height - 1 - tile.y;
 
           // Compute color from coordinates for consistency (tileType only used for disabled check)
-          const isLightSquare = (tile.x + tile.y) % 2 === 0;
+          const isLightSquare = (tile.x + tile.y) % 2 === 1;
           let backgroundColor = isLightSquare ? COLORS.SQUARE_LIGHT : COLORS.SQUARE_DARK;
           if (tile.tileType === 'x') {
             backgroundColor = COLORS.DISABLED;

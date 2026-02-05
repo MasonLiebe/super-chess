@@ -15,6 +15,13 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 adjective_adjective_animal = "0.1"
 futures-util = "0.3"
 lazy_static = "1.4"
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite", "migrate"] }
+jsonwebtoken = "9"
+argon2 = "0.5"
+chrono = { version = "0.4", features = ["serde"] }
+tower = "0.5"
+rand = "0.8"
+lettre = { version = "0.11", features = ["tokio1-native-tls", "builder", "smtp-transport"] }
 
 protochess-engine-rs = { path = "../../packages/engine" }
 protochess-common = { path = "../../packages/common" }

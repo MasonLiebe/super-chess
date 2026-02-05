@@ -1,10 +1,13 @@
 import { useState, useCallback, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { EditorBoard } from '../components/chess/EditorBoard';
+import { BoardThumbnail } from '../components/chess/BoardThumbnail';
 import { PieceSelector } from '../components/editor/PieceSelector';
 import { PieceEditorModal } from '../components/editor/PieceEditorModal';
 import { IconSelectorModal, MAX_CUSTOM_PIECES } from '../components/editor/IconSelectorModal';
 import { useEditorStore, STANDARD_PIECES } from '../stores/editorStore';
+import { useAuthStore } from '../stores/authStore';
+import { createVariant } from '../lib/api';
 import { BOARD_SIZE } from '../lib/constants';
 import type { GameState } from '../types/chess';
 
@@ -31,11 +34,17 @@ export function Editor() {
     loadGameState,
   } = useEditorStore();
 
+  const { user } = useAuthStore();
+
   const [showExportModal, setShowExportModal] = useState(false);
   const [exportFileName, setExportFileName] = useState('my-chess-variant');
   const [showIconSelector, setShowIconSelector] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showStartOptions, setShowStartOptions] = useState(false);
+  const [showPublishModal, setShowPublishModal] = useState(false);
+  const [publishName, setPublishName] = useState('');
+  const [publishDescription, setPublishDescription] = useState('');
+  const [publishing, setPublishing] = useState(false);
   const customPieceImageRefs = useRef<Map<string, HTMLImageElement>>(new Map());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -146,6 +155,41 @@ export function Editor() {
     setShowStartOptions(false);
     navigate('/create-room?from=editor');
   }, [navigate]);
+
+  const handlePublishClick = useCallback(() => {
+    if (!user) {
+      navigate('/login?redirect=/editor&action=publish');
+      return;
+    }
+    if (unregisteredPieces.length > 0) {
+      alert(`Please define movement patterns for: ${unregisteredPieces.join(', ')}`);
+      return;
+    }
+    const whiteKing = pieces.find((p) => p.owner === 0 && p.pieceType === 'k');
+    const blackKing = pieces.find((p) => p.owner === 1 && p.pieceType === 'k');
+    if (!whiteKing || !blackKing) {
+      alert('Both players need a King (k) piece!');
+      return;
+    }
+    setPublishName('');
+    setPublishDescription('');
+    setShowPublishModal(true);
+  }, [user, navigate, pieces, unregisteredPieces]);
+
+  const handlePublishSubmit = useCallback(async () => {
+    if (!publishName.trim()) return;
+    setPublishing(true);
+    try {
+      const state = getGameState();
+      const variant = await createVariant(publishName.trim(), publishDescription.trim(), state);
+      setShowPublishModal(false);
+      navigate(`/variants/${variant.id}`);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Failed to publish');
+    } finally {
+      setPublishing(false);
+    }
+  }, [publishName, publishDescription, getGameState, navigate]);
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] p-4">
@@ -293,6 +337,12 @@ export function Editor() {
                 className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
                 START GAME
+              </button>
+              <button
+                onClick={handlePublishClick}
+                className="w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              >
+                PUBLISH
               </button>
             </div>
           </div>
@@ -547,6 +597,57 @@ export function Editor() {
                 className="w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
                 CREATE MULTIPLAYER ROOM
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Publish Modal */}
+      {showPublishModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] max-w-md w-full">
+            <div className="flex items-center justify-between p-4 border-b-4 border-[#2d3436]">
+              <h2 className="text-xl font-black text-[#2d3436]">PUBLISH VARIANT</h2>
+              <button
+                onClick={() => setShowPublishModal(false)}
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400"
+              >
+                x
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div className="flex justify-center">
+                <BoardThumbnail gameState={getGameState()} size={150} />
+              </div>
+              <div>
+                <label className="block font-bold text-[#2d3436] mb-1">NAME</label>
+                <input
+                  type="text"
+                  value={publishName}
+                  onChange={(e) => setPublishName(e.target.value)}
+                  placeholder="My Chess Variant"
+                  maxLength={100}
+                  className="w-full p-2 border-2 border-[#2d3436] font-medium text-[#2d3436] placeholder:text-[#b2bec3]"
+                />
+              </div>
+              <div>
+                <label className="block font-bold text-[#2d3436] mb-1">DESCRIPTION (OPTIONAL)</label>
+                <textarea
+                  value={publishDescription}
+                  onChange={(e) => setPublishDescription(e.target.value)}
+                  placeholder="Describe your variant..."
+                  rows={3}
+                  maxLength={2000}
+                  className="w-full p-2 border-2 border-[#2d3436] font-medium text-[#2d3436] placeholder:text-[#b2bec3] resize-none"
+                />
+              </div>
+              <button
+                onClick={handlePublishSubmit}
+                disabled={!publishName.trim() || publishing}
+                className="w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {publishing ? 'PUBLISHING...' : 'PUBLISH'}
               </button>
             </div>
           </div>

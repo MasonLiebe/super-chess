@@ -6,6 +6,7 @@ import { useGameStore } from '../stores/gameStore';
 import { useEditorStore } from '../stores/editorStore';
 import { PREBUILT_GAMES, DEFAULT_GAME } from '../prebuilt_games';
 import { playMoveSound, playCaptureSound, playCheckSound, playGameOverSound } from '../lib/sounds';
+import { getVariant } from '../lib/api';
 import type { GameState, Turn, Piece } from '../types/chess';
 
 // AI Difficulty levels with search depth
@@ -40,15 +41,28 @@ export function Singleplayer() {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Check if we're loading a custom game from the editor
+  // Check if we're loading a custom game from the editor or a variant
   useEffect(() => {
-    const fromEditor = searchParams.get('from') === 'editor';
-    if (fromEditor) {
+    const from = searchParams.get('from');
+    if (from === 'editor') {
       const customState = editorStore.getGameState();
       if (customState.pieces.length > 0) {
         setPreviewState(customState);
         setSelectedGameId('custom');
         setIsCustomGame(true);
+      }
+    } else if (from === 'variant') {
+      const variantId = searchParams.get('id');
+      if (variantId) {
+        getVariant(Number(variantId))
+          .then((v) => {
+            setPreviewState(v.gameState);
+            setSelectedGameId('custom');
+            setIsCustomGame(true);
+          })
+          .catch(() => {
+            // ignore, use default
+          });
       }
     }
   }, [searchParams, editorStore]);
