@@ -10,12 +10,24 @@ if ! command -v cargo &> /dev/null; then
     source ~/.cargo/env
 fi
 
+# Install wasm-pack if not present
+if ! command -v wasm-pack &> /dev/null; then
+    echo "Installing wasm-pack..."
+    cargo install wasm-pack
+fi
+
 # Install Node.js if not present
 if ! command -v node &> /dev/null; then
     echo "Installing Node.js..."
     curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
     sudo apt-get install -y nodejs
 fi
+
+# Build WASM engine
+echo "Building WASM engine..."
+cd packages/engine-wasm
+wasm-pack build --target web
+cd ../..
 
 # Build frontend
 echo "Building frontend..."
