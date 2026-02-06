@@ -8,15 +8,15 @@ import { PREBUILT_GAMES, DEFAULT_GAME } from '../prebuilt_games';
 import { playMoveSound, playCaptureSound, playCheckSound, playGameOverSound } from '../lib/sounds';
 import { useSettingsStore } from '../stores/settingsStore';
 import { getVariant } from '../lib/api';
-import { ArrowLeft, Volume2, VolumeOff, RotateCcw, HelpCircle } from 'lucide-react';
+import { ArrowLeft, Volume2, VolumeOff, RotateCcw, HelpCircle, Compass, PencilRuler, Play, ChevronDown } from 'lucide-react';
 import type { GameState, Turn, Piece } from '../types/chess';
 
-// AI Difficulty levels with search depth
+// AI Difficulty levels with search depth and chess piece icons
 const DIFFICULTY_LEVELS = [
-  { id: 'easy', name: 'Easy', depth: 2, color: '#4ecdc4', description: 'Quick moves, beginner friendly' },
-  { id: 'medium', name: 'Medium', depth: 4, color: '#ffe66d', description: 'Balanced gameplay' },
-  { id: 'hard', name: 'Hard', depth: 6, color: '#ff9f43', description: 'Challenging opponent' },
-  { id: 'max', name: 'Max', depth: 8, color: '#ff6b6b', description: 'Maximum strength' },
+  { id: 'easy', name: 'Easy', depth: 2, color: '#4ecdc4', description: 'Beginner friendly', piece: 'p' },
+  { id: 'medium', name: 'Medium', depth: 4, color: '#ffe66d', description: 'Balanced gameplay', piece: 'n' },
+  { id: 'hard', name: 'Hard', depth: 6, color: '#ff9f43', description: 'Challenging opponent', piece: 'r' },
+  { id: 'max', name: 'Max', depth: 8, color: '#ff6b6b', description: 'Maximum strength', piece: 'q' },
 ] as const;
 
 type DifficultyId = typeof DIFFICULTY_LEVELS[number]['id'];
@@ -306,8 +306,8 @@ export function Singleplayer() {
   }, [editorStore, previewState, navigate]);
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] p-4">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#f8f9fa] p-4 flex flex-col justify-center">
+      <div className="max-w-5xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <Link
@@ -432,38 +432,38 @@ export function Singleplayer() {
                   </div>
                 )}
 
-                {/* Difficulty Selection Dropdown */}
+                {/* Difficulty Selection */}
                 <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-                  <span className="font-bold text-[#2d3436] block mb-2">AI DIFFICULTY</span>
+                  <span className="font-bold text-[#2d3436] block mb-3">AI DIFFICULTY</span>
                   <div ref={dropdownRef} className="relative">
-                    {/* Dropdown trigger */}
-                    <button
-                      onClick={() => setDifficultyDropdownOpen(!difficultyDropdownOpen)}
-                      className="w-full p-3 border-3 border-[#2d3436] bg-white font-bold text-[#2d3436] cursor-pointer flex items-center justify-between transition-all hover:bg-[#f8f9fa]"
-                      style={{
-                        backgroundColor: DIFFICULTY_LEVELS.find((d) => d.id === difficulty)?.color,
-                      }}
-                    >
-                      <span>
-                        {DIFFICULTY_LEVELS.find((d) => d.id === difficulty)?.name}
-                        <span className="font-normal text-sm ml-2 opacity-75">
-                          (Depth {DIFFICULTY_LEVELS.find((d) => d.id === difficulty)?.depth})
-                        </span>
-                      </span>
-                      <svg
-                        className={`w-5 h-5 transition-transform ${difficultyDropdownOpen ? 'rotate-180' : ''}`}
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="3"
-                        viewBox="0 0 24 24"
-                      >
-                        <polyline points="6 9 12 15 18 9" />
-                      </svg>
-                    </button>
+                    {(() => {
+                      const selected = DIFFICULTY_LEVELS.find((d) => d.id === difficulty)!;
+                      return (
+                        <button
+                          onClick={() => setDifficultyDropdownOpen(!difficultyDropdownOpen)}
+                          className="w-full p-3 border-3 border-[#2d3436] font-bold text-[#2d3436] cursor-pointer flex items-center gap-3 transition-all hover:brightness-95"
+                          style={{ backgroundColor: selected.color }}
+                        >
+                          <img
+                            src={`/images/chess_pieces/black/${selected.piece}.svg`}
+                            alt=""
+                            className="w-7 h-7 object-contain"
+                          />
+                          <div className="flex-1 text-left">
+                            <div>{selected.name}</div>
+                            <div className="text-xs font-medium opacity-70">{selected.description}</div>
+                          </div>
+                          <ChevronDown
+                            size={18}
+                            strokeWidth={3}
+                            className={`transition-transform ${difficultyDropdownOpen ? 'rotate-180' : ''}`}
+                          />
+                        </button>
+                      );
+                    })()}
 
-                    {/* Dropdown menu */}
                     {difficultyDropdownOpen && (
-                      <div className="absolute top-full left-0 right-0 mt-1 border-3 border-[#2d3436] bg-white shadow-[4px_4px_0px_#2d3436] z-10">
+                      <div className="absolute top-full left-0 right-0 mt-1 border-3 border-[#2d3436] bg-white shadow-[4px_4px_0px_#2d3436] z-10 overflow-hidden">
                         {DIFFICULTY_LEVELS.map((level) => (
                           <button
                             key={level.id}
@@ -471,15 +471,20 @@ export function Singleplayer() {
                               setDifficulty(level.id);
                               setDifficultyDropdownOpen(false);
                             }}
-                            className={`w-full p-3 text-left font-bold text-[#2d3436] flex items-center justify-between transition-colors hover:brightness-95 ${
-                              difficulty === level.id ? 'border-l-4 border-l-[#2d3436]' : ''
+                            className={`w-full p-3 text-left font-bold text-[#2d3436] flex items-center gap-3 transition-colors hover:brightness-95 ${
+                              difficulty === level.id ? 'ring-2 ring-inset ring-[#2d3436]' : ''
                             }`}
                             style={{ backgroundColor: level.color }}
                           >
-                            <span>{level.name}</span>
-                            <span className="font-normal text-sm opacity-75">
-                              Depth {level.depth}
-                            </span>
+                            <img
+                              src={`/images/chess_pieces/black/${level.piece}.svg`}
+                              alt=""
+                              className="w-7 h-7 object-contain"
+                            />
+                            <div className="flex-1">
+                              <div>{level.name}</div>
+                              <div className="text-xs font-medium opacity-70">{level.description}</div>
+                            </div>
                           </button>
                         ))}
                       </div>
@@ -491,18 +496,29 @@ export function Singleplayer() {
                 <button
                   onClick={startGame}
                   disabled={!isReady}
-                  className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
+                  <Play size={18} strokeWidth={3} />
                   START GAME
                 </button>
 
-                {/* Create Custom Game button */}
-                <button
-                  onClick={handleCreateCustomGame}
-                  className="w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
-                >
-                  CREATE CUSTOM GAME
-                </button>
+                {/* Browse & Create */}
+                <div className="flex gap-2">
+                  <Link
+                    to="/browse"
+                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-sm text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                  >
+                    <Compass size={16} strokeWidth={2.5} />
+                    VARIANTS
+                  </Link>
+                  <button
+                    onClick={handleCreateCustomGame}
+                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-sm text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                  >
+                    <PencilRuler size={16} strokeWidth={2.5} />
+                    EDITOR
+                  </button>
+                </div>
               </>
             ) : (
               <>

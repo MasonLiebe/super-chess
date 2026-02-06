@@ -9,8 +9,7 @@ import { useEditorStore, STANDARD_PIECES } from '../stores/editorStore';
 import { useAuthStore } from '../stores/authStore';
 import { createVariant } from '../lib/api';
 import { BOARD_SIZE } from '../lib/constants';
-import { ArrowLeft, HelpCircle, RotateCcw, Upload, Download, Play, Send, Plus, Pencil, Trash2, X, Swords, Globe } from 'lucide-react';
-import type { GameState } from '../types/chess';
+import { ArrowLeft, HelpCircle, RotateCcw, Play, Send, Plus, Pencil, Trash2, X, Swords, Globe } from 'lucide-react';
 
 export function Editor() {
   const navigate = useNavigate();
@@ -32,13 +31,10 @@ export function Editor() {
     resetBoard,
     getGameState,
     removeMovementPattern,
-    loadGameState,
   } = useEditorStore();
 
   const { user } = useAuthStore();
 
-  const [showExportModal, setShowExportModal] = useState(false);
-  const [exportFileName, setExportFileName] = useState('my-chess-variant');
   const [showIconSelector, setShowIconSelector] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
   const [showStartOptions, setShowStartOptions] = useState(false);
@@ -47,7 +43,6 @@ export function Editor() {
   const [publishDescription, setPublishDescription] = useState('');
   const [publishing, setPublishing] = useState(false);
   const customPieceImageRefs = useRef<Map<string, HTMLImageElement>>(new Map());
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Get list of custom pieces that are placed on the board
   const placedCustomPieces = [...new Set(
@@ -86,50 +81,6 @@ export function Editor() {
       }
     }
   }, [removeMovementPattern, selectedPieceType, setSelectedPieceType]);
-
-  // Handle file download
-  const handleExport = useCallback(() => {
-    const state = getGameState();
-    const json = JSON.stringify(state, null, 2);
-    const blob = new Blob([json], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${exportFileName}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    setShowExportModal(false);
-  }, [getGameState, exportFileName]);
-
-  // Handle file load
-  const handleLoadFile = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      try {
-        const json = event.target?.result as string;
-        const state = JSON.parse(json) as GameState;
-
-        // Validate basic structure
-        if (!state.width || !state.height || !state.tiles || !state.pieces) {
-          alert('Invalid game state file: missing required fields');
-          return;
-        }
-
-        loadGameState(state);
-      } catch {
-        alert('Failed to parse JSON file. Please check the file format.');
-      }
-    };
-    reader.readAsText(file);
-
-    // Reset input so same file can be loaded again
-    e.target.value = '';
-  }, [loadGameState]);
 
   const handleStartGame = useCallback(() => {
     if (unregisteredPieces.length > 0) {
@@ -193,8 +144,8 @@ export function Editor() {
   }, [publishName, publishDescription, getGameState, navigate]);
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] p-4">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-[#f8f9fa] p-4 flex flex-col justify-center">
+      <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <Link
@@ -314,30 +265,8 @@ export function Editor() {
               </div>
             </div>
 
-            {/* Load/Export/Start */}
+            {/* Actions */}
             <div className="space-y-2">
-              {/* Hidden file input */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".json"
-                onChange={handleLoadFile}
-                className="hidden"
-              />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="flex items-center justify-center gap-2 w-full bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
-              >
-                <Upload size={16} strokeWidth={3} />
-                LOAD JSON
-              </button>
-              <button
-                onClick={() => setShowExportModal(true)}
-                className="flex items-center justify-center gap-2 w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
-              >
-                <Download size={16} strokeWidth={3} />
-                EXPORT JSON
-              </button>
               <button
                 onClick={handleStartGame}
                 className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
@@ -664,46 +593,6 @@ export function Editor() {
         </div>
       )}
 
-      {/* Export Modal */}
-      {showExportModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] max-w-sm w-full">
-            <div className="flex items-center justify-between p-4 border-b-4 border-[#2d3436]">
-              <h2 className="text-xl font-black text-[#2d3436]">EXPORT</h2>
-              <button
-                onClick={() => setShowExportModal(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
-              >
-                <X size={20} strokeWidth={3} />
-              </button>
-            </div>
-            <div className="p-4 space-y-4">
-              <div>
-                <label className="block font-bold text-[#2d3436] mb-2">
-                  FILE NAME
-                </label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    value={exportFileName}
-                    onChange={(e) => setExportFileName(e.target.value.replace(/[^a-zA-Z0-9-_]/g, ''))}
-                    placeholder="my-chess-variant"
-                    className="flex-1 p-2 border-2 border-[#2d3436] font-medium text-[#2d3436]"
-                  />
-                  <span className="text-[#636e72] font-medium">.json</span>
-                </div>
-              </div>
-              <button
-                onClick={handleExport}
-                disabled={!exportFileName.trim()}
-                className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                DOWNLOAD
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

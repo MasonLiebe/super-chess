@@ -112,8 +112,8 @@ export function Room() {
   const flipped = playerList?.your_seat === 'black';
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] p-4">
-      <div className="max-w-5xl mx-auto">
+    <div className="min-h-screen bg-[#f8f9fa] p-4 flex flex-col justify-center">
+      <div className="max-w-5xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <button
