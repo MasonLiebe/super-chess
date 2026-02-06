@@ -15,47 +15,50 @@ export function AuthBar() {
 
   return (
     <>
-      <div className="fixed top-0 right-0 z-40 p-2">
-        <div className="flex items-center gap-1.5">
+      <div className="fixed top-0 right-0 z-40 p-1.5 sm:p-2">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => setShowAbout(true)}
-            className="flex items-center justify-center text-xs font-bold text-[#636e72] bg-white/90 w-7 h-7 border border-[#2d3436] hover:bg-[#dfe6e9] hover:text-[#2d3436] transition-colors"
+            className="flex items-center justify-center text-xs font-bold text-[#636e72] bg-white/90 w-6 h-6 sm:w-7 sm:h-7 border border-[#2d3436] hover:bg-[#dfe6e9] hover:text-[#2d3436] transition-colors"
             title="About this site"
           >
-            <Info size={14} />
+            <Info size={12} />
           </button>
           {user ? (
             <>
               <Link
                 to="/account"
-                className="flex items-center gap-1.5 text-xs font-bold text-[#2d3436] bg-white/90 px-2 py-1 border border-[#2d3436] hover:bg-[#dfe6e9] transition-colors"
+                className="flex items-center gap-1 text-[10px] sm:text-xs font-bold text-[#2d3436] bg-white/90 px-1.5 py-0.5 sm:px-2 sm:py-1 border border-[#2d3436] hover:bg-[#dfe6e9] transition-colors"
               >
-                <User size={12} />
-                {user.username}
+                <User size={11} />
+                <span className="hidden sm:inline">{user.username}</span>
               </Link>
               <button
                 onClick={logout}
-                className="flex items-center gap-1 text-xs font-bold text-[#636e72] bg-white/90 px-2 py-1 border border-[#2d3436] hover:bg-[#ff6b6b] hover:text-[#2d3436] transition-colors"
+                className="flex items-center justify-center text-xs font-bold text-[#636e72] bg-white/90 w-6 h-6 sm:w-auto sm:h-auto sm:px-2 sm:py-1 border border-[#2d3436] hover:bg-[#ff6b6b] hover:text-[#2d3436] transition-colors"
+                title="Log out"
               >
-                <LogOut size={12} />
-                LOGOUT
+                <LogOut size={11} />
+                <span className="hidden sm:inline sm:ml-1">LOGOUT</span>
               </button>
             </>
           ) : (
             <>
               <Link
                 to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
-                className="flex items-center gap-1 text-xs font-bold text-[#2d3436] bg-white/90 px-2 py-1 border border-[#2d3436] hover:bg-[#4ecdc4] transition-colors"
+                className="flex items-center justify-center text-xs font-bold text-[#2d3436] bg-white/90 w-6 h-6 sm:w-auto sm:h-auto sm:px-2 sm:py-1 border border-[#2d3436] hover:bg-[#4ecdc4] transition-colors"
+                title="Log in"
               >
-                <LogIn size={12} />
-                LOG IN
+                <LogIn size={11} />
+                <span className="hidden sm:inline sm:ml-1">LOG IN</span>
               </Link>
               <Link
                 to={`/register?redirect=${encodeURIComponent(location.pathname)}`}
-                className="flex items-center gap-1 text-xs font-bold text-[#2d3436] bg-[#a29bfe]/90 px-2 py-1 border border-[#2d3436] hover:brightness-95 transition-colors"
+                className="flex items-center justify-center text-xs font-bold text-[#2d3436] bg-[#a29bfe]/90 w-6 h-6 sm:w-auto sm:h-auto sm:px-2 sm:py-1 border border-[#2d3436] hover:brightness-95 transition-colors"
+                title="Register"
               >
-                <UserPlus size={12} />
-                REGISTER
+                <UserPlus size={11} />
+                <span className="hidden sm:inline sm:ml-1">REGISTER</span>
               </Link>
             </>
           )}

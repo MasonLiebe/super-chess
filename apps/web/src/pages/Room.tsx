@@ -138,7 +138,7 @@ export function Room() {
         {/* Game area */}
         <div className="flex flex-col lg:flex-row gap-6 items-start justify-center">
           {/* Board */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 w-full max-w-[560px] mx-auto lg:mx-0">
             {gameInfo ? (
               <Board
                 gameState={gameInfo.state}
@@ -151,7 +151,7 @@ export function Room() {
                 disabled={!isMyTurn}
               />
             ) : (
-              <div className="w-[600px] h-[600px] bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] flex items-center justify-center">
+              <div className="w-full aspect-square max-w-[560px] bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] lg:shadow-[8px_8px_0px_#2d3436] flex items-center justify-center">
                 <p className="font-bold text-[#636e72]">Loading game...</p>
               </div>
             )}

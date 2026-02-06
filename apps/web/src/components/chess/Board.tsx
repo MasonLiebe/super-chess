@@ -1,9 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useGameStore } from '../../stores/gameStore';
+import { useBoardSize } from '../../hooks/useBoardSize';
+import { useTouchDrag } from '../../hooks/useTouchDrag';
 import { COLORS } from '../../lib/constants';
 import type { GameState, Piece as PieceType, Turn } from '../../types/chess';
-
-const MAX_BOARD_SIZE_PX = 560; // Maximum board size in pixels
 
 interface BoardProps {
   gameState: GameState;
@@ -31,17 +31,51 @@ export function Board({
   const { movesFrom, selectedSquare, setSelectedSquare, setMovesFrom } = useGameStore();
   const [isDragging, setIsDragging] = useState(false);
   const [dragFrom, setDragFrom] = useState<[number, number] | null>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
 
   const { width, height } = gameState;
 
-  // Calculate tile size based on the larger dimension to keep tiles square
-  // Use Math.floor to avoid floating point issues causing tiles to poke out
-  const maxDimension = Math.max(width, height);
-  const tileSize = Math.floor(MAX_BOARD_SIZE_PX / maxDimension);
+  // Responsive board sizing
+  const { maxBoardSizePx, tileSize, boardWidthPx, boardHeightPx } = useBoardSize(width, height);
 
-  // Calculate actual board dimensions using integer tile size
-  const boardWidthPx = tileSize * width;
-  const boardHeightPx = tileSize * height;
+  // Touch drag-and-drop for mobile
+  const { touchHandlers, touchDragFrom } = useTouchDrag({
+    boardRef,
+    tileSize,
+    boardWidth: width,
+    boardHeight: height,
+    flipped,
+    disabled,
+    playerNum,
+    toMove: gameState.toMove,
+    pieces: gameState.pieces,
+    onDragStart: useCallback(
+      (x: number, y: number) => {
+        setSelectedSquare([x, y]);
+        onRequestMoves?.(x, y);
+      },
+      [setSelectedSquare, onRequestMoves]
+    ),
+    onDrop: useCallback(
+      (fromX: number, fromY: number, toX: number, toY: number) => {
+        // Check if this is a valid move using the latest movesFrom from the store
+        const store = useGameStore.getState();
+        if (store.movesFrom) {
+          const isValidMove = store.movesFrom.to.some(([mx, my]) => mx === toX && my === toY);
+          if (isValidMove) {
+            onMove?.([fromX, fromY], [toX, toY]);
+          }
+        }
+        setSelectedSquare(null);
+        setMovesFrom(null);
+      },
+      [onMove, setSelectedSquare, setMovesFrom]
+    ),
+    onDragCancel: useCallback(() => {
+      setSelectedSquare(null);
+      setMovesFrom(null);
+    }, [setSelectedSquare, setMovesFrom]),
+  });
 
   const handleTileClick = useCallback(
     (x: number, y: number) => {
@@ -88,7 +122,7 @@ export function Board({
     ]
   );
 
-  // Drag and drop handlers
+  // Drag and drop handlers (desktop HTML5 Drag API)
   const handleDragStart = useCallback(
     (e: React.DragEvent, piece: PieceType) => {
       if (disabled || piece.owner !== playerNum || gameState.toMove !== playerNum) {
@@ -103,7 +137,6 @@ export function Board({
       // Use custom drag image (just the piece)
       const img = e.currentTarget.querySelector('img');
       if (img) {
-        // Create a clone for the drag image, positioned off-screen to avoid layout shift
         const dragImg = img.cloneNode(true) as HTMLImageElement;
         dragImg.style.position = 'absolute';
         dragImg.style.top = '-9999px';
@@ -112,7 +145,6 @@ export function Board({
         dragImg.style.height = `${tileSize * 0.85}px`;
         document.body.appendChild(dragImg);
         e.dataTransfer.setDragImage(dragImg, tileSize * 0.425, tileSize * 0.425);
-        // Clean up after drag starts
         requestAnimationFrame(() => document.body.removeChild(dragImg));
       }
 
@@ -128,7 +160,6 @@ export function Board({
   const handleDragEnd = useCallback(() => {
     setIsDragging(false);
     setDragFrom(null);
-    // Don't clear selection/moves here - let drop or click handle it
   }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -144,7 +175,6 @@ export function Board({
 
       if (disabled) return;
 
-      // Check if this is a valid move
       if (movesFrom && selectedSquare) {
         const isValidMove = movesFrom.to.some(([mx, my]) => mx === targetX && my === targetY);
         if (isValidMove) {
@@ -162,6 +192,7 @@ export function Board({
     if (lastTurn && lastTurn.from[0] === x && lastTurn.from[1] === y) return true;
     if (selectedSquare && selectedSquare[0] === x && selectedSquare[1] === y) return true;
     if (dragFrom && dragFrom[0] === x && dragFrom[1] === y) return true;
+    if (touchDragFrom && touchDragFrom[0] === x && touchDragFrom[1] === y) return true;
     return false;
   };
 
@@ -183,22 +214,27 @@ export function Board({
   return (
     // Invisible container for centering
     <div
-      className="flex items-center justify-center"
-      style={{ width: MAX_BOARD_SIZE_PX, height: MAX_BOARD_SIZE_PX }}
+      className="flex items-center justify-center mx-auto"
+      style={{ width: maxBoardSizePx, height: maxBoardSizePx }}
     >
-      {/* Border wrapper - separate from tile container */}
-      <div className="border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436]">
-        {/* Tile container - no border, exact size for tiles */}
+      {/* Border wrapper - reduced shadow on mobile */}
+      <div className="border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] lg:shadow-[8px_8px_0px_#2d3436]">
+        {/* Tile container */}
         <div
-          className="relative"
-          style={{ width: boardWidthPx, height: boardHeightPx }}
+          ref={boardRef}
+          className="relative select-none"
+          style={{
+            width: boardWidthPx,
+            height: boardHeightPx,
+            touchAction: 'none',
+          }}
+          {...touchHandlers}
         >
           {/* Tiles */}
         {gameState.tiles.map((tile) => {
           const displayX = flipped ? width - 1 - tile.x : tile.x;
           const displayY = flipped ? tile.y : height - 1 - tile.y;
 
-          // Compute color from coordinates for consistency (tileType only used for disabled check)
           const isLightSquare = (tile.x + tile.y) % 2 === 1;
           let backgroundColor = isLightSquare ? COLORS.SQUARE_LIGHT : COLORS.SQUARE_DARK;
           if (tile.tileType === 'x') {
@@ -244,7 +280,9 @@ export function Board({
           const displayY = flipped ? piece.y : height - 1 - piece.y;
           const color = piece.owner === 0 ? 'white' : 'black';
           const canDrag = !disabled && piece.owner === playerNum && gameState.toMove === playerNum;
-          const isBeingDragged = isDragging && dragFrom && dragFrom[0] === piece.x && dragFrom[1] === piece.y;
+          const isBeingDragged =
+            (isDragging && dragFrom && dragFrom[0] === piece.x && dragFrom[1] === piece.y) ||
+            (touchDragFrom && touchDragFrom[0] === piece.x && touchDragFrom[1] === piece.y);
 
           return (
             <div

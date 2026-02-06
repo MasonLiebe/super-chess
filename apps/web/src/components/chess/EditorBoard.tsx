@@ -1,8 +1,7 @@
 import { useCallback, useState, useRef } from 'react';
 import { useEditorStore } from '../../stores/editorStore';
+import { useBoardSize } from '../../hooks/useBoardSize';
 import { COLORS } from '../../lib/constants';
-
-const MAX_BOARD_SIZE_PX = 560; // Maximum board size in pixels
 
 export function EditorBoard() {
   const {
@@ -16,7 +15,7 @@ export function EditorBoard() {
     removePiece,
   } = useEditorStore();
 
-  // Track mouse state for painting
+  // Track painting state (mouse and touch)
   const [isPainting, setIsPainting] = useState(false);
   const [paintedSquares, setPaintedSquares] = useState<Set<string>>(new Set());
   const boardRef = useRef<HTMLDivElement>(null);
@@ -25,13 +24,10 @@ export function EditorBoard() {
     e.preventDefault();
   }, []);
 
-  // Calculate tile size
-  const maxDimension = Math.max(width, height);
-  const tileSize = Math.floor(MAX_BOARD_SIZE_PX / maxDimension);
-  const boardWidthPx = tileSize * width;
-  const boardHeightPx = tileSize * height;
+  // Responsive board sizing
+  const { maxBoardSizePx, tileSize, boardWidthPx, boardHeightPx } = useBoardSize(width, height);
 
-  // Get board coordinates from mouse position
+  // Get board coordinates from client position
   const getBoardCoords = useCallback((clientX: number, clientY: number) => {
     if (!boardRef.current) return null;
     const rect = boardRef.current.getBoundingClientRect();
@@ -41,52 +37,64 @@ export function EditorBoard() {
     return { x, y };
   }, [tileSize, width, height]);
 
-  // Mouse down - start painting
-  const handleMouseDown = useCallback((x: number, y: number, e: React.MouseEvent) => {
-    if (e.button !== 0) return; // Only left click
-
+  // Apply paint action at coordinates
+  const applyPaint = useCallback((x: number, y: number) => {
     if (currentTool === 'toggleTile') {
       toggleTile(x, y);
-      setIsPainting(true);
-      setPaintedSquares(new Set([`${x},${y}`]));
-      return;
+    } else {
+      placePiece(x, y);
     }
+  }, [currentTool, toggleTile, placePiece]);
 
-    // Place piece and begin paint mode
-    placePiece(x, y);
+  // Mouse down - start painting
+  const handleMouseDown = useCallback((x: number, y: number, e: React.MouseEvent) => {
+    if (e.button !== 0) return;
+    applyPaint(x, y);
     setIsPainting(true);
     setPaintedSquares(new Set([`${x},${y}`]));
-  }, [currentTool, placePiece, toggleTile]);
+  }, [applyPaint]);
 
-  // Mouse move - paint pieces or toggle tiles
+  // Mouse move - continue painting
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (!isPainting) return;
-
     const coords = getBoardCoords(e.clientX, e.clientY);
     if (!coords) return;
-
     const key = `${coords.x},${coords.y}`;
     if (!paintedSquares.has(key)) {
-      if (currentTool === 'toggleTile') {
-        toggleTile(coords.x, coords.y);
-      } else {
-        placePiece(coords.x, coords.y);
-      }
+      applyPaint(coords.x, coords.y);
       setPaintedSquares((prev) => new Set(prev).add(key));
     }
-  }, [isPainting, currentTool, getBoardCoords, placePiece, toggleTile, paintedSquares]);
+  }, [isPainting, getBoardCoords, applyPaint, paintedSquares]);
 
-  // Mouse up - stop painting
-  const handleMouseUp = useCallback(() => {
+  const stopPainting = useCallback(() => {
     setIsPainting(false);
     setPaintedSquares(new Set());
   }, []);
 
-  // Mouse leave - cancel painting
-  const handleMouseLeave = useCallback(() => {
-    setIsPainting(false);
-    setPaintedSquares(new Set());
-  }, []);
+  // Touch start - start painting
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const coords = getBoardCoords(touch.clientX, touch.clientY);
+    if (!coords) return;
+    applyPaint(coords.x, coords.y);
+    setIsPainting(true);
+    setPaintedSquares(new Set([`${coords.x},${coords.y}`]));
+  }, [getBoardCoords, applyPaint]);
+
+  // Touch move - continue painting
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isPainting) return;
+    e.preventDefault();
+    const touch = e.touches[0];
+    const coords = getBoardCoords(touch.clientX, touch.clientY);
+    if (!coords) return;
+    const key = `${coords.x},${coords.y}`;
+    if (!paintedSquares.has(key)) {
+      applyPaint(coords.x, coords.y);
+      setPaintedSquares((prev) => new Set(prev).add(key));
+    }
+  }, [isPainting, getBoardCoords, applyPaint, paintedSquares]);
 
   // Handle drag over for dropping pieces from side panel
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -105,7 +113,6 @@ export function EditorBoard() {
       const coords = getBoardCoords(e.clientX, e.clientY);
       if (!coords) return;
 
-      // Temporarily set the piece type and owner, place, then restore
       const store = useEditorStore.getState();
       const prevType = store.selectedPieceType;
       const prevOwner = store.selectedOwner;
@@ -114,7 +121,6 @@ export function EditorBoard() {
       store.setSelectedOwner(owner);
       store.placePiece(coords.x, coords.y);
 
-      // Restore previous selection
       store.setSelectedPieceType(prevType);
       store.setSelectedOwner(prevOwner);
     } catch {
@@ -125,29 +131,35 @@ export function EditorBoard() {
   return (
     // Invisible container for centering
     <div
-      className="flex items-center justify-center"
-      style={{ width: MAX_BOARD_SIZE_PX, height: MAX_BOARD_SIZE_PX }}
+      className="flex items-center justify-center mx-auto"
+      style={{ width: maxBoardSizePx, height: maxBoardSizePx }}
       onContextMenu={handleContextMenu}
       onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseLeave}
+      onMouseUp={stopPainting}
+      onMouseLeave={stopPainting}
     >
-      {/* Border wrapper - separate from tile container */}
-      <div className="border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436]">
-        {/* Tile container - no border, exact size for tiles */}
+      {/* Border wrapper - reduced shadow on mobile */}
+      <div className="border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] lg:shadow-[8px_8px_0px_#2d3436]">
+        {/* Tile container */}
         <div
           ref={boardRef}
           className="relative select-none"
-          style={{ width: boardWidthPx, height: boardHeightPx }}
+          style={{
+            width: boardWidthPx,
+            height: boardHeightPx,
+            touchAction: 'none',
+          }}
           onDragOver={handleDragOver}
           onDrop={handleDrop}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={stopPainting}
         >
         {/* Tiles */}
         {tiles.map((tile) => {
           const displayX = tile.x;
           const displayY = height - 1 - tile.y;
 
-          // Compute color from coordinates for consistency
           const isLightSquare = (tile.x + tile.y) % 2 === 1;
           let backgroundColor: string;
           if (tile.tileType === 'x') {

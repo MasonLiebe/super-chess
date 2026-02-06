@@ -116,7 +116,7 @@ export function CreateRoom() {
         {/* Game area */}
         <div className="flex flex-col lg:flex-row gap-6 items-start justify-center">
           {/* Board Preview */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 w-full max-w-[560px] mx-auto lg:mx-0">
             <Board
               gameState={previewState}
               playerNum={0}

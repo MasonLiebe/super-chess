@@ -284,8 +284,8 @@ export function Editor() {
             </div>
           </div>
 
-          {/* Center - Board */}
-          <div className="flex-1 flex justify-center">
+          {/* Center - Board (show first on mobile) */}
+          <div className="flex-1 flex justify-center order-first lg:order-none w-full max-w-[560px] mx-auto lg:max-w-none">
             <EditorBoard />
           </div>
 
