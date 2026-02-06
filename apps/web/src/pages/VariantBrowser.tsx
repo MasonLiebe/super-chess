@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { BoardThumbnail } from '../components/chess/BoardThumbnail';
 import { listVariants, likeVariant, unlikeVariant } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
+import { ArrowLeft, Search, Heart, MessageSquare, PackageOpen } from 'lucide-react';
 import type { VariantSummary } from '../types/api';
 
 const SORT_OPTIONS = [
@@ -93,8 +94,9 @@ export function VariantBrowser() {
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/"
-            className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
           >
+            <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
           <h1 className="text-2xl font-black text-[#2d3436]">BROWSE VARIANTS</h1>
@@ -114,8 +116,9 @@ export function VariantBrowser() {
               />
               <button
                 type="submit"
-                className="bg-[#4ecdc4] border-2 border-[#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:brightness-95 transition-all"
+                className="flex items-center gap-1.5 bg-[#4ecdc4] border-2 border-[#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:brightness-95 transition-all"
               >
+                <Search size={16} strokeWidth={3} />
                 SEARCH
               </button>
             </form>
@@ -155,6 +158,7 @@ export function VariantBrowser() {
           </div>
         ) : variants.length === 0 ? (
           <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-12 text-center">
+            <PackageOpen size={40} className="mx-auto mb-3 text-[#b2bec3]" />
             <p className="text-xl font-bold text-[#636e72] mb-2">No variants found</p>
             <p className="text-[#b2bec3] mb-4">Be the first to publish one!</p>
             <Link
@@ -203,13 +207,11 @@ export function VariantBrowser() {
                             variant.liked ? 'text-[#ff6b6b]' : 'text-[#636e72] hover:text-[#ff6b6b]'
                           }`}
                         >
-                          <span>{variant.liked ? '\u2665' : '\u2661'}</span>
+                          <Heart size={14} fill={variant.liked ? 'currentColor' : 'none'} />
                           <span>{variant.likeCount}</span>
                         </button>
                         <span className="flex items-center gap-1 text-[#636e72]">
-                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                          </svg>
+                          <MessageSquare size={14} />
                           {variant.commentCount}
                         </span>
                       </div>

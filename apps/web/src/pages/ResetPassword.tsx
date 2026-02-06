@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { resetPassword } from '../lib/api';
+import { ArrowLeft } from 'lucide-react';
 
 export function ResetPassword() {
   const [searchParams] = useSearchParams();
@@ -126,7 +127,8 @@ export function ResetPassword() {
         </div>
 
         <div className="text-center mt-4">
-          <Link to="/" className="text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+          <Link to="/" className="inline-flex items-center gap-1 text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+            <ArrowLeft size={14} />
             Back to Home
           </Link>
         </div>

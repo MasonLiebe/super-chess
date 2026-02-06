@@ -1,55 +1,85 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuthStore } from '../stores/authStore';
+import { Swords, Globe, PencilRuler, Compass, Crown, LogIn, UserPlus, User } from 'lucide-react';
 
 export function Home() {
-  const [showAbout, setShowAbout] = useState(false);
+  const { user } = useAuthStore();
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center p-4">
       <div className="max-w-md w-full">
         <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] p-8">
-          <h1 className="text-4xl font-black text-[#2d3436] mb-2 text-center">
-            CUSTOMCHESS
-          </h1>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Crown size={36} strokeWidth={2.5} className="text-[#2d3436]" />
+            <h1 className="text-4xl font-black text-[#2d3436]">
+              CUSTOMCHESS
+            </h1>
+          </div>
           <p className="text-[#2d3436] text-center mb-8 font-medium">
-            A customizable chess game   engine
+            A customizable chess game engine
           </p>
 
           <div className="space-y-4">
             <Link
               to="/singleplayer"
-              className="block w-full bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 text-center font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="flex items-center justify-center gap-2.5 w-full bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
             >
+              <Swords size={20} strokeWidth={2.5} />
               PLAY VS AI
             </Link>
 
             <Link
               to="/multiplayer"
-              className="block w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 text-center font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="flex items-center justify-center gap-2.5 w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
             >
+              <Globe size={20} strokeWidth={2.5} />
               PLAY ONLINE
             </Link>
 
             <Link
               to="/editor"
-              className="block w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 text-center font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="flex items-center justify-center gap-2.5 w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
             >
+              <PencilRuler size={20} strokeWidth={2.5} />
               BOARD EDITOR
             </Link>
 
             <Link
               to="/browse"
-              className="block w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 text-center font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="flex items-center justify-center gap-2.5 w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
             >
+              <Compass size={20} strokeWidth={2.5} />
               BROWSE VARIANTS
             </Link>
+          </div>
 
-            <button
-              onClick={() => setShowAbout(true)}
-              className="block w-full bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 text-center font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
-            >
-              ABOUT THIS SITE
-            </button>
+          {/* Auth section */}
+          <div className="mt-6 pt-5 border-t-2 border-[#dfe6e9]">
+            {user ? (
+              <div className="flex items-center justify-center gap-2 text-[#2d3436]">
+                <User size={18} className="text-[#636e72]" />
+                <span className="font-medium text-sm">
+                  Signed in as <span className="font-bold">{user.username}</span>
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link
+                  to="/login"
+                  className="flex items-center justify-center gap-2 flex-1 bg-white border-3 border-[#2d3436] shadow-[3px_3px_0px_#2d3436] p-3 font-bold text-sm text-[#2d3436] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1.5px_1.5px_0px_#2d3436] transition-all"
+                >
+                  <LogIn size={16} />
+                  LOG IN
+                </Link>
+                <Link
+                  to="/register"
+                  className="flex items-center justify-center gap-2 flex-1 bg-[#a29bfe] border-3 border-[#2d3436] shadow-[3px_3px_0px_#2d3436] p-3 font-bold text-sm text-[#2d3436] hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1.5px_1.5px_0px_#2d3436] transition-all"
+                >
+                  <UserPlus size={16} />
+                  SIGN UP
+                </Link>
+              </div>
+            )}
           </div>
         </div>
 
@@ -57,93 +87,6 @@ export function Home() {
           Built by Mason Liebe
         </p>
       </div>
-
-      {showAbout && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b-4 border-[#2d3436]">
-              <h2 className="text-xl font-black text-[#2d3436]">ABOUT THIS SITE</h2>
-              <button
-                onClick={() => setShowAbout(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400 transition-colors"
-              >
-                ×
-              </button>
-            </div>
-            <div className="p-4 space-y-4 text-[#2d3436]">
-              <p className="font-medium">
-                CustomChess is a chess variant engine supporting arbitrary board
-                dimensions (up to 16x16), custom piece movement patterns, and
-                configurable tile layouts with disableable squares.
-              </p>
-
-              <div>
-                <h3 className="font-black text-sm mb-1">CHESS ENGINE (RUST / WASM)</h3>
-                <p className="text-sm text-[#636e72]">
-                  The core engine is written in Rust and compiled to WebAssembly
-                  via wasm-bindgen, running entirely in the browser. Board state
-                  is represented using 256-bit bitboards (via numext-fixed-uint
-                  U256) to support up to 16x16 grids. The AI uses negamax search
-                  with alpha-beta pruning, iterative deepening, and principal
-                  variation search (PVS). Pruning is accelerated by null move
-                  pruning (R=3), late move reductions, and a 1.5M-entry
-                  transposition table with 4-way clustering and Zobrist hashing.
-                  Move ordering uses killer moves (2 per ply), history heuristic
-                  tables, and static exchange evaluation (SEE) for captures.
-                  Quiescence search prevents horizon-effect blunders. Positional
-                  evaluation uses dynamically generated piece-square tables based
-                  on mobility, with endgame-aware king centralization.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-black text-sm mb-1">FRONTEND</h3>
-                <p className="text-sm text-[#636e72]">
-                  Built with React 19 and TypeScript, bundled with Vite 7 using
-                  vite-plugin-wasm and vite-plugin-top-level-await for async WASM
-                  initialization. The board is rendered as absolutely-positioned
-                  DOM elements with SVG piece images, supporting both
-                  click-to-move and HTML5 drag-and-drop interactions. State
-                  management uses Zustand stores for game state and editor state.
-                  Styled with Tailwind CSS 4 in a neobrutalist design system.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-black text-sm mb-1">MULTIPLAYER</h3>
-                <p className="text-sm text-[#636e72]">
-                  The backend is an async Rust server built on Axum 0.7 with
-                  Tokio, serving WebSocket connections at /ws. Rooms are managed
-                  as independent Tokio tasks communicating via mpsc channels, with
-                  JSON-serialized tagged-union messages (serde) for the
-                  client-server protocol. Room IDs are generated using
-                  adjective-adjective-animal naming. The client auto-reconnects on
-                  disconnect with a 2-second retry and buffers outbound messages
-                  while disconnected. Deployed via a multi-stage Docker build
-                  (node:20-alpine for the frontend, rust:1.75-alpine for the
-                  server, alpine:latest for runtime).
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-black text-sm mb-1">BOARD EDITOR</h3>
-                <p className="text-sm text-[#636e72]">
-                  The editor supports custom board dimensions (4x4 to 16x16),
-                  per-tile enable/disable toggling, and up to 9 custom piece types
-                  with fully configurable movement patterns. Movement patterns
-                  define independent attack and translate capabilities across 8
-                  sliding directions plus arbitrary jump deltas on a configurable
-                  grid. Board configurations are serializable as JSON GameState
-                  objects and can be exported/imported or used to create
-                  multiplayer rooms. Includes 6 prebuilt variants: Standard, Mini
-                  (6x6), Micro (4x5), Big (10x10), Holy (with disabled tiles),
-                  and Pawn Storm.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

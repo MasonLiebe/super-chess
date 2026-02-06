@@ -7,6 +7,7 @@ import { useEditorStore } from '../stores/editorStore';
 import { PREBUILT_GAMES, DEFAULT_GAME } from '../prebuilt_games';
 import { toRustGameState } from '../lib/convert';
 import { getVariant } from '../lib/api';
+import { ArrowLeft, Eye, X } from 'lucide-react';
 import type { GameState, Seat } from '../types/chess';
 
 export function CreateRoom() {
@@ -96,8 +97,9 @@ export function CreateRoom() {
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/multiplayer"
-            className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
           >
+            <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
           <h1 className="text-2xl font-black text-[#2d3436]">CREATE ROOM</h1>
@@ -250,10 +252,7 @@ export function CreateRoom() {
                 onClick={() => handleCreateRoom('spectator')}
                 className="w-full p-3 border-2 border-[#2d3436] font-bold text-[#2d3436] bg-[#dfe6e9] hover:bg-[#b2bec3] transition-colors flex items-center gap-3"
               >
-                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                  <circle cx="12" cy="12" r="3" />
-                </svg>
+                <Eye size={24} />
                 Watch as Spectator
               </button>
             </div>

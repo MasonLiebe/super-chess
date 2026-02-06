@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { forgotPassword } from '../lib/api';
+import { ArrowLeft } from 'lucide-react';
 
 export function ForgotPassword() {
   const [identifier, setIdentifier] = useState('');
@@ -73,7 +74,8 @@ export function ForgotPassword() {
         </div>
 
         <div className="text-center mt-4">
-          <Link to="/" className="text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+          <Link to="/" className="inline-flex items-center gap-1 text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+            <ArrowLeft size={14} />
             Back to Home
           </Link>
         </div>

@@ -6,7 +6,9 @@ import { useGameStore } from '../stores/gameStore';
 import { useEditorStore } from '../stores/editorStore';
 import { PREBUILT_GAMES, DEFAULT_GAME } from '../prebuilt_games';
 import { playMoveSound, playCaptureSound, playCheckSound, playGameOverSound } from '../lib/sounds';
+import { useSettingsStore } from '../stores/settingsStore';
 import { getVariant } from '../lib/api';
+import { ArrowLeft, Volume2, VolumeOff, RotateCcw, HelpCircle } from 'lucide-react';
 import type { GameState, Turn, Piece } from '../types/chess';
 
 // AI Difficulty levels with search depth
@@ -40,6 +42,7 @@ export function Singleplayer() {
   const [difficultyDropdownOpen, setDifficultyDropdownOpen] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { soundEnabled, toggleSound } = useSettingsStore();
 
   // Check if we're loading a custom game from the editor or a variant
   useEffect(() => {
@@ -309,30 +312,39 @@ export function Singleplayer() {
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/"
-            className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
           >
+            <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
           <h1 className="text-2xl font-black text-[#2d3436]">VS AI</h1>
-          {gameStarted ? (
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowHelpModal(true)}
-                className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-3 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
-                title="How to play"
-              >
-                ?
-              </button>
-              <button
-                onClick={handleNewGame}
-                className="bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
-              >
-                NEW
-              </button>
-            </div>
-          ) : (
-            <div className="w-24" />
-          )}
+          <div className="flex gap-2">
+            <button
+              onClick={toggleSound}
+              className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-3 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              title={soundEnabled ? 'Mute sounds' : 'Unmute sounds'}
+            >
+              {soundEnabled ? <Volume2 size={18} /> : <VolumeOff size={18} />}
+            </button>
+            {gameStarted ? (
+              <>
+                <button
+                  onClick={() => setShowHelpModal(true)}
+                  className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-3 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                  title="How to play"
+                >
+                  <HelpCircle size={18} />
+                </button>
+                <button
+                  onClick={handleNewGame}
+                  className="flex items-center gap-1.5 bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                >
+                  <RotateCcw size={16} strokeWidth={3} />
+                  NEW
+                </button>
+              </>
+            ) : null}
+          </div>
         </div>
 
         {/* Game area */}

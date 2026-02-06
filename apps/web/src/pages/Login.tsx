@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { login } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
+import { ArrowLeft } from 'lucide-react';
 
 export function Login() {
   const navigate = useNavigate();
@@ -90,7 +91,8 @@ export function Login() {
         </div>
 
         <div className="text-center mt-4">
-          <Link to="/" className="text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+          <Link to="/" className="inline-flex items-center gap-1 text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+            <ArrowLeft size={14} />
             Back to Home
           </Link>
         </div>

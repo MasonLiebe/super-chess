@@ -1,6 +1,12 @@
 // Chess sound effects using Web Audio API
 // Creates brief, pleasant sounds without external files
 
+import { useSettingsStore } from '../stores/settingsStore';
+
+function isSoundEnabled(): boolean {
+  return useSettingsStore.getState().soundEnabled;
+}
+
 let audioContext: AudioContext | null = null;
 
 function getAudioContext(): AudioContext {
@@ -23,6 +29,7 @@ async function ensureAudioContext(): Promise<AudioContext> {
  * Play a brief "click" sound for piece movement
  */
 export async function playMoveSound(): Promise<void> {
+  if (!isSoundEnabled()) return;
   try {
     const ctx = await ensureAudioContext();
     const now = ctx.currentTime;
@@ -55,6 +62,7 @@ export async function playMoveSound(): Promise<void> {
  * Play a sound for capturing a piece (slightly different tone)
  */
 export async function playCaptureSound(): Promise<void> {
+  if (!isSoundEnabled()) return;
   try {
     const ctx = await ensureAudioContext();
     const now = ctx.currentTime;
@@ -86,6 +94,7 @@ export async function playCaptureSound(): Promise<void> {
  * Play a sound for check
  */
 export async function playCheckSound(): Promise<void> {
+  if (!isSoundEnabled()) return;
   try {
     const ctx = await ensureAudioContext();
     const now = ctx.currentTime;
@@ -116,6 +125,7 @@ export async function playCheckSound(): Promise<void> {
  * Play a sound for game over (win or lose)
  */
 export async function playGameOverSound(won: boolean): Promise<void> {
+  if (!isSoundEnabled()) return;
   try {
     const ctx = await ensureAudioContext();
     const now = ctx.currentTime;

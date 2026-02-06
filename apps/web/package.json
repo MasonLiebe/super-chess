@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "lucide-react": "^0.563.0",
     "protochess-engine-wasm": "file:../../packages/engine-wasm/pkg",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

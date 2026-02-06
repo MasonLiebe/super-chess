@@ -9,6 +9,7 @@ import { useEditorStore, STANDARD_PIECES } from '../stores/editorStore';
 import { useAuthStore } from '../stores/authStore';
 import { createVariant } from '../lib/api';
 import { BOARD_SIZE } from '../lib/constants';
+import { ArrowLeft, HelpCircle, RotateCcw, Upload, Download, Play, Send, Plus, Pencil, Trash2, X, Swords, Globe } from 'lucide-react';
 import type { GameState } from '../types/chess';
 
 export function Editor() {
@@ -198,22 +199,25 @@ export function Editor() {
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/"
-            className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
           >
+            <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
           <h1 className="text-2xl font-black text-[#2d3436]">BOARD EDITOR</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setShowHelp(true)}
-              className="bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="flex items-center gap-1.5 bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
             >
+              <HelpCircle size={18} />
               HELP
             </button>
             <button
               onClick={resetBoard}
-              className="bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="flex items-center gap-1.5 bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
             >
+              <RotateCcw size={16} strokeWidth={3} />
               RESET
             </button>
           </div>
@@ -322,26 +326,30 @@ export function Editor() {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
+                <Upload size={16} strokeWidth={3} />
                 LOAD JSON
               </button>
               <button
                 onClick={() => setShowExportModal(true)}
-                className="w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
+                <Download size={16} strokeWidth={3} />
                 EXPORT JSON
               </button>
               <button
                 onClick={handleStartGame}
-                className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
+                <Play size={16} strokeWidth={3} />
                 START GAME
               </button>
               <button
                 onClick={handlePublishClick}
-                className="w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
+                <Send size={16} strokeWidth={3} />
                 PUBLISH
               </button>
             </div>
@@ -450,7 +458,7 @@ export function Editor() {
                           : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       }`}
                     >
-                      ✎ EDIT
+                      <span className="flex items-center justify-center gap-1"><Pencil size={14} /> EDIT</span>
                     </button>
                     <button
                       onClick={() => configuredPieces.includes(selectedPieceType) && handleDeletePiece(selectedPieceType)}
@@ -461,7 +469,7 @@ export function Editor() {
                           : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                       }`}
                     >
-                      × DELETE
+                      <span className="flex items-center justify-center gap-1"><Trash2 size={14} /> DELETE</span>
                     </button>
                   </div>
                 </div>
@@ -504,7 +512,7 @@ export function Editor() {
                     : 'bg-[#ffe66d] hover:brightness-105'
                   }`}
               >
-                + CREATE NEW PIECE
+                <span className="flex items-center justify-center gap-1.5"><Plus size={18} strokeWidth={3} /> CREATE NEW PIECE</span>
               </button>
             </div>
 
@@ -537,9 +545,9 @@ export function Editor() {
               <h2 className="text-xl font-black text-[#2d3436]">HOW TO USE</h2>
               <button
                 onClick={() => setShowHelp(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
               >
-                ×
+                <X size={20} strokeWidth={3} />
               </button>
             </div>
             <div className="p-4 space-y-4">
@@ -580,22 +588,24 @@ export function Editor() {
               <h2 className="text-xl font-black text-[#2d3436]">START GAME</h2>
               <button
                 onClick={() => setShowStartOptions(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
               >
-                ×
+                <X size={20} strokeWidth={3} />
               </button>
             </div>
             <div className="p-4 space-y-3">
               <button
                 onClick={handlePlayVsAI}
-                className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
+                <Swords size={18} />
                 PLAY VS AI
               </button>
               <button
                 onClick={handleCreateMultiplayerRoom}
-                className="w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
+                <Globe size={18} />
                 CREATE MULTIPLAYER ROOM
               </button>
             </div>
@@ -662,9 +672,9 @@ export function Editor() {
               <h2 className="text-xl font-black text-[#2d3436]">EXPORT</h2>
               <button
                 onClick={() => setShowExportModal(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
               >
-                ×
+                <X size={20} strokeWidth={3} />
               </button>
             </div>
             <div className="p-4 space-y-4">

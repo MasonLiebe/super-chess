@@ -13,6 +13,7 @@ import {
 } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
 import { useEditorStore } from '../stores/editorStore';
+import { ArrowLeft, Heart, Swords, Globe, PencilRuler, Pencil, Trash2, MessageSquare } from 'lucide-react';
 import type { VariantSummary, Comment } from '../types/api';
 
 export function VariantDetail() {
@@ -188,8 +189,9 @@ export function VariantDetail() {
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/browse"
-            className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
           >
+            <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
           <h1 className="text-2xl font-black text-[#2d3436] truncate mx-4">{variant.name}</h1>
@@ -279,28 +281,31 @@ export function VariantDetail() {
                     variant.liked ? 'bg-[#ff6b6b]' : 'bg-white'
                   }`}
                 >
-                  {variant.liked ? '\u2665' : '\u2661'} {variant.likeCount}
+                  <Heart size={16} fill={variant.liked ? 'currentColor' : 'none'} /> {variant.likeCount}
                 </button>
               </div>
 
               <Link
                 to={`/singleplayer?from=variant&id=${variant.id}`}
-                className="block w-full bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 text-center font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
+                <Swords size={18} />
                 PLAY VS AI
               </Link>
 
               <Link
                 to={`/create-room?from=variant&id=${variant.id}`}
-                className="block w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 text-center font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
+                <Globe size={18} />
                 CREATE ROOM
               </Link>
 
               <button
                 onClick={handleEditInEditor}
-                className="w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
               >
+                <PencilRuler size={16} />
                 EDIT IN EDITOR
               </button>
 
@@ -308,14 +313,16 @@ export function VariantDetail() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setEditing(true)}
-                    className="flex-1 bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
                   >
+                    <Pencil size={16} />
                     EDIT
                   </button>
                   <button
                     onClick={handleDelete}
-                    className="flex-1 bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
                   >
+                    <Trash2 size={16} />
                     DELETE
                   </button>
                 </div>
@@ -324,7 +331,8 @@ export function VariantDetail() {
 
             {/* Comments Section */}
             <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-              <h3 className="font-bold text-[#2d3436] mb-3">
+              <h3 className="flex items-center gap-1.5 font-bold text-[#2d3436] mb-3">
+                <MessageSquare size={16} strokeWidth={3} />
                 COMMENTS ({variant.commentCount})
               </h3>
 

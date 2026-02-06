@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useGameStore } from '../stores/gameStore';
 import { useWebSocket } from '../contexts/WebSocketContext';
+import { ArrowLeft, Plus, DoorOpen } from 'lucide-react';
 
 export function Multiplayer() {
   const navigate = useNavigate();
@@ -27,8 +28,9 @@ export function Multiplayer() {
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/"
-            className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
           >
+            <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
           <h1 className="text-2xl font-black text-[#2d3436]">ONLINE PLAY</h1>
@@ -51,7 +53,7 @@ export function Multiplayer() {
             !connected ? 'opacity-50 pointer-events-none' : ''
           }`}
         >
-          CREATE NEW ROOM
+          <span className="flex items-center justify-center gap-2"><Plus size={18} strokeWidth={3} /> CREATE NEW ROOM</span>
         </Link>
 
         {/* Room list */}
@@ -62,6 +64,7 @@ export function Multiplayer() {
 
           {roomList.length === 0 ? (
             <div className="p-8 text-center text-[#636e72]">
+              <DoorOpen size={32} className="mx-auto mb-2 text-[#b2bec3]" />
               No public rooms available. Create one!
             </div>
           ) : (

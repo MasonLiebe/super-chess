@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getMe, setEmail, resendVerification } from '../lib/api';
 import { useAuthStore } from '../stores/authStore';
+import { ArrowLeft } from 'lucide-react';
 
 export function AccountSettings() {
   const navigate = useNavigate();
@@ -156,7 +157,8 @@ export function AccountSettings() {
         </div>
 
         <div className="text-center mt-4">
-          <Link to="/" className="text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+          <Link to="/" className="inline-flex items-center gap-1 text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+            <ArrowLeft size={14} />
             Back to Home
           </Link>
         </div>

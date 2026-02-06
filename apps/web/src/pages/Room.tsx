@@ -5,6 +5,8 @@ import { useGameStore } from '../stores/gameStore';
 import { useWebSocket } from '../contexts/WebSocketContext';
 import { toRustTurn } from '../lib/convert';
 import { playMoveSound, playCaptureSound, playCheckSound, playGameOverSound } from '../lib/sounds';
+import { useSettingsStore } from '../stores/settingsStore';
+import { ArrowLeft, Volume2, VolumeOff, Copy, Check, Eye, Share2 } from 'lucide-react';
 import type { GameInfo, Seat } from '../types/chess';
 
 export function Room() {
@@ -14,6 +16,7 @@ export function Room() {
   const { gameInfo, playerList, currentRoom, reset } = useGameStore();
   const prevGameInfoRef = useRef<GameInfo | null>(null);
   const [copied, setCopied] = useState(false);
+  const { soundEnabled, toggleSound } = useSettingsStore();
 
   // Join room if not already in one (default to spectator, user can switch seats once in)
   useEffect(() => {
@@ -115,14 +118,21 @@ export function Room() {
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={handleLeaveRoom}
-            className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
           >
+            <ArrowLeft size={18} strokeWidth={3} />
             LEAVE
           </button>
           <h1 className="text-xl font-black text-[#2d3436] truncate max-w-[200px]">
             {roomId || 'Loading...'}
           </h1>
-          <div className="w-20" />
+          <button
+            onClick={toggleSound}
+            className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-3 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            title={soundEnabled ? 'Mute sounds' : 'Unmute sounds'}
+          >
+            {soundEnabled ? <Volume2 size={18} /> : <VolumeOff size={18} />}
+          </button>
         </div>
 
         {/* Game area */}
@@ -206,10 +216,7 @@ export function Room() {
                           ) : seat === 'black' ? (
                             <span className="w-4 h-4 rounded-full bg-[#2d3436]" />
                           ) : (
-                            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                              <circle cx="12" cy="12" r="3" />
-                            </svg>
+                            <Eye size={16} />
                           )}
                         </span>
                         {seat.toUpperCase()}
@@ -235,10 +242,7 @@ export function Room() {
                       }`}
                     >
                       {player.seat === 'spectator' ? (
-                        <svg className="w-3 h-3 text-[#636e72]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                          <circle cx="12" cy="12" r="3" />
-                        </svg>
+                        <Eye size={12} className="text-[#636e72]" />
                       ) : (
                         <span
                           className={`w-3 h-3 rounded-full ${
@@ -262,7 +266,10 @@ export function Room() {
 
             {/* Share link */}
             <div className="bg-[#f8f9fa] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-              <h2 className="font-bold text-[#2d3436] mb-2">SHARE</h2>
+              <h2 className="flex items-center gap-1.5 font-bold text-[#2d3436] mb-2">
+                <Share2 size={16} strokeWidth={3} />
+                SHARE
+              </h2>
               <div className="flex gap-2">
                 <input
                   type="text"
@@ -277,9 +284,9 @@ export function Room() {
                     setCopied(true);
                     setTimeout(() => setCopied(false), 2000);
                   }}
-                  className="px-3 py-2 bg-[#4ecdc4] border-2 border-[#2d3436] font-bold text-sm text-[#2d3436] hover:bg-[#45b7aa] transition-colors whitespace-nowrap"
+                  className="flex items-center gap-1.5 px-3 py-2 bg-[#4ecdc4] border-2 border-[#2d3436] font-bold text-sm text-[#2d3436] hover:bg-[#45b7aa] transition-colors whitespace-nowrap"
                 >
-                  {copied ? 'COPIED!' : 'COPY'}
+                  {copied ? <><Check size={14} strokeWidth={3} /> COPIED!</> : <><Copy size={14} strokeWidth={3} /> COPY</>}
                 </button>
               </div>
             </div>
