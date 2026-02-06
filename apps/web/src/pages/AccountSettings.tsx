@@ -67,37 +67,37 @@ export function AccountSettings() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--bg-page)] flex items-center justify-center p-4">
       <div className="max-w-md w-full">
-        <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] p-8">
-          <h1 className="text-3xl font-black text-[#2d3436] mb-6 text-center">ACCOUNT</h1>
+        <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] p-8">
+          <h1 className="text-3xl font-black text-[var(--text-primary)] mb-6 text-center">ACCOUNT</h1>
 
           {fetching ? (
-            <p className="text-center text-[#636e72]">Loading...</p>
+            <p className="text-center text-[var(--text-secondary)]">Loading...</p>
           ) : (
             <div className="space-y-6">
               {/* Username (read-only) */}
               <div>
-                <label className="block font-bold text-[#2d3436] mb-1">USERNAME</label>
-                <div className="w-full p-3 border-3 border-[#dfe6e9] bg-[#f8f9fa] font-medium text-[#636e72]">
+                <label className="block font-bold text-[var(--text-primary)] mb-1">USERNAME</label>
+                <div className="w-full p-3 border-3 border-[var(--divider)] bg-[var(--bg-card-hover)] font-medium text-[var(--text-secondary)]">
                   {user.username}
                 </div>
               </div>
 
               {/* Email section */}
               <div>
-                <label className="block font-bold text-[#2d3436] mb-1">EMAIL</label>
+                <label className="block font-bold text-[var(--text-primary)] mb-1">EMAIL</label>
 
                 {currentEmail ? (
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="font-medium text-[#2d3436]">{currentEmail}</span>
+                      <span className="font-medium text-[var(--text-primary)]">{currentEmail}</span>
                       {emailVerified ? (
-                        <span className="text-xs font-bold bg-[#00b894] text-white px-2 py-0.5 border border-[#2d3436]">
+                        <span className="text-xs font-bold bg-[#00b894] text-white px-2 py-0.5 border border-[var(--border-color)]">
                           VERIFIED
                         </span>
                       ) : (
-                        <span className="text-xs font-bold bg-[#fdcb6e] text-[#2d3436] px-2 py-0.5 border border-[#2d3436]">
+                        <span className="text-xs font-bold bg-[#fdcb6e] text-[var(--color-dark)] px-2 py-0.5 border border-[var(--border-color)]">
                           UNVERIFIED
                         </span>
                       )}
@@ -107,21 +107,21 @@ export function AccountSettings() {
                       <button
                         onClick={handleResend}
                         disabled={loading}
-                        className="text-sm font-bold text-[#2d3436] bg-[#4ecdc4] border-2 border-[#2d3436] shadow-[2px_2px_0px_#2d3436] px-3 py-1 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_#2d3436] transition-all disabled:opacity-50"
+                        className="text-sm font-bold text-[var(--color-dark)] bg-[#4ecdc4] border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] px-3 py-1 hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-[1px_1px_0px_var(--shadow-color)] transition-all disabled:opacity-50"
                       >
                         RESEND VERIFICATION
                       </button>
                     )}
                   </div>
                 ) : (
-                  <p className="text-sm text-[#636e72] mb-2">No email set. Add one for password recovery.</p>
+                  <p className="text-sm text-[var(--text-secondary)] mb-2">No email set. Add one for password recovery.</p>
                 )}
               </div>
 
               {/* Add/Change email form */}
               <form onSubmit={handleSetEmail} className="space-y-3">
                 <div>
-                  <label className="block font-bold text-[#2d3436] mb-1 text-sm">
+                  <label className="block font-bold text-[var(--text-primary)] mb-1 text-sm">
                     {currentEmail ? 'CHANGE EMAIL' : 'ADD EMAIL'}
                   </label>
                   <input
@@ -129,26 +129,26 @@ export function AccountSettings() {
                     value={newEmail}
                     onChange={(e) => setNewEmail(e.target.value)}
                     placeholder="you@example.com"
-                    className="w-full p-3 border-3 border-[#2d3436] font-medium text-[#2d3436] placeholder:text-[#b2bec3]"
+                    className="w-full p-3 border-3 border-[var(--border-color)] font-medium placeholder:text-[var(--text-muted)]"
                     required
                   />
                 </div>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50"
+                  className="w-full bg-[#a29bfe] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all disabled:opacity-50"
                 >
                   {loading ? 'SAVING...' : currentEmail ? 'UPDATE EMAIL' : 'ADD EMAIL'}
                 </button>
               </form>
 
               {message && (
-                <div className="p-3 bg-[#00b894] border-2 border-[#2d3436] text-[#2d3436] font-medium text-sm">
+                <div className="p-3 bg-[#00b894] border-2 border-[var(--border-color)] text-[var(--color-dark)] font-medium text-sm">
                   {message}
                 </div>
               )}
               {error && (
-                <div className="p-3 bg-[#ff6b6b] border-2 border-[#2d3436] text-[#2d3436] font-medium text-sm">
+                <div className="p-3 bg-[#ff6b6b] border-2 border-[var(--border-color)] text-[var(--color-dark)] font-medium text-sm">
                   {error}
                 </div>
               )}
@@ -157,7 +157,7 @@ export function AccountSettings() {
         </div>
 
         <div className="text-center mt-4">
-          <Link to="/" className="inline-flex items-center gap-1 text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+          <Link to="/" className="inline-flex items-center gap-1 text-[var(--text-secondary)] font-medium text-sm hover:text-[var(--text-primary)]">
             <ArrowLeft size={14} />
             Back to Home
           </Link>

@@ -22,24 +22,24 @@ export function Multiplayer() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] p-4 flex flex-col justify-center">
+    <div className="min-h-screen bg-[var(--bg-page)] p-4 flex flex-col justify-center">
       <div className="max-w-2xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/"
-            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
           >
             <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
-          <h1 className="text-2xl font-black text-[#2d3436]">ONLINE PLAY</h1>
+          <h1 className="text-2xl font-black text-[var(--text-primary)]">ONLINE PLAY</h1>
           <div className="w-20" />
         </div>
 
         {/* Connection status */}
         <div
-          className={`mb-6 p-3 border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] font-bold ${
+          className={`mb-6 p-3 border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] font-bold ${
             connected ? 'bg-[#4ecdc4]' : 'bg-[#ff6b6b]'
           }`}
         >
@@ -49,7 +49,7 @@ export function Multiplayer() {
         {/* Create room button */}
         <Link
           to="/create-room"
-          className={`block w-full mb-6 bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] text-center hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all ${
+          className={`block w-full mb-6 bg-[#ffe66d] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4 font-bold text-[var(--color-dark)] text-center hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all ${
             !connected ? 'opacity-50 pointer-events-none' : ''
           }`}
         >
@@ -57,38 +57,38 @@ export function Multiplayer() {
         </Link>
 
         {/* Room list */}
-        <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436]">
-          <div className="p-4 border-b-4 border-[#2d3436]">
-            <h2 className="font-bold text-[#2d3436]">PUBLIC ROOMS</h2>
+        <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)]">
+          <div className="p-4 border-b-4 border-[var(--border-color)]">
+            <h2 className="font-bold text-[var(--text-primary)]">PUBLIC ROOMS</h2>
           </div>
 
           {roomList.length === 0 ? (
-            <div className="p-8 text-center text-[#636e72]">
-              <DoorOpen size={32} className="mx-auto mb-2 text-[#b2bec3]" />
+            <div className="p-8 text-center text-[var(--text-secondary)]">
+              <DoorOpen size={32} className="mx-auto mb-2 text-[var(--text-muted)]" />
               No public rooms available. Create one!
             </div>
           ) : (
-            <div className="divide-y-4 divide-[#2d3436]">
+            <div className="divide-y-4 divide-[var(--border-color)]">
               {roomList.map((room) => (
                 <div
                   key={room.room_id}
-                  className="p-4 flex items-center justify-between hover:bg-[#f8f9fa] transition-colors"
+                  className="p-4 flex items-center justify-between hover:bg-[var(--bg-card-hover)] transition-colors"
                 >
                   <div>
-                    <p className="font-bold text-[#2d3436]">{room.room_id}</p>
+                    <p className="font-bold text-[var(--text-primary)]">{room.room_id}</p>
                     <div className="flex items-center gap-3 text-sm">
-                      <span className="text-[#636e72]">
+                      <span className="text-[var(--text-secondary)]">
                         {room.num_clients} player{room.num_clients !== 1 ? 's' : ''}
                       </span>
                       <span className="flex items-center gap-1">
                         <span
-                          className={`inline-block w-3 h-3 rounded-full border border-[#2d3436] ${
+                          className={`inline-block w-3 h-3 rounded-full border border-[var(--border-color)] ${
                             room.white_taken ? 'bg-[#ff6b6b]' : 'bg-white'
                           }`}
                           title={room.white_taken ? 'White taken' : 'White available'}
                         />
                         <span
-                          className={`inline-block w-3 h-3 rounded-full border border-[#2d3436] ${
+                          className={`inline-block w-3 h-3 rounded-full border border-[var(--border-color)] ${
                             room.black_taken ? 'bg-[#ff6b6b]' : 'bg-[#2d3436]'
                           }`}
                           title={room.black_taken ? 'Black taken' : 'Black available'}
@@ -98,19 +98,19 @@ export function Multiplayer() {
                         <span className="text-[#4ecdc4] font-medium">Both seats open!</span>
                       )}
                       {(room.white_taken && !room.black_taken) && (
-                        <span className="text-[#636e72]">Black open</span>
+                        <span className="text-[var(--text-secondary)]">Black open</span>
                       )}
                       {(!room.white_taken && room.black_taken) && (
-                        <span className="text-[#636e72]">White open</span>
+                        <span className="text-[var(--text-secondary)]">White open</span>
                       )}
                       {room.white_taken && room.black_taken && (
-                        <span className="text-[#636e72]">Spectate only</span>
+                        <span className="text-[var(--text-secondary)]">Spectate only</span>
                       )}
                     </div>
                   </div>
                   <button
                     onClick={() => handleJoinRoom(room.room_id)}
-                    className="bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                    className="bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
                   >
                     JOIN
                   </button>

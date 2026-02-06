@@ -1,6 +1,21 @@
 @import "tailwindcss";
 
 :root {
+  /* Theme colors */
+  --bg-page: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8f9fa;
+  --text-primary: #2d3436;
+  --text-secondary: #636e72;
+  --text-muted: #b2bec3;
+  --border-color: #2d3436;
+  --shadow-color: #2d3436;
+  --divider: #dfe6e9;
+  --color-input-bg: #ffffff;
+  --bg-disabled: #e2e8f0;
+  --text-disabled: #a0aec0;
+
+  /* Accent colors (same in both modes) */
   --color-primary: #ff6b6b;
   --color-secondary: #4ecdc4;
   --color-accent: #ffe66d;
@@ -16,12 +31,65 @@
   --color-highlight-check: rgba(255, 0, 0, 0.5);
 }
 
+html.dark {
+  --bg-page: #1e2329;
+  --bg-card: #2d333b;
+  --bg-card-hover: #363d46;
+  --text-primary: #d6dae0;
+  --text-secondary: #9ca5ae;
+  --text-muted: #6e7880;
+  --border-color: #5d6671;
+  --shadow-color: #111519;
+  --divider: #3b434c;
+  --color-input-bg: #363d46;
+  --bg-disabled: #363d46;
+  --text-disabled: #6e7880;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
   font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  transition: background-color 0.2s, color 0.2s;
 }
 
 #root {
   min-height: 100vh;
+}
+
+input, textarea, select {
+  background-color: var(--color-input-bg);
+  color: var(--text-primary);
+}
+
+/* Scrollbar styling */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-muted) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--text-muted);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-secondary);
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
 }

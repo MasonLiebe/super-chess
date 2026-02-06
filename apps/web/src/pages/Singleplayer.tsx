@@ -318,22 +318,22 @@ export function Singleplayer() {
   }, [editorStore, previewState, navigate]);
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] p-4 flex flex-col justify-center">
+    <div className="min-h-screen bg-[var(--bg-page)] p-4 flex flex-col justify-center">
       <div className="max-w-5xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center gap-2 mb-4">
           <Link
             to="/"
-            className="flex items-center justify-center bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] w-10 h-10 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center justify-center bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] w-10 h-10 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
             title="Back to home"
           >
             <ArrowLeft size={18} strokeWidth={3} />
           </Link>
-          <h1 className="text-lg sm:text-2xl font-black text-[#2d3436] flex-1 text-center">VS AI</h1>
+          <h1 className="text-lg sm:text-2xl font-black text-[var(--text-primary)] flex-1 text-center">VS AI</h1>
           <div className="flex gap-1.5">
             <button
               onClick={toggleSound}
-              className="flex items-center justify-center bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] w-10 h-10 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="flex items-center justify-center bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] w-10 h-10 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               title={soundEnabled ? 'Mute sounds' : 'Unmute sounds'}
             >
               {soundEnabled ? <Volume2 size={18} /> : <VolumeOff size={18} />}
@@ -342,14 +342,14 @@ export function Singleplayer() {
               <>
                 <button
                   onClick={() => setShowHelpModal(true)}
-                  className="flex items-center justify-center bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] w-10 h-10 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                  className="flex items-center justify-center bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] w-10 h-10 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
                   title="How to play"
                 >
                   <HelpCircle size={18} />
                 </button>
                 <button
                   onClick={handleNewGame}
-                  className="flex items-center justify-center bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] w-10 h-10 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                  className="flex items-center justify-center bg-[#ffe66d] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] w-10 h-10 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
                   title="New game"
                 >
                   <RotateCcw size={16} strokeWidth={3} />
@@ -364,10 +364,10 @@ export function Singleplayer() {
           {/* Board */}
           <div className="flex-shrink-0 w-full max-w-[560px] mx-auto lg:mx-0">
             {!isReady ? (
-              <div className="w-full aspect-square max-w-[560px] bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] lg:shadow-[8px_8px_0px_#2d3436] flex items-center justify-center">
+              <div className="w-full aspect-square max-w-[560px] bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] lg:shadow-[8px_8px_0px_var(--shadow-color)] flex items-center justify-center">
                 <div className="text-center">
-                  <div className="animate-spin w-8 h-8 border-4 border-[#2d3436] border-t-transparent rounded-full mx-auto mb-4" />
-                  <p className="font-bold text-[#636e72]">Loading engine...</p>
+                  <div className="animate-spin w-8 h-8 border-4 border-[var(--border-color)] border-t-transparent rounded-full mx-auto mb-4" />
+                  <p className="font-bold text-[var(--text-secondary)]">Loading engine...</p>
                 </div>
               </div>
             ) : gameStarted && gameState ? (
@@ -397,21 +397,21 @@ export function Singleplayer() {
               <>
                 {/* Game Selection + Difficulty - compact row on mobile */}
                 <div className="flex flex-row lg:flex-col gap-2 lg:gap-4">
-                  <div className="bg-white border-2 lg:border-4 border-[#2d3436] shadow-[2px_2px_0px_#2d3436] lg:shadow-[4px_4px_0px_#2d3436] p-2 lg:p-4 flex-1">
-                    <h2 className="font-bold text-[#2d3436] text-xs lg:text-base mb-2 lg:mb-4">SELECT GAME</h2>
+                  <div className="bg-[var(--bg-card)] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-4 flex-1">
+                    <h2 className="font-bold text-[var(--text-primary)] text-xs lg:text-base mb-2 lg:mb-4">SELECT GAME</h2>
                     <div className="space-y-1 lg:space-y-2 max-h-32 lg:max-h-48 overflow-y-auto pr-1">
                       {PREBUILT_GAMES.map((game) => (
                         <button
                           key={game.id}
                           onClick={() => handleGameSelect(game.id)}
-                          className={`w-full px-2 py-1 lg:p-2 text-left border border-[#2d3436] lg:border-2 transition-colors ${
+                          className={`w-full px-2 py-1 lg:p-2 text-left border border-[var(--border-color)] lg:border-2 transition-colors ${
                             selectedGameId === game.id
                               ? 'bg-[#4ecdc4]'
-                              : 'bg-white hover:bg-[#f8f9fa]'
+                              : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                           }`}
                         >
                           <div className="font-bold text-xs lg:text-sm">{game.name}</div>
-                          <div className="text-[10px] lg:text-xs text-[#636e72]">
+                          <div className="text-[10px] lg:text-xs text-[var(--text-secondary)]">
                             {game.state.width}×{game.state.height}
                           </div>
                         </button>
@@ -420,14 +420,14 @@ export function Singleplayer() {
                       {isCustomGame && (
                         <button
                           onClick={() => handleGameSelect('custom')}
-                          className={`w-full px-2 py-1 lg:p-2 text-left border border-[#2d3436] lg:border-2 transition-colors ${
+                          className={`w-full px-2 py-1 lg:p-2 text-left border border-[var(--border-color)] lg:border-2 transition-colors ${
                             selectedGameId === 'custom'
                               ? 'bg-[#ffe66d]'
-                              : 'bg-white hover:bg-[#f8f9fa]'
+                              : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                           }`}
                         >
                           <div className="font-bold text-xs lg:text-sm">Custom Game</div>
-                          <div className="text-[10px] lg:text-xs text-[#636e72]">
+                          <div className="text-[10px] lg:text-xs text-[var(--text-secondary)]">
                             {previewState.width}×{previewState.height}
                           </div>
                         </button>
@@ -436,15 +436,15 @@ export function Singleplayer() {
                   </div>
 
                   {/* Difficulty Selection */}
-                  <div className="bg-white border-2 lg:border-4 border-[#2d3436] shadow-[2px_2px_0px_#2d3436] lg:shadow-[4px_4px_0px_#2d3436] p-2 lg:p-4 flex-1">
-                    <span className="font-bold text-[#2d3436] text-xs lg:text-base block mb-2 lg:mb-3">AI DIFFICULTY</span>
+                  <div className="bg-[var(--bg-card)] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-4 flex-1">
+                    <span className="font-bold text-[var(--text-primary)] text-xs lg:text-base block mb-2 lg:mb-3">AI DIFFICULTY</span>
                     <div ref={dropdownRef} className="relative">
                       {(() => {
                         const selected = DIFFICULTY_LEVELS.find((d) => d.id === difficulty)!;
                         return (
                           <button
                             onClick={() => setDifficultyDropdownOpen(!difficultyDropdownOpen)}
-                            className="w-full p-2 lg:p-3 border lg:border-3 border-[#2d3436] font-bold text-[#2d3436] cursor-pointer flex items-center gap-2 lg:gap-3 transition-all hover:brightness-95"
+                            className="w-full p-2 lg:p-3 border lg:border-3 border-[var(--border-color)] font-bold text-[var(--color-dark)] cursor-pointer flex items-center gap-2 lg:gap-3 transition-all hover:brightness-95"
                             style={{ backgroundColor: selected.color }}
                           >
                             <img
@@ -466,7 +466,7 @@ export function Singleplayer() {
                       })()}
 
                       {difficultyDropdownOpen && (
-                        <div className="absolute top-full left-0 right-0 mt-1 border lg:border-3 border-[#2d3436] bg-white shadow-[4px_4px_0px_#2d3436] z-10 overflow-hidden">
+                        <div className="absolute top-full left-0 right-0 mt-1 border lg:border-3 border-[var(--border-color)] bg-[var(--bg-card)] shadow-[4px_4px_0px_var(--shadow-color)] z-10 overflow-hidden">
                           {DIFFICULTY_LEVELS.map((level) => (
                             <button
                               key={level.id}
@@ -474,8 +474,8 @@ export function Singleplayer() {
                                 setDifficulty(level.id);
                                 setDifficultyDropdownOpen(false);
                               }}
-                              className={`w-full p-2 lg:p-3 text-left font-bold text-[#2d3436] flex items-center gap-2 lg:gap-3 transition-colors hover:brightness-95 ${
-                                difficulty === level.id ? 'ring-2 ring-inset ring-[#2d3436]' : ''
+                              className={`w-full p-2 lg:p-3 text-left font-bold text-[var(--color-dark)] flex items-center gap-2 lg:gap-3 transition-colors hover:brightness-95 ${
+                                difficulty === level.id ? 'ring-2 ring-inset ring-[var(--border-color)]' : ''
                               }`}
                               style={{ backgroundColor: level.color }}
                             >
@@ -497,9 +497,9 @@ export function Singleplayer() {
                 </div>
 
                 {isCustomGame && selectedGameId === 'custom' && (
-                  <div className="bg-[#ffe66d] border-2 lg:border-4 border-[#2d3436] shadow-[2px_2px_0px_#2d3436] lg:shadow-[4px_4px_0px_#2d3436] p-2 lg:p-4">
-                    <h3 className="font-bold text-[#2d3436] text-xs lg:text-base mb-1">Custom Game</h3>
-                    <p className="text-xs lg:text-sm text-[#2d3436]">
+                  <div className="bg-[#ffe66d] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-4">
+                    <h3 className="font-bold text-[var(--color-dark)] text-xs lg:text-base mb-1">Custom Game</h3>
+                    <p className="text-xs lg:text-sm text-[var(--color-dark)]">
                       {previewState.pieces.length} pieces on the board.
                     </p>
                   </div>
@@ -509,7 +509,7 @@ export function Singleplayer() {
                 <button
                   onClick={startGame}
                   disabled={!isReady}
-                  className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-2 lg:border-4 border-[#2d3436] shadow-[2px_2px_0px_#2d3436] lg:shadow-[4px_4px_0px_#2d3436] p-2.5 lg:p-4 font-bold text-sm lg:text-base text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-none lg:hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2.5 lg:p-4 font-bold text-sm lg:text-base text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none lg:hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Play size={16} strokeWidth={3} />
                   START GAME
@@ -519,14 +519,14 @@ export function Singleplayer() {
                 <div className="flex gap-2">
                   <Link
                     to="/browse"
-                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#a29bfe] border-2 lg:border-4 border-[#2d3436] shadow-[2px_2px_0px_#2d3436] lg:shadow-[4px_4px_0px_#2d3436] p-2 lg:p-3 font-bold text-xs lg:text-sm text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-none lg:hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#a29bfe] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-3 font-bold text-xs lg:text-sm text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none lg:hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
                   >
                     <Compass size={14} strokeWidth={2.5} />
                     VARIANTS
                   </Link>
                   <button
                     onClick={handleCreateCustomGame}
-                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#ffe66d] border-2 lg:border-4 border-[#2d3436] shadow-[2px_2px_0px_#2d3436] lg:shadow-[4px_4px_0px_#2d3436] p-2 lg:p-3 font-bold text-xs lg:text-sm text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-none lg:hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#ffe66d] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-3 font-bold text-xs lg:text-sm text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none lg:hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
                   >
                     <PencilRuler size={14} strokeWidth={2.5} />
                     EDITOR
@@ -542,22 +542,22 @@ export function Singleplayer() {
                     ? winner === 'Player' ? '#4ecdc4' : '#ff6b6b'
                     : isThinking ? '#ffe66d'
                     : inCheckKings ? '#ff6b6b'
-                    : '#ffffff';
+                    : 'var(--bg-card)';
                   return (
                     <div
-                      className="border-2 lg:border-4 border-[#2d3436] shadow-[2px_2px_0px_#2d3436] lg:shadow-[4px_4px_0px_#2d3436] p-2.5 lg:p-4 transition-colors"
+                      className="border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2.5 lg:p-4 transition-colors"
                       style={{ backgroundColor: bgColor }}
                     >
                       <div className="flex items-center gap-2 mb-1.5 lg:mb-2">
                         {isThinking ? (
-                          <div className="animate-spin w-3.5 h-3.5 lg:w-4 lg:h-4 border-2 border-[#2d3436] border-t-transparent rounded-full flex-shrink-0" />
+                          <div className="animate-spin w-3.5 h-3.5 lg:w-4 lg:h-4 border-2 border-[var(--border-color)] border-t-transparent rounded-full flex-shrink-0" />
                         ) : (
-                          <div className="w-2 h-2 lg:w-2.5 lg:h-2.5 rounded-full flex-shrink-0 border border-[#2d3436] lg:border-2" style={{ backgroundColor: bgColor === '#ffffff' ? '#4ecdc4' : bgColor }} />
+                          <div className="w-2 h-2 lg:w-2.5 lg:h-2.5 rounded-full flex-shrink-0 border border-[var(--border-color)] lg:border-2" style={{ backgroundColor: bgColor === 'var(--bg-card)' ? '#4ecdc4' : bgColor }} />
                         )}
-                        <p className="font-bold text-[#2d3436] text-xs lg:text-sm">{status}</p>
+                        <p className="font-bold text-[var(--color-dark)] text-xs lg:text-sm">{status}</p>
                       </div>
                       <div
-                        className="flex items-center gap-1.5 lg:gap-2 px-1.5 lg:px-2 py-0.5 lg:py-1 border border-[#2d3436] lg:border-2"
+                        className="flex items-center gap-1.5 lg:gap-2 px-1.5 lg:px-2 py-0.5 lg:py-1 border border-[var(--border-color)] lg:border-2"
                         style={{ backgroundColor: level.color }}
                       >
                         <img
@@ -565,8 +565,8 @@ export function Singleplayer() {
                           alt=""
                           className="w-4 h-4 lg:w-5 lg:h-5 object-contain"
                         />
-                        <span className="font-bold text-[10px] lg:text-xs text-[#2d3436]">{level.name}</span>
-                        <span className="text-[10px] lg:text-xs text-[#2d3436] opacity-70">{level.description}</span>
+                        <span className="font-bold text-[10px] lg:text-xs text-[var(--color-dark)]">{level.name}</span>
+                        <span className="text-[10px] lg:text-xs text-[var(--color-dark)] opacity-70">{level.description}</span>
                       </div>
                     </div>
                   );
@@ -580,29 +580,29 @@ export function Singleplayer() {
       {/* Help Modal */}
       {showHelpModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] p-6 max-w-sm w-full mx-4">
-            <h2 className="font-bold text-[#2d3436] text-xl mb-4 text-center">HOW TO PLAY</h2>
-            <ul className="text-[#636e72] space-y-2 mb-4">
+          <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] p-6 max-w-sm w-full mx-4">
+            <h2 className="font-bold text-[var(--text-primary)] text-xl mb-4 text-center">HOW TO PLAY</h2>
+            <ul className="text-[var(--text-secondary)] space-y-2 mb-4">
               <li className="flex items-start gap-2">
-                <span className="text-[#2d3436]">•</span>
+                <span className="text-[var(--text-primary)]">•</span>
                 <span>Click a piece to see available moves</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#2d3436]">•</span>
+                <span className="text-[var(--text-primary)]">•</span>
                 <span>Click a highlighted square to move</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#2d3436]">•</span>
+                <span className="text-[var(--text-primary)]">•</span>
                 <span>You play as White, AI plays as Black</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-[#2d3436]">•</span>
+                <span className="text-[var(--text-primary)]">•</span>
                 <span>Drag and drop also works</span>
               </li>
             </ul>
             <button
               onClick={() => setShowHelpModal(false)}
-              className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="w-full bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
             >
               GOT IT
             </button>
@@ -613,19 +613,19 @@ export function Singleplayer() {
       {/* New Game Confirmation */}
       {showNewGameConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] p-6 max-w-xs w-full mx-4 text-center">
-            <h2 className="font-bold text-[#2d3436] text-lg mb-2">NEW GAME?</h2>
-            <p className="text-sm text-[#636e72] mb-4">Your current game will be lost.</p>
+          <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] p-6 max-w-xs w-full mx-4 text-center">
+            <h2 className="font-bold text-[var(--text-primary)] text-lg mb-2">NEW GAME?</h2>
+            <p className="text-sm text-[var(--text-secondary)] mb-4">Your current game will be lost.</p>
             <div className="flex gap-2">
               <button
                 onClick={() => setShowNewGameConfirm(false)}
-                className="flex-1 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-2.5 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex-1 bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-2.5 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               >
                 CANCEL
               </button>
               <button
                 onClick={doNewGame}
-                className="flex-1 bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-2.5 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex-1 bg-[#ff6b6b] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-2.5 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               >
                 QUIT GAME
               </button>

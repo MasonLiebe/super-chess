@@ -156,10 +156,10 @@ export function VariantDetail() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bg-page)] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin w-8 h-8 border-4 border-[#2d3436] border-t-transparent rounded-full mx-auto mb-4" />
-          <p className="font-bold text-[#636e72]">Loading variant...</p>
+          <div className="animate-spin w-8 h-8 border-4 border-[var(--border-color)] border-t-transparent rounded-full mx-auto mb-4" />
+          <p className="font-bold text-[var(--text-secondary)]">Loading variant...</p>
         </div>
       </div>
     );
@@ -167,13 +167,13 @@ export function VariantDetail() {
 
   if (error || !variant) {
     return (
-      <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center p-4">
-        <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] p-8 text-center max-w-sm">
-          <p className="text-xl font-bold text-[#2d3436] mb-2">Variant not found</p>
-          <p className="text-[#636e72] mb-4">{error || 'This variant may have been deleted.'}</p>
+      <div className="min-h-screen bg-[var(--bg-page)] flex items-center justify-center p-4">
+        <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] p-8 text-center max-w-sm">
+          <p className="text-xl font-bold text-[var(--text-primary)] mb-2">Variant not found</p>
+          <p className="text-[var(--text-secondary)] mb-4">{error || 'This variant may have been deleted.'}</p>
           <Link
             to="/browse"
-            className="inline-block bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-6 py-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="inline-block bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-6 py-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
           >
             BROWSE VARIANTS
           </Link>
@@ -183,18 +183,18 @@ export function VariantDetail() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] p-4 flex flex-col justify-center">
+    <div className="min-h-screen bg-[var(--bg-page)] p-4 flex flex-col justify-center">
       <div className="max-w-5xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/browse"
-            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
           >
             <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
-          <h1 className="text-2xl font-black text-[#2d3436] truncate mx-4">{variant.name}</h1>
+          <h1 className="text-2xl font-black text-[var(--text-primary)] truncate mx-4">{variant.name}</h1>
           <div className="w-20" />
         </div>
 
@@ -212,31 +212,31 @@ export function VariantDetail() {
           {/* Info panel */}
           <div className="w-full lg:w-80 space-y-4">
             {/* Name & Description */}
-            <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
+            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
               {editing ? (
                 <div className="space-y-3">
                   <div>
-                    <label className="block font-bold text-[#2d3436] mb-1">NAME</label>
+                    <label className="block font-bold text-[var(--text-primary)] mb-1">NAME</label>
                     <input
                       type="text"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
-                      className="w-full p-2 border-2 border-[#2d3436] font-medium"
+                      className="w-full p-2 border-2 border-[var(--border-color)] font-medium"
                     />
                   </div>
                   <div>
-                    <label className="block font-bold text-[#2d3436] mb-1">DESCRIPTION</label>
+                    <label className="block font-bold text-[var(--text-primary)] mb-1">DESCRIPTION</label>
                     <textarea
                       value={editDescription}
                       onChange={(e) => setEditDescription(e.target.value)}
                       rows={4}
-                      className="w-full p-2 border-2 border-[#2d3436] font-medium resize-none"
+                      className="w-full p-2 border-2 border-[var(--border-color)] font-medium resize-none"
                     />
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={handleSaveEdit}
-                      className="flex-1 bg-[#4ecdc4] border-2 border-[#2d3436] p-2 font-bold text-sm"
+                      className="flex-1 bg-[#4ecdc4] border-2 border-[var(--border-color)] p-2 font-bold text-sm"
                     >
                       SAVE
                     </button>
@@ -246,7 +246,7 @@ export function VariantDetail() {
                         setEditName(variant.name);
                         setEditDescription(variant.description);
                       }}
-                      className="flex-1 bg-white border-2 border-[#2d3436] p-2 font-bold text-sm text-[#636e72]"
+                      className="flex-1 bg-[var(--bg-card)] border-2 border-[var(--border-color)] p-2 font-bold text-sm text-[var(--text-secondary)]"
                     >
                       CANCEL
                     </button>
@@ -254,19 +254,19 @@ export function VariantDetail() {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-xl font-black text-[#2d3436] mb-1">{variant.name}</h2>
-                  <p className="text-sm text-[#636e72] mb-2">
+                  <h2 className="text-xl font-black text-[var(--text-primary)] mb-1">{variant.name}</h2>
+                  <p className="text-sm text-[var(--text-secondary)] mb-2">
                     by <span className="font-bold">{variant.author.username}</span>
                   </p>
-                  <div className="flex items-center gap-2 mb-3 text-xs text-[#636e72]">
-                    <span className="px-2 py-0.5 bg-[#f8f9fa] border border-[#dfe6e9] font-medium">
+                  <div className="flex items-center gap-2 mb-3 text-xs text-[var(--text-secondary)]">
+                    <span className="px-2 py-0.5 bg-[var(--bg-card-hover)] border border-[var(--divider)] font-medium">
                       {variant.boardWidth}x{variant.boardHeight}
                     </span>
                     <span>{variant.pieceCount} pieces</span>
                     <span>{new Date(variant.createdAt).toLocaleDateString()}</span>
                   </div>
                   {variant.description && (
-                    <p className="text-sm text-[#2d3436] whitespace-pre-wrap">{variant.description}</p>
+                    <p className="text-sm text-[var(--text-primary)] whitespace-pre-wrap">{variant.description}</p>
                   )}
                 </>
               )}
@@ -277,8 +277,8 @@ export function VariantDetail() {
               <div className="flex gap-2">
                 <button
                   onClick={handleLikeToggle}
-                  className={`flex-1 border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all ${
-                    variant.liked ? 'bg-[#ff6b6b]' : 'bg-white'
+                  className={`flex-1 border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all ${
+                    variant.liked ? 'bg-[#ff6b6b]' : 'bg-[var(--bg-card)]'
                   }`}
                 >
                   <Heart size={16} fill={variant.liked ? 'currentColor' : 'none'} /> {variant.likeCount}
@@ -287,7 +287,7 @@ export function VariantDetail() {
 
               <Link
                 to={`/singleplayer?from=variant&id=${variant.id}`}
-                className="flex items-center justify-center gap-2 w-full bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#ff6b6b] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               >
                 <Swords size={18} />
                 PLAY VS AI
@@ -295,7 +295,7 @@ export function VariantDetail() {
 
               <Link
                 to={`/create-room?from=variant&id=${variant.id}`}
-                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               >
                 <Globe size={18} />
                 CREATE ROOM
@@ -303,7 +303,7 @@ export function VariantDetail() {
 
               <button
                 onClick={handleEditInEditor}
-                className="flex items-center justify-center gap-2 w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#ffe66d] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               >
                 <PencilRuler size={16} />
                 EDIT IN EDITOR
@@ -313,14 +313,14 @@ export function VariantDetail() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => setEditing(true)}
-                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#a29bfe] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
                   >
                     <Pencil size={16} />
                     EDIT
                   </button>
                   <button
                     onClick={handleDelete}
-                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#ff6b6b] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
                   >
                     <Trash2 size={16} />
                     DELETE
@@ -330,8 +330,8 @@ export function VariantDetail() {
             </div>
 
             {/* Comments Section */}
-            <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-              <h3 className="flex items-center gap-1.5 font-bold text-[#2d3436] mb-3">
+            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+              <h3 className="flex items-center gap-1.5 font-bold text-[var(--text-primary)] mb-3">
                 <MessageSquare size={16} strokeWidth={3} />
                 COMMENTS ({variant.commentCount})
               </h3>
@@ -345,19 +345,19 @@ export function VariantDetail() {
                     placeholder="Add a comment..."
                     rows={2}
                     maxLength={1000}
-                    className="w-full p-2 border-2 border-[#2d3436] font-medium text-sm text-[#2d3436] placeholder:text-[#b2bec3] resize-none mb-2"
+                    className="w-full p-2 border-2 border-[var(--border-color)] font-medium text-sm placeholder:text-[var(--text-muted)] resize-none mb-2"
                   />
                   <button
                     onClick={handleAddComment}
                     disabled={!newComment.trim() || submittingComment}
-                    className="bg-[#4ecdc4] border-2 border-[#2d3436] px-4 py-1.5 font-bold text-sm text-[#2d3436] disabled:opacity-50 hover:brightness-95 transition-all"
+                    className="bg-[#4ecdc4] border-2 border-[var(--border-color)] px-4 py-1.5 font-bold text-sm text-[var(--color-dark)] disabled:opacity-50 hover:brightness-95 transition-all"
                   >
                     {submittingComment ? 'POSTING...' : 'POST'}
                   </button>
                 </div>
               ) : (
-                <p className="text-sm text-[#636e72] mb-4">
-                  <Link to={`/login?redirect=/variants/${variant.id}`} className="text-[#2d3436] font-bold underline">
+                <p className="text-sm text-[var(--text-secondary)] mb-4">
+                  <Link to={`/login?redirect=/variants/${variant.id}`} className="text-[var(--text-primary)] font-bold underline">
                     Log in
                   </Link>{' '}
                   to comment
@@ -367,16 +367,16 @@ export function VariantDetail() {
               {/* Comments list */}
               <div className="space-y-3">
                 {commentsLoading && comments.length === 0 ? (
-                  <p className="text-sm text-[#636e72] text-center py-4">Loading comments...</p>
+                  <p className="text-sm text-[var(--text-secondary)] text-center py-4">Loading comments...</p>
                 ) : comments.length === 0 ? (
-                  <p className="text-sm text-[#636e72] text-center py-4">No comments yet</p>
+                  <p className="text-sm text-[var(--text-secondary)] text-center py-4">No comments yet</p>
                 ) : (
                   comments.map((comment) => (
-                    <div key={comment.id} className="border-t border-[#f8f9fa] pt-3">
+                    <div key={comment.id} className="border-t border-[var(--divider)] pt-3">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-sm font-bold text-[#2d3436]">{comment.author.username}</span>
+                        <span className="text-sm font-bold text-[var(--text-primary)]">{comment.author.username}</span>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs text-[#b2bec3]">
+                          <span className="text-xs text-[var(--text-muted)]">
                             {new Date(comment.createdAt).toLocaleDateString()}
                           </span>
                           {user && user.id === comment.author.id && (
@@ -389,7 +389,7 @@ export function VariantDetail() {
                           )}
                         </div>
                       </div>
-                      <p className="text-sm text-[#2d3436] whitespace-pre-wrap">{comment.content}</p>
+                      <p className="text-sm text-[var(--text-primary)] whitespace-pre-wrap">{comment.content}</p>
                     </div>
                   ))
                 )}
@@ -399,7 +399,7 @@ export function VariantDetail() {
                 <button
                   onClick={handleLoadMoreComments}
                   disabled={commentsLoading}
-                  className="w-full mt-3 p-2 border-2 border-[#2d3436] font-bold text-sm text-[#636e72] hover:bg-[#f8f9fa] disabled:opacity-50"
+                  className="w-full mt-3 p-2 border-2 border-[var(--border-color)] font-bold text-sm text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] disabled:opacity-50"
                 >
                   {commentsLoading ? 'LOADING...' : 'LOAD MORE COMMENTS'}
                 </button>

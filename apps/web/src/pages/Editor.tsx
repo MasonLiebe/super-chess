@@ -144,29 +144,29 @@ export function Editor() {
   }, [publishName, publishDescription, getGameState, navigate]);
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] p-4 flex flex-col justify-center">
+    <div className="min-h-screen bg-[var(--bg-page)] p-4 flex flex-col justify-center">
       <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/"
-            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
           >
             <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
-          <h1 className="text-2xl font-black text-[#2d3436]">BOARD EDITOR</h1>
+          <h1 className="text-2xl font-black text-[var(--text-primary)]">BOARD EDITOR</h1>
           <div className="flex gap-2">
             <button
               onClick={() => setShowHelp(true)}
-              className="flex items-center gap-1.5 bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="flex items-center gap-1.5 bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
             >
               <HelpCircle size={18} />
               HELP
             </button>
             <button
               onClick={resetBoard}
-              className="flex items-center gap-1.5 bg-[#ff6b6b] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="flex items-center gap-1.5 bg-[#ff6b6b] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
             >
               <RotateCcw size={16} strokeWidth={3} />
               RESET
@@ -179,12 +179,12 @@ export function Editor() {
           {/* Left panel - Board config */}
           <div className="w-full lg:w-64 space-y-4">
             {/* Board Size */}
-            <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-              <h2 className="font-bold text-[#2d3436] mb-4">BOARD SIZE</h2>
+            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+              <h2 className="font-bold text-[var(--text-primary)] mb-4">BOARD SIZE</h2>
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-[#636e72] mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Width: {width}
                   </label>
                   <input
@@ -193,12 +193,12 @@ export function Editor() {
                     max={BOARD_SIZE.MAX}
                     value={width}
                     onChange={(e) => setWidth(Number(e.target.value))}
-                    className="w-full h-2 bg-[#ddd] rounded-lg appearance-none cursor-pointer accent-[#4ecdc4]"
+                    className="w-full h-2 bg-[var(--divider)] rounded-lg appearance-none cursor-pointer accent-[#4ecdc4]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-[#636e72] mb-1">
+                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
                     Height: {height}
                   </label>
                   <input
@@ -207,7 +207,7 @@ export function Editor() {
                     max={BOARD_SIZE.MAX}
                     value={height}
                     onChange={(e) => setHeight(Number(e.target.value))}
-                    className="w-full h-2 bg-[#ddd] rounded-lg appearance-none cursor-pointer accent-[#4ecdc4]"
+                    className="w-full h-2 bg-[var(--divider)] rounded-lg appearance-none cursor-pointer accent-[#4ecdc4]"
                   />
                 </div>
 
@@ -224,10 +224,10 @@ export function Editor() {
                         setWidth(w);
                         setHeight(h);
                       }}
-                      className={`px-3 py-1 text-sm font-bold border-2 border-[#2d3436] ${
+                      className={`px-3 py-1 text-sm font-bold border-2 border-[var(--border-color)] ${
                         width === w && height === h
                           ? 'bg-[#4ecdc4]'
-                          : 'bg-white hover:bg-[#f8f9fa]'
+                          : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                       }`}
                     >
                       {label}
@@ -238,26 +238,26 @@ export function Editor() {
             </div>
 
             {/* Tools */}
-            <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-              <h2 className="font-bold text-[#2d3436] mb-4">TOOLS</h2>
+            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+              <h2 className="font-bold text-[var(--text-primary)] mb-4">TOOLS</h2>
 
               <div className="space-y-2">
                 <button
                   onClick={() => setCurrentTool('placePiece')}
-                  className={`w-full p-2 text-center font-medium border-2 border-[#2d3436] ${
+                  className={`w-full p-2 text-center font-medium border-2 border-[var(--border-color)] ${
                     currentTool === 'placePiece'
                       ? 'bg-[#4ecdc4]'
-                      : 'bg-white hover:bg-[#f8f9fa]'
+                      : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
                   Place Piece
                 </button>
                 <button
                   onClick={() => setCurrentTool('toggleTile')}
-                  className={`w-full p-2 text-center font-medium border-2 border-[#2d3436] ${
+                  className={`w-full p-2 text-center font-medium border-2 border-[var(--border-color)] ${
                     currentTool === 'toggleTile'
                       ? 'bg-[#4ecdc4]'
-                      : 'bg-white hover:bg-[#f8f9fa]'
+                      : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
                   Disable Tiles
@@ -269,14 +269,14 @@ export function Editor() {
             <div className="space-y-2">
               <button
                 onClick={handleStartGame}
-                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               >
                 <Play size={16} strokeWidth={3} />
                 START GAME
               </button>
               <button
                 onClick={handlePublishClick}
-                className="flex items-center justify-center gap-2 w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#a29bfe] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               >
                 <Send size={16} strokeWidth={3} />
                 PUBLISH
@@ -292,37 +292,37 @@ export function Editor() {
           {/* Right panel - Pieces */}
           <div className="w-full lg:w-72 space-y-4">
             {/* Owner selection */}
-            <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-              <h2 className="font-bold text-[#2d3436] mb-4">PLAYER</h2>
+            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+              <h2 className="font-bold text-[var(--text-primary)] mb-4">PLAYER</h2>
               <div className="flex gap-2">
                 <button
                   onClick={() => setSelectedOwner(0)}
-                  className={`flex-1 p-2 font-bold border-2 border-[#2d3436] flex items-center justify-center gap-2 ${
+                  className={`flex-1 p-2 font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-2 ${
                     selectedOwner === 0
                       ? 'bg-[#4ecdc4]'
-                      : 'bg-white hover:bg-[#f8f9fa]'
+                      : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
-                  <div className="w-4 h-4 rounded-full bg-white border-2 border-[#2d3436]" />
+                  <div className="w-4 h-4 rounded-full bg-white border-2 border-[var(--border-color)]" />
                   White
                 </button>
                 <button
                   onClick={() => setSelectedOwner(1)}
-                  className={`flex-1 p-2 font-bold border-2 border-[#2d3436] flex items-center justify-center gap-2 ${
+                  className={`flex-1 p-2 font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-2 ${
                     selectedOwner === 1
                       ? 'bg-[#4ecdc4]'
-                      : 'bg-white hover:bg-[#f8f9fa]'
+                      : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
-                  <div className="w-4 h-4 rounded-full bg-[#2d3436] border-2 border-[#2d3436]" />
+                  <div className="w-4 h-4 rounded-full bg-[#2d3436] border-2 border-[var(--border-color)]" />
                   Black
                 </button>
               </div>
             </div>
 
             {/* Standard Pieces */}
-            <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-              <h2 className="font-bold text-[#2d3436] mb-4">STANDARD PIECES</h2>
+            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+              <h2 className="font-bold text-[var(--text-primary)] mb-4">STANDARD PIECES</h2>
               <PieceSelector
                 pieces={[...STANDARD_PIECES]}
                 selectedPiece={selectedPieceType}
@@ -332,10 +332,10 @@ export function Editor() {
             </div>
 
             {/* Custom Pieces */}
-            <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
+            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold text-[#2d3436]">CUSTOM PIECES</h2>
-                <span className="text-xs text-[#636e72]">
+                <h2 className="font-bold text-[var(--text-primary)]">CUSTOM PIECES</h2>
+                <span className="text-xs text-[var(--text-secondary)]">
                   {configuredPieces.length}/{MAX_CUSTOM_PIECES}
                 </span>
               </div>
@@ -357,10 +357,10 @@ export function Editor() {
                             e.dataTransfer.setDragImage(img, 25, 25);
                           }
                         }}
-                        className={`aspect-square border-2 border-[#2d3436] flex items-center justify-center p-1 cursor-grab active:cursor-grabbing ${
+                        className={`aspect-square border-2 border-[var(--border-color)] flex items-center justify-center p-1 cursor-grab active:cursor-grabbing ${
                           selectedPieceType === p
                             ? 'bg-[#4ecdc4]'
-                            : 'bg-white hover:bg-[#f8f9fa]'
+                            : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                         }`}
                         title={`${p.toUpperCase()} - Drag to board`}
                       >
@@ -381,10 +381,10 @@ export function Editor() {
                     <button
                       onClick={() => configuredPieces.includes(selectedPieceType) && setEditingPiece(selectedPieceType)}
                       disabled={!configuredPieces.includes(selectedPieceType)}
-                      className={`flex-1 p-2 text-sm font-bold border-2 border-[#2d3436] transition-colors ${
+                      className={`flex-1 p-2 text-sm font-bold border-2 border-[var(--border-color)] transition-colors ${
                         configuredPieces.includes(selectedPieceType)
-                          ? 'bg-[#4ecdc4] hover:bg-[#45b7aa] text-[#2d3436]'
-                          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                          ? 'bg-[#4ecdc4] hover:bg-[#45b7aa] text-[var(--color-dark)]'
+                          : 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
                       }`}
                     >
                       <span className="flex items-center justify-center gap-1"><Pencil size={14} /> EDIT</span>
@@ -392,10 +392,10 @@ export function Editor() {
                     <button
                       onClick={() => configuredPieces.includes(selectedPieceType) && handleDeletePiece(selectedPieceType)}
                       disabled={!configuredPieces.includes(selectedPieceType)}
-                      className={`flex-1 p-2 text-sm font-bold border-2 border-[#2d3436] transition-colors ${
+                      className={`flex-1 p-2 text-sm font-bold border-2 border-[var(--border-color)] transition-colors ${
                         configuredPieces.includes(selectedPieceType)
-                          ? 'bg-[#ff6b6b] hover:bg-red-400 text-[#2d3436]'
-                          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                          ? 'bg-[#ff6b6b] hover:bg-red-400 text-[var(--color-dark)]'
+                          : 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
                       }`}
                     >
                       <span className="flex items-center justify-center gap-1"><Trash2 size={14} /> DELETE</span>
@@ -403,7 +403,7 @@ export function Editor() {
                   </div>
                 </div>
               ) : (
-                <p className="text-sm text-[#636e72] mb-4 text-center py-4">
+                <p className="text-sm text-[var(--text-secondary)] mb-4 text-center py-4">
                   No custom pieces yet
                 </p>
               )}
@@ -434,10 +434,10 @@ export function Editor() {
               <button
                 onClick={() => setShowIconSelector(true)}
                 disabled={configuredPieces.length >= MAX_CUSTOM_PIECES}
-                className={`w-full p-3 font-bold border-2 border-[#2d3436] shadow-[3px_3px_0px_#2d3436]
+                className={`w-full p-3 font-bold border-2 border-[var(--border-color)] shadow-[3px_3px_0px_var(--shadow-color)]
                   transition-all active:translate-x-[3px] active:translate-y-[3px] active:shadow-none
                   ${configuredPieces.length >= MAX_CUSTOM_PIECES
-                    ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                    ? 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
                     : 'bg-[#ffe66d] hover:brightness-105'
                   }`}
               >
@@ -469,36 +469,36 @@ export function Editor() {
       {/* Help Modal */}
       {showHelp && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] max-w-md w-full">
-            <div className="flex items-center justify-between p-4 border-b-4 border-[#2d3436]">
-              <h2 className="text-xl font-black text-[#2d3436]">HOW TO USE</h2>
+          <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] max-w-md w-full">
+            <div className="flex items-center justify-between p-4 border-b-4 border-[var(--border-color)]">
+              <h2 className="text-xl font-black text-[var(--text-primary)]">HOW TO USE</h2>
               <button
                 onClick={() => setShowHelp(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
               >
                 <X size={20} strokeWidth={3} />
               </button>
             </div>
             <div className="p-4 space-y-4">
               <div>
-                <h3 className="font-bold text-[#2d3436] mb-2">Placing Pieces</h3>
-                <ul className="text-sm text-[#636e72] space-y-1">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">Placing Pieces</h3>
+                <ul className="text-sm text-[var(--text-secondary)] space-y-1">
                   <li>• Select a piece from the right panel</li>
                   <li>• Click on the board to place it</li>
                   <li>• Right-click to remove a piece</li>
                 </ul>
               </div>
               <div>
-                <h3 className="font-bold text-[#2d3436] mb-2">Board Setup</h3>
-                <ul className="text-sm text-[#636e72] space-y-1">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">Board Setup</h3>
+                <ul className="text-sm text-[var(--text-secondary)] space-y-1">
                   <li>• Use sliders to adjust board size</li>
                   <li>• Toggle Tiles tool to disable squares</li>
                   <li>• Both players need a King to start</li>
                 </ul>
               </div>
               <div>
-                <h3 className="font-bold text-[#2d3436] mb-2">Custom Pieces</h3>
-                <ul className="text-sm text-[#636e72] space-y-1">
+                <h3 className="font-bold text-[var(--text-primary)] mb-2">Custom Pieces</h3>
+                <ul className="text-sm text-[var(--text-secondary)] space-y-1">
                   <li>• Click "Create New Piece" to add custom pieces</li>
                   <li>• Define movement patterns in the editor</li>
                   <li>• Custom pieces must have patterns before starting</li>
@@ -512,12 +512,12 @@ export function Editor() {
       {/* Start Game Options Modal */}
       {showStartOptions && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] max-w-sm w-full">
-            <div className="flex items-center justify-between p-4 border-b-4 border-[#2d3436]">
-              <h2 className="text-xl font-black text-[#2d3436]">START GAME</h2>
+          <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] max-w-sm w-full">
+            <div className="flex items-center justify-between p-4 border-b-4 border-[var(--border-color)]">
+              <h2 className="text-xl font-black text-[var(--text-primary)]">START GAME</h2>
               <button
                 onClick={() => setShowStartOptions(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
               >
                 <X size={20} strokeWidth={3} />
               </button>
@@ -525,14 +525,14 @@ export function Editor() {
             <div className="p-4 space-y-3">
               <button
                 onClick={handlePlayVsAI}
-                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               >
                 <Swords size={18} />
                 PLAY VS AI
               </button>
               <button
                 onClick={handleCreateMultiplayerRoom}
-                className="flex items-center justify-center gap-2 w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+                className="flex items-center justify-center gap-2 w-full bg-[#ffe66d] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
               >
                 <Globe size={18} />
                 CREATE MULTIPLAYER ROOM
@@ -545,12 +545,12 @@ export function Editor() {
       {/* Publish Modal */}
       {showPublishModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] max-w-md w-full">
-            <div className="flex items-center justify-between p-4 border-b-4 border-[#2d3436]">
-              <h2 className="text-xl font-black text-[#2d3436]">PUBLISH VARIANT</h2>
+          <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] max-w-md w-full">
+            <div className="flex items-center justify-between p-4 border-b-4 border-[var(--border-color)]">
+              <h2 className="text-xl font-black text-[var(--text-primary)]">PUBLISH VARIANT</h2>
               <button
                 onClick={() => setShowPublishModal(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl hover:bg-red-400"
               >
                 x
               </button>
@@ -560,31 +560,31 @@ export function Editor() {
                 <BoardThumbnail gameState={getGameState()} size={150} />
               </div>
               <div>
-                <label className="block font-bold text-[#2d3436] mb-1">NAME</label>
+                <label className="block font-bold text-[var(--text-primary)] mb-1">NAME</label>
                 <input
                   type="text"
                   value={publishName}
                   onChange={(e) => setPublishName(e.target.value)}
                   placeholder="My Chess Variant"
                   maxLength={100}
-                  className="w-full p-2 border-2 border-[#2d3436] font-medium text-[#2d3436] placeholder:text-[#b2bec3]"
+                  className="w-full p-2 border-2 border-[var(--border-color)] font-medium text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
                 />
               </div>
               <div>
-                <label className="block font-bold text-[#2d3436] mb-1">DESCRIPTION (OPTIONAL)</label>
+                <label className="block font-bold text-[var(--text-primary)] mb-1">DESCRIPTION (OPTIONAL)</label>
                 <textarea
                   value={publishDescription}
                   onChange={(e) => setPublishDescription(e.target.value)}
                   placeholder="Describe your variant..."
                   rows={3}
                   maxLength={2000}
-                  className="w-full p-2 border-2 border-[#2d3436] font-medium text-[#2d3436] placeholder:text-[#b2bec3] resize-none"
+                  className="w-full p-2 border-2 border-[var(--border-color)] font-medium text-[var(--text-primary)] placeholder:text-[var(--text-muted)] resize-none"
                 />
               </div>
               <button
                 onClick={handlePublishSubmit}
                 disabled={!publishName.trim() || publishing}
-                className="w-full bg-[#a29bfe] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#a29bfe] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {publishing ? 'PUBLISHING...' : 'PUBLISH'}
               </button>

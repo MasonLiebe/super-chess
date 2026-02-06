@@ -39,10 +39,10 @@ export function PieceSelector({ pieces, selectedPiece, onSelect, owner }: PieceS
           onClick={() => onSelect(piece)}
           draggable
           onDragStart={(e) => handleDragStart(e, piece)}
-          className={`aspect-square border-2 border-[#2d3436] p-1 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing ${
+          className={`aspect-square border-2 border-[var(--border-color)] p-1 flex flex-col items-center justify-center cursor-grab active:cursor-grabbing ${
             selectedPiece === piece
               ? 'bg-[#4ecdc4]'
-              : 'bg-white hover:bg-[#f8f9fa]'
+              : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
           }`}
           title={`${PIECE_LABELS[piece] || piece.toUpperCase()} - Drag to board`}
         >

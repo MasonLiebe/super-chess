@@ -17,8 +17,8 @@ export const THEME = {
   accent: '#ffe66d',
   dark: '#2d3436',
   light: '#f8f9fa',
-  border: '#2d3436',
-  shadow: '4px 4px 0px #2d3436',
+  border: 'var(--border-color)',
+  shadow: '4px 4px 0px var(--shadow-color)',
 };
 
 // Board size constraints

@@ -91,24 +91,24 @@ export function CreateRoom() {
   }, [editorStore, previewState, navigate]);
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] p-4 flex flex-col justify-center">
+    <div className="min-h-screen bg-[var(--bg-page)] p-4 flex flex-col justify-center">
       <div className="max-w-5xl mx-auto w-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <Link
             to="/multiplayer"
-            className="flex items-center gap-1.5 bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] px-4 py-2 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+            className="flex items-center gap-1.5 bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
           >
             <ArrowLeft size={18} strokeWidth={3} />
             BACK
           </Link>
-          <h1 className="text-2xl font-black text-[#2d3436]">CREATE ROOM</h1>
+          <h1 className="text-2xl font-black text-[var(--text-primary)]">CREATE ROOM</h1>
           <div className="w-20" />
         </div>
 
         {/* Connection status */}
         {!connected && (
-          <div className="mb-6 p-3 border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] font-bold bg-[#ff6b6b]">
+          <div className="mb-6 p-3 border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] font-bold bg-[#ff6b6b]">
             CONNECTING TO SERVER...
           </div>
         )}
@@ -128,8 +128,8 @@ export function CreateRoom() {
           {/* Side panel */}
           <div className="w-full lg:w-72 space-y-4">
             {/* Room Name & Visibility */}
-            <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-              <label className="font-bold text-[#2d3436] block mb-2">
+            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+              <label className="font-bold text-[var(--text-primary)] block mb-2">
                 ROOM NAME (OPTIONAL)
               </label>
               <input
@@ -137,44 +137,44 @@ export function CreateRoom() {
                 value={roomName}
                 onChange={(e) => setRoomName(e.target.value)}
                 placeholder="Auto-generated if empty"
-                className="w-full p-2 border-2 border-[#2d3436] font-medium text-[#2d3436] placeholder:text-[#b2bec3] mb-3"
+                className="w-full p-2 border-2 border-[var(--border-color)] font-medium text-[var(--text-primary)] placeholder:text-[var(--text-muted)] mb-3"
               />
               <label className="flex items-center gap-3 cursor-pointer">
                 <div
-                  className={`w-10 h-5 border-2 border-[#2d3436] relative transition-colors ${
-                    isPublic ? 'bg-[#4ecdc4]' : 'bg-[#dfe6e9]'
+                  className={`w-10 h-5 border-2 border-[var(--border-color)] relative transition-colors ${
+                    isPublic ? 'bg-[#4ecdc4]' : 'bg-[var(--divider)]'
                   }`}
                   onClick={() => setIsPublic(!isPublic)}
                 >
                   <div
-                    className={`absolute top-0 w-3.5 h-3.5 bg-white border-2 border-[#2d3436] transition-all ${
+                    className={`absolute top-0 w-3.5 h-3.5 bg-[var(--bg-card)] border-2 border-[var(--border-color)] transition-all ${
                       isPublic ? 'left-5' : 'left-0.5'
                     }`}
                   />
                 </div>
-                <span className="text-sm text-[#636e72]">
+                <span className="text-sm text-[var(--text-secondary)]">
                   {isPublic ? 'Public room' : 'Private room'}
                 </span>
               </label>
             </div>
 
             {/* Game Selection */}
-            <div className="bg-white border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-              <h2 className="font-bold text-[#2d3436] mb-4">SELECT GAME</h2>
+            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+              <h2 className="font-bold text-[var(--text-primary)] mb-4">SELECT GAME</h2>
 
               <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                 {PREBUILT_GAMES.map((game) => (
                   <button
                     key={game.id}
                     onClick={() => handleGameSelect(game.id)}
-                    className={`w-full p-2 text-left border-2 border-[#2d3436] transition-colors ${
+                    className={`w-full p-2 text-left border-2 border-[var(--border-color)] transition-colors ${
                       selectedGameId === game.id
                         ? 'bg-[#4ecdc4]'
-                        : 'bg-white hover:bg-[#f8f9fa]'
+                        : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                     }`}
                   >
                     <div className="font-bold text-sm">{game.name}</div>
-                    <div className="text-xs text-[#636e72]">
+                    <div className="text-xs text-[var(--text-secondary)]">
                       {game.state.width}x{game.state.height}
                     </div>
                   </button>
@@ -183,14 +183,14 @@ export function CreateRoom() {
                 {isCustomGame && (
                   <button
                     onClick={() => handleGameSelect('custom')}
-                    className={`w-full p-2 text-left border-2 border-[#2d3436] transition-colors ${
+                    className={`w-full p-2 text-left border-2 border-[var(--border-color)] transition-colors ${
                       selectedGameId === 'custom'
                         ? 'bg-[#ffe66d]'
-                        : 'bg-white hover:bg-[#f8f9fa]'
+                        : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                     }`}
                   >
                     <div className="font-bold text-sm">Custom Game</div>
-                    <div className="text-xs text-[#636e72]">
+                    <div className="text-xs text-[var(--text-secondary)]">
                       {previewState.width}x{previewState.height} (from editor)
                     </div>
                   </button>
@@ -200,9 +200,9 @@ export function CreateRoom() {
 
             {/* Custom game info */}
             {isCustomGame && selectedGameId === 'custom' && (
-              <div className="bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4">
-                <h3 className="font-bold text-[#2d3436] mb-2">Custom Game</h3>
-                <p className="text-sm text-[#2d3436]">
+              <div className="bg-[#ffe66d] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+                <h3 className="font-bold text-[var(--color-dark)] mb-2">Custom Game</h3>
+                <p className="text-sm text-[var(--color-dark)]">
                   Board created in the editor with {previewState.pieces.length} pieces.
                 </p>
               </div>
@@ -212,7 +212,7 @@ export function CreateRoom() {
             <button
               onClick={() => setShowSeatModal(true)}
               disabled={!connected}
-              className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               CREATE ROOM
             </button>
@@ -220,7 +220,7 @@ export function CreateRoom() {
             {/* Create Custom Game button */}
             <button
               onClick={handleCreateCustomGame}
-              className="w-full bg-[#ffe66d] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-4 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all"
+              className="w-full bg-[#ffe66d] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
             >
               CREATE CUSTOM GAME
             </button>
@@ -231,26 +231,26 @@ export function CreateRoom() {
       {/* Seat Selection Modal */}
       {showSeatModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] p-6 max-w-sm w-full mx-4">
-            <h2 className="font-bold text-[#2d3436] text-xl mb-4 text-center">SELECT YOUR SEAT</h2>
+          <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] p-6 max-w-sm w-full mx-4">
+            <h2 className="font-bold text-[var(--text-primary)] text-xl mb-4 text-center">SELECT YOUR SEAT</h2>
             <div className="space-y-3">
               <button
                 onClick={() => handleCreateRoom('white')}
-                className="w-full p-3 border-2 border-[#2d3436] font-bold text-[#2d3436] bg-white hover:bg-[#f8f9fa] transition-colors flex items-center gap-3"
+                className="w-full p-3 border-2 border-[var(--border-color)] font-bold text-[var(--text-primary)] bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] transition-colors flex items-center gap-3"
               >
-                <span className="w-6 h-6 rounded-full bg-white border-2 border-[#2d3436]" />
+                <span className="w-6 h-6 rounded-full bg-white border-2 border-[var(--border-color)]" />
                 Play as White
               </button>
               <button
                 onClick={() => handleCreateRoom('black')}
-                className="w-full p-3 border-2 border-[#2d3436] font-bold text-white bg-[#2d3436] hover:bg-[#636e72] transition-colors flex items-center gap-3"
+                className="w-full p-3 border-2 border-[var(--border-color)] font-bold text-white bg-[#2d3436] hover:bg-[#636e72] transition-colors flex items-center gap-3"
               >
                 <span className="w-6 h-6 rounded-full bg-[#2d3436] border-2 border-white" />
                 Play as Black
               </button>
               <button
                 onClick={() => handleCreateRoom('spectator')}
-                className="w-full p-3 border-2 border-[#2d3436] font-bold text-[#2d3436] bg-[#dfe6e9] hover:bg-[#b2bec3] transition-colors flex items-center gap-3"
+                className="w-full p-3 border-2 border-[var(--border-color)] font-bold text-[var(--text-primary)] bg-[var(--divider)] hover:bg-[var(--text-muted)] transition-colors flex items-center gap-3"
               >
                 <Eye size={24} />
                 Watch as Spectator
@@ -258,7 +258,7 @@ export function CreateRoom() {
             </div>
             <button
               onClick={() => setShowSeatModal(false)}
-              className="w-full mt-4 p-2 border-2 border-[#2d3436] font-bold text-[#636e72] hover:bg-[#f8f9fa] transition-colors"
+              className="w-full mt-4 p-2 border-2 border-[var(--border-color)] font-bold text-[var(--text-secondary)] hover:bg-[var(--bg-card-hover)] transition-colors"
             >
               Cancel
             </button>

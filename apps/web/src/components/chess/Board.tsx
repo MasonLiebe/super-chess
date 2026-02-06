@@ -218,7 +218,7 @@ export function Board({
       style={{ width: maxBoardSizePx, height: maxBoardSizePx }}
     >
       {/* Border wrapper - reduced shadow on mobile */}
-      <div className="border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] lg:shadow-[8px_8px_0px_#2d3436]">
+      <div className="border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] lg:shadow-[8px_8px_0px_var(--shadow-color)]">
         {/* Tile container */}
         <div
           ref={boardRef}

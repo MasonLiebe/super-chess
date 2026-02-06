@@ -22,7 +22,7 @@ export const BoardThumbnail = memo(function BoardThumbnail({
       className="flex items-center justify-center"
       style={{ width: size, height: size }}
     >
-      <div className="border-2 border-[#2d3436]">
+      <div className="border-2 border-[var(--border-color)]">
         <div
           className="relative"
           style={{ width: boardWidthPx, height: boardHeightPx }}

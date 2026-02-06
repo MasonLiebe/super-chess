@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../stores/authStore';
-import { User, LogOut, LogIn, UserPlus, Info, X } from 'lucide-react';
+import { useSettingsStore } from '../stores/settingsStore';
+import { User, LogOut, LogIn, UserPlus, Info, X, Moon, Sun } from 'lucide-react';
 
 export function AuthBar() {
   const { user, logout } = useAuthStore();
+  const { darkMode, toggleDarkMode } = useSettingsStore();
   const location = useLocation();
   const [showAbout, setShowAbout] = useState(false);
 
@@ -15,11 +17,32 @@ export function AuthBar() {
 
   return (
     <>
+      {/* Dark mode toggle - top left */}
+      <div className="fixed top-0 left-0 z-40 p-1.5 sm:p-2">
+        <button
+          onClick={toggleDarkMode}
+          className="flex items-center justify-center text-xs font-bold w-6 h-6 sm:w-7 sm:h-7 border transition-colors"
+          style={{
+            color: 'var(--text-secondary)',
+            backgroundColor: 'var(--bg-card)',
+            borderColor: 'var(--border-color)',
+          }}
+          title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+        >
+          {darkMode ? <Sun size={12} /> : <Moon size={12} />}
+        </button>
+      </div>
+
       <div className="fixed top-0 right-0 z-40 p-1.5 sm:p-2">
         <div className="flex items-center gap-1">
           <button
             onClick={() => setShowAbout(true)}
-            className="flex items-center justify-center text-xs font-bold text-[#636e72] bg-white/90 w-6 h-6 sm:w-7 sm:h-7 border border-[#2d3436] hover:bg-[#dfe6e9] hover:text-[#2d3436] transition-colors"
+            className="flex items-center justify-center text-xs font-bold w-6 h-6 sm:w-7 sm:h-7 border transition-colors"
+            style={{
+              color: 'var(--text-secondary)',
+              backgroundColor: 'var(--bg-card)',
+              borderColor: 'var(--border-color)',
+            }}
             title="About this site"
           >
             <Info size={12} />
@@ -28,14 +51,24 @@ export function AuthBar() {
             <>
               <Link
                 to="/account"
-                className="flex items-center gap-1 text-[10px] sm:text-xs font-bold text-[#2d3436] bg-white/90 px-1.5 py-0.5 sm:px-2 sm:py-1 border border-[#2d3436] hover:bg-[#dfe6e9] transition-colors"
+                className="flex items-center gap-1 text-[10px] sm:text-xs font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 border transition-colors"
+                style={{
+                  color: 'var(--text-primary)',
+                  backgroundColor: 'var(--bg-card)',
+                  borderColor: 'var(--border-color)',
+                }}
               >
                 <User size={11} />
                 <span className="hidden sm:inline">{user.username}</span>
               </Link>
               <button
                 onClick={logout}
-                className="flex items-center justify-center text-xs font-bold text-[#636e72] bg-white/90 w-6 h-6 sm:w-auto sm:h-auto sm:px-2 sm:py-1 border border-[#2d3436] hover:bg-[#ff6b6b] hover:text-[#2d3436] transition-colors"
+                className="flex items-center justify-center text-xs font-bold w-6 h-6 sm:w-auto sm:h-auto sm:px-2 sm:py-1 border hover:bg-[#ff6b6b] transition-colors"
+                style={{
+                  color: 'var(--text-secondary)',
+                  backgroundColor: 'var(--bg-card)',
+                  borderColor: 'var(--border-color)',
+                }}
                 title="Log out"
               >
                 <LogOut size={11} />
@@ -46,7 +79,12 @@ export function AuthBar() {
             <>
               <Link
                 to={`/login?redirect=${encodeURIComponent(location.pathname)}`}
-                className="flex items-center justify-center text-xs font-bold text-[#2d3436] bg-white/90 w-6 h-6 sm:w-auto sm:h-auto sm:px-2 sm:py-1 border border-[#2d3436] hover:bg-[#4ecdc4] transition-colors"
+                className="flex items-center justify-center text-xs font-bold w-6 h-6 sm:w-auto sm:h-auto sm:px-2 sm:py-1 border hover:bg-[#4ecdc4] transition-colors"
+                style={{
+                  color: 'var(--text-primary)',
+                  backgroundColor: 'var(--bg-card)',
+                  borderColor: 'var(--border-color)',
+                }}
                 title="Log in"
               >
                 <LogIn size={11} />
@@ -54,7 +92,7 @@ export function AuthBar() {
               </Link>
               <Link
                 to={`/register?redirect=${encodeURIComponent(location.pathname)}`}
-                className="flex items-center justify-center text-xs font-bold text-[#2d3436] bg-[#a29bfe]/90 w-6 h-6 sm:w-auto sm:h-auto sm:px-2 sm:py-1 border border-[#2d3436] hover:brightness-95 transition-colors"
+                className="flex items-center justify-center text-xs font-bold text-[var(--color-dark)] bg-[#a29bfe]/90 w-6 h-6 sm:w-auto sm:h-auto sm:px-2 sm:py-1 border border-[var(--border-color)] hover:brightness-95 transition-colors"
                 title="Register"
               >
                 <UserPlus size={11} />
@@ -68,17 +106,28 @@ export function AuthBar() {
       {/* About Modal */}
       {showAbout && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-4 border-b-4 border-[#2d3436]">
-              <h2 className="text-xl font-black text-[#2d3436]">ABOUT THIS SITE</h2>
+          <div
+            className="border-4 shadow-[8px_8px_0px] max-w-md w-full max-h-[90vh] overflow-y-auto"
+            style={{
+              backgroundColor: 'var(--bg-card)',
+              borderColor: 'var(--border-color)',
+              boxShadow: '8px 8px 0px var(--shadow-color)',
+            }}
+          >
+            <div
+              className="flex items-center justify-between p-4 border-b-4"
+              style={{ borderColor: 'var(--border-color)' }}
+            >
+              <h2 className="text-xl font-black" style={{ color: 'var(--text-primary)' }}>ABOUT THIS SITE</h2>
               <button
                 onClick={() => setShowAbout(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400 transition-colors flex items-center justify-center"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 font-bold text-xl hover:bg-red-400 transition-colors flex items-center justify-center"
+                style={{ borderColor: 'var(--border-color)' }}
               >
                 <X size={20} strokeWidth={3} />
               </button>
             </div>
-            <div className="p-4 space-y-4 text-[#2d3436]">
+            <div className="p-4 space-y-4" style={{ color: 'var(--text-primary)' }}>
               <p className="font-medium">
                 CustomChess is a chess variant engine supporting arbitrary board
                 dimensions (up to 16x16), custom piece movement patterns, and
@@ -87,7 +136,7 @@ export function AuthBar() {
 
               <div>
                 <h3 className="font-black text-sm mb-1">CHESS ENGINE (RUST / WASM)</h3>
-                <p className="text-sm text-[#636e72]">
+                <p className="text-sm">
                   The core engine is written in Rust and compiled to WebAssembly
                   via wasm-bindgen, running entirely in the browser. Board state
                   is represented using 256-bit bitboards (via numext-fixed-uint
@@ -106,7 +155,7 @@ export function AuthBar() {
 
               <div>
                 <h3 className="font-black text-sm mb-1">FRONTEND</h3>
-                <p className="text-sm text-[#636e72]">
+                <p className="text-sm">
                   Built with React 19 and TypeScript, bundled with Vite 7 using
                   vite-plugin-wasm and vite-plugin-top-level-await for async WASM
                   initialization. The board is rendered as absolutely-positioned
@@ -119,7 +168,7 @@ export function AuthBar() {
 
               <div>
                 <h3 className="font-black text-sm mb-1">MULTIPLAYER</h3>
-                <p className="text-sm text-[#636e72]">
+                <p className="text-sm">
                   The backend is an async Rust server built on Axum 0.7 with
                   Tokio, serving WebSocket connections at /ws. Rooms are managed
                   as independent Tokio tasks communicating via mpsc channels, with
@@ -135,7 +184,7 @@ export function AuthBar() {
 
               <div>
                 <h3 className="font-black text-sm mb-1">BOARD EDITOR</h3>
-                <p className="text-sm text-[#636e72]">
+                <p className="text-sm">
                   The editor supports custom board dimensions (4x4 to 16x16),
                   per-tile enable/disable toggling, and up to 9 custom piece types
                   with fully configurable movement patterns. Movement patterns

@@ -33,36 +33,36 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[var(--bg-page)] flex items-center justify-center p-4">
       <div className="max-w-sm w-full">
-        <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] p-8">
-          <h1 className="text-3xl font-black text-[#2d3436] mb-6 text-center">LOG IN</h1>
+        <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] p-8">
+          <h1 className="text-3xl font-black text-[var(--text-primary)] mb-6 text-center">LOG IN</h1>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block font-bold text-[#2d3436] mb-1">USERNAME</label>
+              <label className="block font-bold text-[var(--text-primary)] mb-1">USERNAME</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-3 border-3 border-[#2d3436] font-medium text-[#2d3436]"
+                className="w-full p-3 border-3 border-[var(--border-color)] font-medium"
                 required
               />
             </div>
 
             <div>
-              <label className="block font-bold text-[#2d3436] mb-1">PASSWORD</label>
+              <label className="block font-bold text-[var(--text-primary)] mb-1">PASSWORD</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 border-3 border-[#2d3436] font-medium text-[#2d3436]"
+                className="w-full p-3 border-3 border-[var(--border-color)] font-medium"
                 required
               />
             </div>
 
             {error && (
-              <div className="p-3 bg-[#ff6b6b] border-2 border-[#2d3436] text-[#2d3436] font-medium text-sm">
+              <div className="p-3 bg-[#ff6b6b] border-2 border-[var(--border-color)] text-[var(--color-dark)] font-medium text-sm">
                 {error}
               </div>
             )}
@@ -70,28 +70,28 @@ export function Login() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#4ecdc4] border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] p-3 font-bold text-[#2d3436] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_#2d3436] transition-all disabled:opacity-50"
+              className="w-full bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all disabled:opacity-50"
             >
               {loading ? 'LOGGING IN...' : 'LOG IN'}
             </button>
           </form>
 
-          <p className="text-center text-[#636e72] mt-4 text-sm">
-            <Link to="/forgot-password" className="text-[#636e72] underline hover:text-[#2d3436]">
+          <p className="text-center text-[var(--text-secondary)] mt-4 text-sm">
+            <Link to="/forgot-password" className="text-[var(--text-secondary)] underline hover:text-[var(--text-primary)]">
               Forgot password?
             </Link>
           </p>
 
-          <p className="text-center text-[#636e72] mt-2 text-sm">
+          <p className="text-center text-[var(--text-secondary)] mt-2 text-sm">
             Don't have an account?{' '}
-            <Link to={`/register${redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="text-[#2d3436] font-bold underline">
+            <Link to={`/register${redirect !== '/' ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="text-[var(--text-primary)] font-bold underline">
               Register
             </Link>
           </p>
         </div>
 
         <div className="text-center mt-4">
-          <Link to="/" className="inline-flex items-center gap-1 text-[#636e72] font-medium text-sm hover:text-[#2d3436]">
+          <Link to="/" className="inline-flex items-center gap-1 text-[var(--text-secondary)] font-medium text-sm hover:text-[var(--text-primary)]">
             <ArrowLeft size={14} />
             Back to Home
           </Link>

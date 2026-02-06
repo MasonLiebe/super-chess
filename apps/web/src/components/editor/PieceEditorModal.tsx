@@ -68,7 +68,7 @@ const arrows: Record<string, React.ReactNode> = {
 // Get background color based on slide state
 function getSlideButtonStyle(state: SlideState): string {
   switch (state) {
-    case 0: return 'bg-white text-[#2d3436]';
+    case 0: return 'bg-[var(--bg-card)] text-[var(--text-primary)]';
     case 1: return 'bg-red-400 text-white';
     case 2: return 'bg-green-500 text-white';
     case 3: return 'bg-purple-500 text-white';
@@ -199,22 +199,22 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white border-4 border-[#2d3436] shadow-[8px_8px_0px_#2d3436] max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[8px_8px_0px_var(--shadow-color)] max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b-4 border-[#2d3436]">
+        <div className="flex items-center justify-between p-4 border-b-4 border-[var(--border-color)]">
           <div className="flex items-center gap-4">
             <img
               src={`/images/chess_pieces/white/${pieceType}.svg`}
               alt={pieceType}
               className="w-12 h-12"
             />
-            <h2 className="text-xl font-black text-[#2d3436]">
+            <h2 className="text-xl font-black text-[var(--text-primary)]">
               {isStandard ? `Edit ${pieceType.toUpperCase()} (Standard)` : `Custom Piece: ${pieceType.toUpperCase()}`}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 bg-[#ff6b6b] border-2 border-[#2d3436] font-bold text-xl hover:bg-red-400"
+            className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl hover:bg-red-400"
           >
             ×
           </button>
@@ -229,7 +229,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
               <div className="flex-shrink-0" style={{ width: 360 }}>
                 {/* Slider - full width above grid */}
                 <div className="mb-3 flex items-center gap-3 w-full">
-                  <label className="text-sm font-medium text-[#636e72] whitespace-nowrap">
+                  <label className="text-sm font-medium text-[var(--text-secondary)] whitespace-nowrap">
                     Grid: {gridSize}×{gridSize}
                   </label>
                   <input
@@ -245,7 +245,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
 
                 {/* Movement Grid - Fixed 360px container, cells resize to fit */}
                 <div
-                  className="grid bg-[#2d3436]"
+                  className="grid bg-[var(--shadow-color)]"
                   style={{
                     gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
                     gridTemplateRows: `repeat(${gridSize}, 1fr)`,
@@ -267,7 +267,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                     const isAttackSlide = attackSlideCells.some(([x, y]) => x === gridX && y === gridY);
                     const isTranslateSlide = translateSlideCells.some(([x, y]) => x === gridX && y === gridY);
 
-                    let bgColor = 'bg-white';
+                    let bgColor = 'bg-[var(--bg-card)]';
                     if (isCenter) {
                       bgColor = 'bg-[#ffe66d]';
                     } else if (hasAttack && hasTranslate) {
@@ -308,23 +308,23 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                 {/* Grid Legend */}
                 <div className="mt-3 flex flex-wrap justify-center gap-3 text-xs">
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-red-400 border border-[#2d3436]" />
+                    <div className="w-3 h-3 bg-red-400 border border-[var(--border-color)]" />
                     <span>Attack</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-green-400 border border-[#2d3436]" />
+                    <div className="w-3 h-3 bg-green-400 border border-[var(--border-color)]" />
                     <span>Move</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-purple-400 border border-[#2d3436]" />
+                    <div className="w-3 h-3 bg-purple-400 border border-[var(--border-color)]" />
                     <span>Both</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-red-200 border border-[#2d3436]" />
+                    <div className="w-3 h-3 bg-red-200 border border-[var(--border-color)]" />
                     <span>Slide (A)</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <div className="w-3 h-3 bg-green-200 border border-[#2d3436]" />
+                    <div className="w-3 h-3 bg-green-200 border border-[var(--border-color)]" />
                     <span>Slide (M)</span>
                   </div>
                 </div>
@@ -332,8 +332,8 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                 {/* Tips + Buttons row under the grid */}
                 <div className="mt-4 flex gap-3 items-stretch">
                   {/* Tips - retroUI styled */}
-                  <div className="flex-1 bg-[#ffe66d] border-2 border-[#2d3436] shadow-[3px_3px_0px_#2d3436] px-3 py-2">
-                    <p className="text-xs text-[#2d3436]">
+                  <div className="flex-1 bg-[#ffe66d] border-2 border-[var(--border-color)] shadow-[3px_3px_0px_var(--shadow-color)] px-3 py-2">
+                    <p className="text-xs text-[var(--color-dark)]">
                       <span className="font-bold">Jump</span> = Jump to a square (Knight Move)<br />
                       <span className="font-bold">Slide</span> = Slide along a line until blocked<br />
                       <span className="font-bold">Attack</span> = Capture a piece at a square<br />
@@ -345,7 +345,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                   <div className="flex flex-col gap-2">
                     <button
                       onClick={handleSave}
-                      className="px-4 py-2 font-bold text-sm border-2 border-[#2d3436] bg-[#4ecdc4] shadow-[3px_3px_0px_#2d3436]
+                      className="px-4 py-2 font-bold text-sm border-2 border-[var(--border-color)] bg-[#4ecdc4] shadow-[3px_3px_0px_var(--shadow-color)]
                         transition-all duration-100 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none
                         hover:brightness-105"
                     >
@@ -353,9 +353,9 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                     </button>
                     <button
                       onClick={handleReset}
-                      className="px-4 py-2 font-bold text-sm border-2 border-[#2d3436] bg-white shadow-[3px_3px_0px_#2d3436]
+                      className="px-4 py-2 font-bold text-sm border-2 border-[var(--border-color)] bg-[var(--bg-card)] shadow-[3px_3px_0px_var(--shadow-color)]
                         transition-all duration-100 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none
-                        hover:bg-[#f8f9fa]"
+                        hover:bg-[var(--bg-card-hover)]"
                     >
                       RESET
                     </button>
@@ -366,30 +366,30 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
               {/* Right - Controls */}
               <div className="w-56 space-y-4">
                 {/* Tool Selection */}
-                <div className="bg-[#f8f9fa] border-2 border-[#2d3436] p-4">
-                  <h3 className="font-bold text-[#2d3436] mb-1 text-center">JUMP MOVES</h3>
-                  <p className="text-xs text-[#636e72] text-center mb-3">Toggle modes, then click squares on the grid</p>
+                <div className="bg-[var(--bg-card-hover)] border-2 border-[var(--border-color)] p-4">
+                  <h3 className="font-bold text-[var(--text-primary)] mb-1 text-center">JUMP MOVES</h3>
+                  <p className="text-xs text-[var(--text-secondary)] text-center mb-3">Toggle modes, then click squares on the grid</p>
                   <div className="space-y-2">
                     <button
                       onClick={() => setJumpAttackEnabled(!jumpAttackEnabled)}
-                      className={`w-full p-2 text-center text-sm font-medium border-2 border-[#2d3436] transition-colors ${
+                      className={`w-full p-2 text-center text-sm font-medium border-2 border-[var(--border-color)] transition-colors ${
                         jumpAttackEnabled && jumpMoveEnabled
                           ? 'bg-purple-500 text-white'
                           : jumpAttackEnabled
                           ? 'bg-red-400 text-white'
-                          : 'bg-white'
+                          : 'bg-[var(--bg-card)]'
                       }`}
                     >
                       Attack {jumpAttackEnabled ? '✓' : ''}
                     </button>
                     <button
                       onClick={() => setJumpMoveEnabled(!jumpMoveEnabled)}
-                      className={`w-full p-2 text-center text-sm font-medium border-2 border-[#2d3436] transition-colors ${
+                      className={`w-full p-2 text-center text-sm font-medium border-2 border-[var(--border-color)] transition-colors ${
                         jumpAttackEnabled && jumpMoveEnabled
                           ? 'bg-purple-500 text-white'
                           : jumpMoveEnabled
                           ? 'bg-green-500 text-white'
-                          : 'bg-white'
+                          : 'bg-[var(--bg-card)]'
                       }`}
                     >
                       Move {jumpMoveEnabled ? '✓' : ''}
@@ -401,16 +401,16 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                 </div>
 
                 {/* Slide Directions - 3x3 Grid */}
-                <div className="bg-[#f8f9fa] border-2 border-[#2d3436] p-4">
-                  <h3 className="font-bold text-[#2d3436] mb-1 text-center">SLIDE DIRECTIONS</h3>
-                  <p className="text-xs text-[#636e72] text-center mb-3">Click arrows to cycle modes</p>
+                <div className="bg-[var(--bg-card-hover)] border-2 border-[var(--border-color)] p-4">
+                  <h3 className="font-bold text-[var(--text-primary)] mb-1 text-center">SLIDE DIRECTIONS</h3>
+                  <p className="text-xs text-[var(--text-secondary)] text-center mb-3">Click arrows to cycle modes</p>
                   <div className="grid grid-cols-3 gap-1.5 mx-auto" style={{ width: 'fit-content' }}>
                     {/* Row 1: NW, N, NE */}
                     {(['northwest', 'north', 'northeast'] as const).map((dir) => (
                       <button
                         key={dir}
                         onClick={() => cycleSlideState(dir)}
-                        className={`w-11 h-11 border-2 border-[#2d3436] shadow-[2px_2px_0px_#2d3436]
+                        className={`w-11 h-11 border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)]
                           flex items-center justify-center transition-all duration-100
                           active:translate-x-[2px] active:translate-y-[2px] active:shadow-none
                           ${getSlideButtonStyle(getSlideState(dir))}`}
@@ -422,7 +422,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                     {/* Row 2: W, Center, E */}
                     <button
                       onClick={() => cycleSlideState('west')}
-                      className={`w-11 h-11 border-2 border-[#2d3436] shadow-[2px_2px_0px_#2d3436]
+                      className={`w-11 h-11 border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)]
                         flex items-center justify-center transition-all duration-100
                         active:translate-x-[2px] active:translate-y-[2px] active:shadow-none
                         ${getSlideButtonStyle(getSlideState('west'))}`}
@@ -430,7 +430,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                     >
                       {arrows.west}
                     </button>
-                    <div className="w-11 h-11 border-2 border-[#2d3436] bg-[#ffe66d] flex items-center justify-center">
+                    <div className="w-11 h-11 border-2 border-[var(--border-color)] bg-[#ffe66d] flex items-center justify-center">
                       <img
                         src={`/images/chess_pieces/white/${pieceType}.svg`}
                         alt={pieceType}
@@ -439,7 +439,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                     </div>
                     <button
                       onClick={() => cycleSlideState('east')}
-                      className={`w-11 h-11 border-2 border-[#2d3436] shadow-[2px_2px_0px_#2d3436]
+                      className={`w-11 h-11 border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)]
                         flex items-center justify-center transition-all duration-100
                         active:translate-x-[2px] active:translate-y-[2px] active:shadow-none
                         ${getSlideButtonStyle(getSlideState('east'))}`}
@@ -452,7 +452,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                       <button
                         key={dir}
                         onClick={() => cycleSlideState(dir)}
-                        className={`w-11 h-11 border-2 border-[#2d3436] shadow-[2px_2px_0px_#2d3436]
+                        className={`w-11 h-11 border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)]
                           flex items-center justify-center transition-all duration-100
                           active:translate-x-[2px] active:translate-y-[2px] active:shadow-none
                           ${getSlideButtonStyle(getSlideState(dir))}`}
@@ -465,19 +465,19 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                   {/* Legend */}
                   <div className="mt-3 flex flex-wrap justify-center gap-3 text-xs">
                     <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-white border border-[#2d3436]" />
+                      <div className="w-3 h-3 bg-[var(--bg-card)] border border-[var(--border-color)]" />
                       <span>Off</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-red-400 border border-[#2d3436]" />
+                      <div className="w-3 h-3 bg-red-400 border border-[var(--border-color)]" />
                       <span>Attack</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-green-500 border border-[#2d3436]" />
+                      <div className="w-3 h-3 bg-green-500 border border-[var(--border-color)]" />
                       <span>Move</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <div className="w-3 h-3 bg-purple-500 border border-[#2d3436]" />
+                      <div className="w-3 h-3 bg-purple-500 border border-[var(--border-color)]" />
                       <span>Both</span>
                     </div>
                   </div>

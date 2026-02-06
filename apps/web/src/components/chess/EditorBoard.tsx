@@ -139,7 +139,7 @@ export function EditorBoard() {
       onMouseLeave={stopPainting}
     >
       {/* Border wrapper - reduced shadow on mobile */}
-      <div className="border-4 border-[#2d3436] shadow-[4px_4px_0px_#2d3436] lg:shadow-[8px_8px_0px_#2d3436]">
+      <div className="border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] lg:shadow-[8px_8px_0px_var(--shadow-color)]">
         {/* Tile container */}
         <div
           ref={boardRef}
@@ -230,8 +230,8 @@ export function EditorBoard() {
         {/* Empty board message */}
         {pieces.length === 0 && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="bg-white/90 px-4 py-2 border-2 border-[#2d3436]">
-              <p className="text-[#636e72] font-medium">Click to place pieces</p>
+            <div className="px-4 py-2 border-2 border-[var(--border-color)]" style={{ backgroundColor: 'color-mix(in srgb, var(--bg-card) 90%, transparent)' }}>
+              <p className="text-[var(--text-secondary)] font-medium">Click to place pieces</p>
             </div>
           </div>
         )}
