@@ -408,7 +408,7 @@ export function Singleplayer() {
                   <div className="flex flex-row lg:flex-col gap-2 lg:gap-4">
                   {/* Variant Dropdown */}
                   <div ref={gameDropdownRef} className="relative flex-1 min-w-0">
-                    <span className="font-bold text-[var(--text-secondary)] text-[10px] lg:text-xs block mb-1">PREBUILT VARIANT</span>
+                    <span className="font-bold text-[var(--text-secondary)] text-[10px] lg:text-xs block mb-1">PREBUILT VARIANTS</span>
                     {(() => {
                       const selectedGame = selectedGameId === 'custom'
                         ? { name: 'Custom Game', description: `${previewState.width}×${previewState.height}`, isCustom: true }
@@ -540,7 +540,7 @@ export function Singleplayer() {
 
                   {/* Custom variant options */}
                   <div>
-                    <span className="font-bold text-[var(--text-secondary)] text-[10px] lg:text-xs block mb-1">CUSTOM VARIANT</span>
+                    <span className="font-bold text-[var(--text-secondary)] text-[10px] lg:text-xs block mb-1">CUSTOM VARIANTS</span>
                     <div className="flex gap-2">
                       <Link
                         to="/browse"

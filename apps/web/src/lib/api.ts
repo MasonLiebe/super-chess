@@ -98,6 +98,7 @@ export async function listVariants(params: {
   q?: string;
   sort?: string;
   author_id?: number;
+  liked_by?: number;
   min_width?: number;
   max_width?: number;
   min_height?: number;

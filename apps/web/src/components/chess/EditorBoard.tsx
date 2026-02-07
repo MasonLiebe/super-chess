@@ -1,9 +1,13 @@
 import { useCallback, useState, useRef } from 'react';
 import { useEditorStore } from '../../stores/editorStore';
-import { useBoardSize } from '../../hooks/useBoardSize';
+import { useBoardSize, type ReservedHeight } from '../../hooks/useBoardSize';
 import { COLORS } from '../../lib/constants';
 
-export function EditorBoard() {
+interface EditorBoardProps {
+  reservedHeight?: number | ReservedHeight;
+}
+
+export function EditorBoard({ reservedHeight }: EditorBoardProps) {
   const {
     width,
     height,
@@ -25,7 +29,7 @@ export function EditorBoard() {
   }, []);
 
   // Responsive board sizing
-  const { maxBoardSizePx, tileSize, boardWidthPx, boardHeightPx } = useBoardSize(width, height);
+  const { maxBoardSizePx, tileSize, boardWidthPx, boardHeightPx } = useBoardSize(width, height, reservedHeight);
 
   // Get board coordinates from client position
   const getBoardCoords = useCallback((clientX: number, clientY: number) => {

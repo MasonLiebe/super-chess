@@ -43,6 +43,7 @@ export function Editor() {
   const [publishDescription, setPublishDescription] = useState('');
   const [publishing, setPublishing] = useState(false);
   const customPieceImageRefs = useRef<Map<string, HTMLImageElement>>(new Map());
+  const [activeTab, setActiveTab] = useState<'pieces' | 'board' | 'actions'>('pieces');
 
   // Get list of custom pieces that are placed on the board
   const placedCustomPieces = [...new Set(
@@ -144,310 +145,599 @@ export function Editor() {
   }, [publishName, publishDescription, getGameState, navigate]);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)] p-4 flex flex-col justify-center">
-      <div className="max-w-7xl mx-auto w-full">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
-          >
-            <ArrowLeft size={18} strokeWidth={3} />
-            BACK
-          </Link>
-          <h1 className="text-2xl font-black text-[var(--text-primary)]">BOARD EDITOR</h1>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setShowHelp(true)}
-              className="flex items-center gap-1.5 bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
+    <>
+      {/* ===== Desktop layout (lg+) ===== */}
+      <div className="hidden lg:flex min-h-screen bg-[var(--bg-page)] p-4 flex-col justify-center">
+        <div className="max-w-7xl mx-auto w-full">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <Link
+              to="/"
+              className="flex items-center gap-1.5 bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
             >
-              <HelpCircle size={18} />
-              HELP
-            </button>
-            <button
-              onClick={resetBoard}
-              className="flex items-center gap-1.5 bg-[#ff6b6b] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
-            >
-              <RotateCcw size={16} strokeWidth={3} />
-              RESET
-            </button>
+              <ArrowLeft size={18} strokeWidth={3} />
+              BACK
+            </Link>
+            <h1 className="text-2xl font-black text-[var(--text-primary)]">BOARD EDITOR</h1>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setShowHelp(true)}
+                className="flex items-center gap-1.5 bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
+              >
+                <HelpCircle size={18} />
+                HELP
+              </button>
+              <button
+                onClick={resetBoard}
+                className="flex items-center gap-1.5 bg-[#ff6b6b] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] px-4 py-2 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
+              >
+                <RotateCcw size={16} strokeWidth={3} />
+                RESET
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Main content */}
-        <div className="flex flex-col lg:flex-row gap-6">
-          {/* Left panel - Board config */}
-          <div className="w-full lg:w-64 space-y-4">
-            {/* Board Size */}
-            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
-              <h2 className="font-bold text-[var(--text-primary)] mb-4">BOARD SIZE</h2>
-
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Width: {width}
-                  </label>
-                  <input
-                    type="range"
-                    min={BOARD_SIZE.MIN}
-                    max={BOARD_SIZE.MAX}
-                    value={width}
-                    onChange={(e) => setWidth(Number(e.target.value))}
-                    className="w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
-                    Height: {height}
-                  </label>
-                  <input
-                    type="range"
-                    min={BOARD_SIZE.MIN}
-                    max={BOARD_SIZE.MAX}
-                    value={height}
-                    onChange={(e) => setHeight(Number(e.target.value))}
-                    className="w-full"
-                  />
-                </div>
-
-                {/* Quick presets */}
-                <div className="flex flex-wrap gap-2">
-                  {[
-                    { w: 8, h: 8, label: '8×8' },
-                    { w: 10, h: 8, label: '10×8' },
-                    { w: 10, h: 10, label: '10×10' },
-                  ].map(({ w, h, label }) => (
-                    <button
-                      key={label}
-                      onClick={() => {
-                        setWidth(w);
-                        setHeight(h);
-                      }}
-                      className={`px-3 py-1 text-sm font-bold border-2 border-[var(--border-color)] ${
-                        width === w && height === h
-                          ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
-                          : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
+          {/* Main content */}
+          <div className="flex gap-6">
+            {/* Left panel - Board config */}
+            <div className="w-64 space-y-4">
+              {/* Board Size */}
+              <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+                <h2 className="font-bold text-[var(--text-primary)] mb-4">BOARD SIZE</h2>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      Width: {width}
+                    </label>
+                    <input
+                      type="range"
+                      min={BOARD_SIZE.MIN}
+                      max={BOARD_SIZE.MAX}
+                      value={width}
+                      onChange={(e) => setWidth(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-[var(--text-secondary)] mb-1">
+                      Height: {height}
+                    </label>
+                    <input
+                      type="range"
+                      min={BOARD_SIZE.MIN}
+                      max={BOARD_SIZE.MAX}
+                      value={height}
+                      onChange={(e) => setHeight(Number(e.target.value))}
+                      className="w-full"
+                    />
+                  </div>
+                  {/* Quick presets */}
+                  <div className="flex flex-wrap gap-2">
+                    {[
+                      { w: 8, h: 8, label: '8×8' },
+                      { w: 10, h: 8, label: '10×8' },
+                      { w: 10, h: 10, label: '10×10' },
+                    ].map(({ w, h, label }) => (
+                      <button
+                        key={label}
+                        onClick={() => { setWidth(w); setHeight(h); }}
+                        className={`px-3 py-1 text-sm font-bold border-2 border-[var(--border-color)] ${
+                          width === w && height === h
+                            ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
+                            : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Tools */}
-            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
-              <h2 className="font-bold text-[var(--text-primary)] mb-4">TOOLS</h2>
+              {/* Tools */}
+              <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+                <h2 className="font-bold text-[var(--text-primary)] mb-4">TOOLS</h2>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => setCurrentTool('placePiece')}
+                    className={`w-full p-2 text-center font-medium border-2 border-[var(--border-color)] ${
+                      currentTool === 'placePiece'
+                        ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
+                        : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                    }`}
+                  >
+                    Place Piece
+                  </button>
+                  <button
+                    onClick={() => setCurrentTool('toggleTile')}
+                    className={`w-full p-2 text-center font-medium border-2 border-[var(--border-color)] ${
+                      currentTool === 'toggleTile'
+                        ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
+                        : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                    }`}
+                  >
+                    Disable Tiles
+                  </button>
+                </div>
+              </div>
 
+              {/* Actions */}
               <div className="space-y-2">
                 <button
-                  onClick={() => setCurrentTool('placePiece')}
-                  className={`w-full p-2 text-center font-medium border-2 border-[var(--border-color)] ${
-                    currentTool === 'placePiece'
-                      ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
-                      : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
-                  }`}
+                  onClick={handleStartGame}
+                  className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
                 >
-                  Place Piece
+                  <Play size={16} strokeWidth={3} />
+                  START GAME
                 </button>
                 <button
-                  onClick={() => setCurrentTool('toggleTile')}
-                  className={`w-full p-2 text-center font-medium border-2 border-[var(--border-color)] ${
-                    currentTool === 'toggleTile'
-                      ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
-                      : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
-                  }`}
+                  onClick={handlePublishClick}
+                  className="flex items-center justify-center gap-2 w-full bg-[#a29bfe] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
                 >
-                  Disable Tiles
+                  <Send size={16} strokeWidth={3} />
+                  PUBLISH
                 </button>
               </div>
             </div>
 
-            {/* Actions */}
-            <div className="space-y-2">
-              <button
-                onClick={handleStartGame}
-                className="flex items-center justify-center gap-2 w-full bg-[#4ecdc4] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
-              >
-                <Play size={16} strokeWidth={3} />
-                START GAME
-              </button>
-              <button
-                onClick={handlePublishClick}
-                className="flex items-center justify-center gap-2 w-full bg-[#a29bfe] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
-              >
-                <Send size={16} strokeWidth={3} />
-                PUBLISH
-              </button>
+            {/* Center - Board */}
+            <div className="flex-1 flex justify-center">
+              <EditorBoard />
+            </div>
+
+            {/* Right panel - Pieces */}
+            <div className="w-72 space-y-4">
+              {/* Owner selection */}
+              <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+                <h2 className="font-bold text-[var(--text-primary)] mb-4">PLAYER</h2>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setSelectedOwner(0)}
+                    className={`flex-1 p-2 font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-2 ${
+                      selectedOwner === 0
+                        ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
+                        : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                    }`}
+                  >
+                    <div className="w-4 h-4 rounded-full bg-white border-2 border-[var(--border-color)]" />
+                    White
+                  </button>
+                  <button
+                    onClick={() => setSelectedOwner(1)}
+                    className={`flex-1 p-2 font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-2 ${
+                      selectedOwner === 1
+                        ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
+                        : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                    }`}
+                  >
+                    <div className="w-4 h-4 rounded-full bg-[#2d3436] border-2 border-[var(--border-color)]" />
+                    Black
+                  </button>
+                </div>
+              </div>
+
+              {/* Standard Pieces */}
+              <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+                <h2 className="font-bold text-[var(--text-primary)] mb-4">STANDARD PIECES</h2>
+                <PieceSelector
+                  pieces={[...STANDARD_PIECES]}
+                  selectedPiece={selectedPieceType}
+                  onSelect={setSelectedPieceType}
+                  owner={selectedOwner}
+                />
+              </div>
+
+              {/* Custom Pieces */}
+              <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-bold text-[var(--text-primary)]">CUSTOM PIECES</h2>
+                  <span className="text-xs text-[var(--text-secondary)]">
+                    {configuredPieces.length}/{MAX_CUSTOM_PIECES}
+                  </span>
+                </div>
+
+                {/* Configured custom pieces */}
+                {configuredPieces.length > 0 ? (
+                  <div className="mb-4">
+                    <div className="grid grid-cols-3 gap-2">
+                      {configuredPieces.map((p) => (
+                        <button
+                          key={p}
+                          onClick={() => setSelectedPieceType(p)}
+                          draggable
+                          onDragStart={(e) => {
+                            e.dataTransfer.setData('application/json', JSON.stringify({ pieceType: p, owner: selectedOwner }));
+                            e.dataTransfer.effectAllowed = 'copy';
+                            const img = customPieceImageRefs.current.get(p);
+                            if (img) {
+                              e.dataTransfer.setDragImage(img, 25, 25);
+                            }
+                          }}
+                          className={`aspect-square border-2 border-[var(--border-color)] flex items-center justify-center p-1 cursor-grab active:cursor-grabbing ${
+                            selectedPieceType === p
+                              ? 'bg-[#4ecdc4]'
+                              : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                          }`}
+                          title={`${p.toUpperCase()} - Drag to board`}
+                        >
+                          <img
+                            ref={(el) => {
+                              if (el) customPieceImageRefs.current.set(p, el);
+                            }}
+                            src={`/images/chess_pieces/${selectedOwner === 0 ? 'white' : 'black'}/${p}.svg`}
+                            alt={p}
+                            className="w-full h-full object-contain pointer-events-none"
+                          />
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Edit/Delete buttons for selected custom piece */}
+                    <div className="flex gap-2 mt-3">
+                      <button
+                        onClick={() => configuredPieces.includes(selectedPieceType) && setEditingPiece(selectedPieceType)}
+                        disabled={!configuredPieces.includes(selectedPieceType)}
+                        className={`flex-1 p-2 text-sm font-bold border-2 border-[var(--border-color)] transition-colors ${
+                          configuredPieces.includes(selectedPieceType)
+                            ? 'bg-[#4ecdc4] hover:bg-[#45b7aa] text-[var(--color-dark)]'
+                            : 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
+                        }`}
+                      >
+                        <span className="flex items-center justify-center gap-1"><Pencil size={14} /> EDIT</span>
+                      </button>
+                      <button
+                        onClick={() => configuredPieces.includes(selectedPieceType) && handleDeletePiece(selectedPieceType)}
+                        disabled={!configuredPieces.includes(selectedPieceType)}
+                        className={`flex-1 p-2 text-sm font-bold border-2 border-[var(--border-color)] transition-colors ${
+                          configuredPieces.includes(selectedPieceType)
+                            ? 'bg-[#ff6b6b] hover:bg-red-400 text-[var(--color-dark)]'
+                            : 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
+                        }`}
+                      >
+                        <span className="flex items-center justify-center gap-1"><Trash2 size={14} /> DELETE</span>
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-[var(--text-secondary)] mb-4 text-center py-4">
+                    No custom pieces yet
+                  </p>
+                )}
+
+                {/* Unregistered pieces warning */}
+                {unregisteredPieces.length > 0 && (
+                  <div className="mb-4 p-2 bg-red-100 border-2 border-red-400">
+                    <p className="text-xs text-red-700 mb-1">Needs movement pattern:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {unregisteredPieces.map((p) => (
+                        <button
+                          key={p}
+                          onClick={() => setEditingPiece(p)}
+                          className="w-10 h-10 border-2 border-red-400 bg-red-50 flex items-center justify-center hover:bg-red-100"
+                        >
+                          <img
+                            src={`/images/chess_pieces/${selectedOwner === 0 ? 'white' : 'black'}/${p}.svg`}
+                            alt={p}
+                            className="w-8 h-8"
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Create new piece button */}
+                <button
+                  onClick={() => setShowIconSelector(true)}
+                  disabled={configuredPieces.length >= MAX_CUSTOM_PIECES}
+                  className={`w-full p-3 font-bold border-2 border-[var(--border-color)] shadow-[3px_3px_0px_var(--shadow-color)]
+                    transition-all active:translate-x-[3px] active:translate-y-[3px] active:shadow-none
+                    ${configuredPieces.length >= MAX_CUSTOM_PIECES
+                      ? 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
+                      : 'bg-[#ffe66d] text-[var(--color-dark)] hover:brightness-105'
+                    }`}
+                >
+                  <span className="flex items-center justify-center gap-1.5"><Plus size={18} strokeWidth={3} /> CREATE NEW PIECE</span>
+                </button>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
 
-          {/* Center - Board (show first on mobile) */}
-          <div className="flex-1 flex justify-center order-first lg:order-none w-full max-w-[560px] mx-auto lg:max-w-none">
-            <EditorBoard />
-          </div>
+      {/* ===== Mobile layout (<lg) ===== */}
+      <div className="lg:hidden h-screen bg-[var(--bg-page)] px-2 pb-2 pt-12 flex flex-col">
+        {/* Compact header */}
+        <div className="flex items-center gap-2 mb-2 shrink-0">
+          <Link
+            to="/"
+            className="flex items-center justify-center bg-[var(--bg-card)] border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] w-8 h-8 text-[var(--text-primary)]"
+          >
+            <ArrowLeft size={16} strokeWidth={3} />
+          </Link>
+          <h1 className="text-sm font-black text-[var(--text-primary)] flex-1 text-center">BOARD EDITOR</h1>
+          <button
+            onClick={() => setShowHelp(true)}
+            className="flex items-center justify-center bg-[#4ecdc4] border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] w-8 h-8 text-[var(--color-dark)]"
+          >
+            <HelpCircle size={16} />
+          </button>
+          <button
+            onClick={resetBoard}
+            className="flex items-center justify-center bg-[#ff6b6b] border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] w-8 h-8 text-[var(--color-dark)]"
+          >
+            <RotateCcw size={14} strokeWidth={3} />
+          </button>
+        </div>
 
-          {/* Right panel - Pieces */}
-          <div className="w-full lg:w-72 space-y-4">
-            {/* Owner selection */}
-            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
-              <h2 className="font-bold text-[var(--text-primary)] mb-4">PLAYER</h2>
-              <div className="flex gap-2">
+        {/* Board - fills available space */}
+        <div className="flex-1 min-h-0 flex items-center justify-center">
+          <EditorBoard reservedHeight={{ mobile: 340, desktop: 0 }} />
+        </div>
+
+        {/* Tab bar */}
+        <div className="flex mt-2 border-2 border-[var(--border-color)] shrink-0">
+          {(['pieces', 'board', 'actions'] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`flex-1 py-1.5 text-xs font-bold border-r-2 last:border-r-0 border-[var(--border-color)] ${
+                activeTab === tab
+                  ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
+                  : 'bg-[var(--bg-card)] text-[var(--text-secondary)]'
+              }`}
+            >
+              {tab === 'pieces' ? 'PIECES' : tab === 'board' ? 'BOARD' : 'ACTIONS'}
+            </button>
+          ))}
+        </div>
+
+        {/* Tab content */}
+        <div className="h-[200px] shrink-0 bg-[var(--bg-card)] border-2 border-t-0 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] p-2 overflow-y-auto">
+          {/* Pieces tab */}
+          {activeTab === 'pieces' && (
+            <div className="space-y-2">
+              {/* White/Black toggle */}
+              <div className="flex gap-1.5">
                 <button
                   onClick={() => setSelectedOwner(0)}
-                  className={`flex-1 p-2 font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-2 ${
+                  className={`flex-1 py-1 text-xs font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-1 ${
                     selectedOwner === 0
                       ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
-                      : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                      : 'bg-[var(--bg-card)] text-[var(--text-secondary)]'
                   }`}
                 >
-                  <div className="w-4 h-4 rounded-full bg-white border-2 border-[var(--border-color)]" />
+                  <span className="w-3 h-3 rounded-full bg-white border-2 border-[var(--border-color)]" />
                   White
                 </button>
                 <button
                   onClick={() => setSelectedOwner(1)}
-                  className={`flex-1 p-2 font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-2 ${
+                  className={`flex-1 py-1 text-xs font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-1 ${
                     selectedOwner === 1
                       ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
-                      : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                      : 'bg-[var(--bg-card)] text-[var(--text-secondary)]'
                   }`}
                 >
-                  <div className="w-4 h-4 rounded-full bg-[#2d3436] border-2 border-[var(--border-color)]" />
+                  <span className="w-3 h-3 rounded-full bg-[#2d3436]" />
                   Black
                 </button>
               </div>
-            </div>
 
-            {/* Standard Pieces */}
-            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
-              <h2 className="font-bold text-[var(--text-primary)] mb-4">STANDARD PIECES</h2>
-              <PieceSelector
-                pieces={[...STANDARD_PIECES]}
-                selectedPiece={selectedPieceType}
-                onSelect={setSelectedPieceType}
-                owner={selectedOwner}
-              />
-            </div>
-
-            {/* Custom Pieces */}
-            <div className="bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-4">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-bold text-[var(--text-primary)]">CUSTOM PIECES</h2>
-                <span className="text-xs text-[var(--text-secondary)]">
-                  {configuredPieces.length}/{MAX_CUSTOM_PIECES}
-                </span>
+              {/* Standard pieces - 6 columns */}
+              <div>
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] mb-1">STANDARD</p>
+                <div className="grid grid-cols-6 gap-1">
+                  {STANDARD_PIECES.map((piece) => (
+                    <button
+                      key={piece}
+                      onClick={() => { setSelectedPieceType(piece); setCurrentTool('placePiece'); }}
+                      className={`aspect-square border-2 border-[var(--border-color)] p-0.5 flex items-center justify-center ${
+                        selectedPieceType === piece && currentTool === 'placePiece'
+                          ? 'bg-[#4ecdc4]'
+                          : 'bg-[var(--bg-card)]'
+                      }`}
+                    >
+                      <img
+                        src={`/images/chess_pieces/${selectedOwner === 0 ? 'white' : 'black'}/${piece}.svg`}
+                        alt={piece}
+                        className="w-full h-full object-contain"
+                      />
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Configured custom pieces */}
-              {configuredPieces.length > 0 ? (
-                <div className="mb-4">
-                  <div className="grid grid-cols-3 gap-2">
+              {/* Custom pieces */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-[10px] font-bold text-[var(--text-secondary)]">CUSTOM ({configuredPieces.length}/{MAX_CUSTOM_PIECES})</p>
+                  <button
+                    onClick={() => setShowIconSelector(true)}
+                    disabled={configuredPieces.length >= MAX_CUSTOM_PIECES}
+                    className={`text-[10px] font-bold px-2 py-0.5 border border-[var(--border-color)] ${
+                      configuredPieces.length >= MAX_CUSTOM_PIECES
+                        ? 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
+                        : 'bg-[#ffe66d] text-[var(--color-dark)]'
+                    }`}
+                  >
+                    + NEW
+                  </button>
+                </div>
+                {configuredPieces.length > 0 ? (
+                  <div className="flex gap-1 flex-wrap items-center">
                     {configuredPieces.map((p) => (
                       <button
                         key={p}
-                        onClick={() => setSelectedPieceType(p)}
-                        draggable
-                        onDragStart={(e) => {
-                          e.dataTransfer.setData('application/json', JSON.stringify({ pieceType: p, owner: selectedOwner }));
-                          e.dataTransfer.effectAllowed = 'copy';
-                          const img = customPieceImageRefs.current.get(p);
-                          if (img) {
-                            e.dataTransfer.setDragImage(img, 25, 25);
-                          }
-                        }}
-                        className={`aspect-square border-2 border-[var(--border-color)] flex items-center justify-center p-1 cursor-grab active:cursor-grabbing ${
-                          selectedPieceType === p
+                        onClick={() => { setSelectedPieceType(p); setCurrentTool('placePiece'); }}
+                        className={`w-9 h-9 border-2 border-[var(--border-color)] p-0.5 flex items-center justify-center ${
+                          selectedPieceType === p && currentTool === 'placePiece'
                             ? 'bg-[#4ecdc4]'
-                            : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                            : 'bg-[var(--bg-card)]'
                         }`}
-                        title={`${p.toUpperCase()} - Drag to board`}
                       >
                         <img
-                          ref={(el) => {
-                            if (el) customPieceImageRefs.current.set(p, el);
-                          }}
                           src={`/images/chess_pieces/${selectedOwner === 0 ? 'white' : 'black'}/${p}.svg`}
                           alt={p}
-                          className="w-full h-full object-contain pointer-events-none"
+                          className="w-full h-full object-contain"
                         />
                       </button>
                     ))}
+                    {/* Edit/Delete for selected custom piece */}
+                    {configuredPieces.includes(selectedPieceType) && (
+                      <>
+                        <button
+                          onClick={() => setEditingPiece(selectedPieceType)}
+                          className="w-7 h-7 bg-[#4ecdc4] border border-[var(--border-color)] flex items-center justify-center"
+                          title="Edit piece"
+                        >
+                          <Pencil size={12} />
+                        </button>
+                        <button
+                          onClick={() => handleDeletePiece(selectedPieceType)}
+                          className="w-7 h-7 bg-[#ff6b6b] border border-[var(--border-color)] flex items-center justify-center"
+                          title="Delete piece"
+                        >
+                          <Trash2 size={12} />
+                        </button>
+                      </>
+                    )}
                   </div>
-
-                  {/* Edit/Delete buttons for selected custom piece */}
-                  <div className="flex gap-2 mt-3">
-                    <button
-                      onClick={() => configuredPieces.includes(selectedPieceType) && setEditingPiece(selectedPieceType)}
-                      disabled={!configuredPieces.includes(selectedPieceType)}
-                      className={`flex-1 p-2 text-sm font-bold border-2 border-[var(--border-color)] transition-colors ${
-                        configuredPieces.includes(selectedPieceType)
-                          ? 'bg-[#4ecdc4] hover:bg-[#45b7aa] text-[var(--color-dark)]'
-                          : 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
-                      }`}
-                    >
-                      <span className="flex items-center justify-center gap-1"><Pencil size={14} /> EDIT</span>
-                    </button>
-                    <button
-                      onClick={() => configuredPieces.includes(selectedPieceType) && handleDeletePiece(selectedPieceType)}
-                      disabled={!configuredPieces.includes(selectedPieceType)}
-                      className={`flex-1 p-2 text-sm font-bold border-2 border-[var(--border-color)] transition-colors ${
-                        configuredPieces.includes(selectedPieceType)
-                          ? 'bg-[#ff6b6b] hover:bg-red-400 text-[var(--color-dark)]'
-                          : 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
-                      }`}
-                    >
-                      <span className="flex items-center justify-center gap-1"><Trash2 size={14} /> DELETE</span>
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <p className="text-sm text-[var(--text-secondary)] mb-4 text-center py-4">
-                  No custom pieces yet
-                </p>
-              )}
+                ) : (
+                  <p className="text-[10px] text-[var(--text-secondary)]">No custom pieces yet</p>
+                )}
+              </div>
 
               {/* Unregistered pieces warning */}
               {unregisteredPieces.length > 0 && (
-                <div className="mb-4 p-2 bg-red-100 border-2 border-red-400">
-                  <p className="text-xs text-red-700 mb-1">Needs movement pattern:</p>
-                  <div className="flex flex-wrap gap-2">
+                <div className="p-1.5 bg-red-100 border border-red-400">
+                  <p className="text-[10px] text-red-700 mb-1">Needs pattern:</p>
+                  <div className="flex gap-1">
                     {unregisteredPieces.map((p) => (
                       <button
                         key={p}
                         onClick={() => setEditingPiece(p)}
-                        className="w-10 h-10 border-2 border-red-400 bg-red-50 flex items-center justify-center hover:bg-red-100"
+                        className="w-8 h-8 border border-red-400 bg-red-50 flex items-center justify-center"
                       >
                         <img
                           src={`/images/chess_pieces/${selectedOwner === 0 ? 'white' : 'black'}/${p}.svg`}
                           alt={p}
-                          className="w-8 h-8"
+                          className="w-6 h-6"
                         />
                       </button>
                     ))}
                   </div>
                 </div>
               )}
-
-              {/* Create new piece button */}
-              <button
-                onClick={() => setShowIconSelector(true)}
-                disabled={configuredPieces.length >= MAX_CUSTOM_PIECES}
-                className={`w-full p-3 font-bold border-2 border-[var(--border-color)] shadow-[3px_3px_0px_var(--shadow-color)]
-                  transition-all active:translate-x-[3px] active:translate-y-[3px] active:shadow-none
-                  ${configuredPieces.length >= MAX_CUSTOM_PIECES
-                    ? 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
-                    : 'bg-[#ffe66d] text-[var(--color-dark)] hover:brightness-105'
-                  }`}
-              >
-                <span className="flex items-center justify-center gap-1.5"><Plus size={18} strokeWidth={3} /> CREATE NEW PIECE</span>
-              </button>
             </div>
+          )}
 
-          </div>
+          {/* Board tab */}
+          {activeTab === 'board' && (
+            <div className="space-y-2">
+              {/* Width slider */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-bold text-[var(--text-secondary)] w-14 shrink-0">W: {width}</label>
+                <input
+                  type="range"
+                  min={BOARD_SIZE.MIN}
+                  max={BOARD_SIZE.MAX}
+                  value={width}
+                  onChange={(e) => setWidth(Number(e.target.value))}
+                  className="flex-1"
+                />
+              </div>
+
+              {/* Height slider */}
+              <div className="flex items-center gap-2">
+                <label className="text-xs font-bold text-[var(--text-secondary)] w-14 shrink-0">H: {height}</label>
+                <input
+                  type="range"
+                  min={BOARD_SIZE.MIN}
+                  max={BOARD_SIZE.MAX}
+                  value={height}
+                  onChange={(e) => setHeight(Number(e.target.value))}
+                  className="flex-1"
+                />
+              </div>
+
+              {/* Presets */}
+              <div className="flex gap-1.5">
+                {[
+                  { w: 8, h: 8, label: '8×8' },
+                  { w: 10, h: 8, label: '10×8' },
+                  { w: 10, h: 10, label: '10×10' },
+                ].map(({ w, h, label }) => (
+                  <button
+                    key={label}
+                    onClick={() => { setWidth(w); setHeight(h); }}
+                    className={`flex-1 py-1 text-xs font-bold border-2 border-[var(--border-color)] ${
+                      width === w && height === h
+                        ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
+                        : 'bg-[var(--bg-card)] text-[var(--text-secondary)]'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Tools */}
+              <div>
+                <p className="text-[10px] font-bold text-[var(--text-secondary)] mb-1">TOOL</p>
+                <div className="flex gap-1.5">
+                  <button
+                    onClick={() => setCurrentTool('placePiece')}
+                    className={`flex-1 py-1.5 text-xs font-bold border-2 border-[var(--border-color)] ${
+                      currentTool === 'placePiece'
+                        ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
+                        : 'bg-[var(--bg-card)] text-[var(--text-secondary)]'
+                    }`}
+                  >
+                    Place Piece
+                  </button>
+                  <button
+                    onClick={() => setCurrentTool('toggleTile')}
+                    className={`flex-1 py-1.5 text-xs font-bold border-2 border-[var(--border-color)] ${
+                      currentTool === 'toggleTile'
+                        ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
+                        : 'bg-[var(--bg-card)] text-[var(--text-secondary)]'
+                    }`}
+                  >
+                    Disable Tiles
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Actions tab */}
+          {activeTab === 'actions' && (
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <button
+                  onClick={handleStartGame}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-[#4ecdc4] border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] py-2.5 font-bold text-xs text-[var(--color-dark)] transition-all"
+                >
+                  <Play size={14} strokeWidth={3} />
+                  START
+                </button>
+                <button
+                  onClick={handlePublishClick}
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-[#a29bfe] border-2 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] py-2.5 font-bold text-xs text-[var(--color-dark)] transition-all"
+                >
+                  <Send size={14} strokeWidth={3} />
+                  PUBLISH
+                </button>
+              </div>
+              <p className="text-[10px] text-[var(--text-secondary)] text-center">
+                Both players need a King to start. Right-click to remove pieces.
+              </p>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* ===== Shared Modals ===== */}
 
       {/* Icon Selector Modal */}
       {showIconSelector && (
@@ -483,9 +773,9 @@ export function Editor() {
               <div>
                 <h3 className="font-bold text-[var(--text-primary)] mb-2">Placing Pieces</h3>
                 <ul className="text-sm text-[var(--text-secondary)] space-y-1">
-                  <li>• Select a piece from the right panel</li>
-                  <li>• Click on the board to place it</li>
-                  <li>• Right-click to remove a piece</li>
+                  <li>• Select a piece from the panel</li>
+                  <li>• Tap on the board to place it</li>
+                  <li>• Right-click/long-press to remove</li>
                 </ul>
               </div>
               <div>
@@ -592,7 +882,6 @@ export function Editor() {
           </div>
         </div>
       )}
-
-    </div>
+    </>
   );
 }

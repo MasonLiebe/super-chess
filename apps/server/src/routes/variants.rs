@@ -14,6 +14,7 @@ pub struct ListVariantsQuery {
     pub q: Option<String>,
     pub sort: Option<String>,
     pub author_id: Option<i64>,
+    pub liked_by: Option<i64>,
     pub min_width: Option<i64>,
     pub max_width: Option<i64>,
     pub min_height: Option<i64>,
@@ -134,6 +135,16 @@ pub async fn list_variants(
         bind_values.push(max_h.to_string());
     }
 
+    // Filter to variants liked by a specific user
+    let mut extra_joins = String::new();
+    if let Some(liked_by) = params.liked_by {
+        extra_joins = format!(
+            " JOIN likes l_filter ON v.id = l_filter.variant_id AND l_filter.user_id = ?{}",
+            bind_values.len() + 1
+        );
+        bind_values.push(liked_by.to_string());
+    }
+
     // Cursor-based pagination
     if let Some(ref cursor) = params.cursor {
         let parts: Vec<&str> = cursor.splitn(2, ':').collect();
@@ -190,11 +201,11 @@ pub async fn list_variants(
         "SELECT v.id, v.name, v.description, v.author_id, u.username as author_username, \
          v.board_width, v.board_height, v.piece_count, v.like_count, v.comment_count, \
          v.game_state_json, v.created_at, v.updated_at \
-         FROM variants v JOIN users u ON v.author_id = u.id \
+         FROM variants v JOIN users u ON v.author_id = u.id{} \
          WHERE {} \
          ORDER BY {} {}, v.id DESC \
          LIMIT {}",
-        where_clause, order_col, order_dir, limit + 1
+        extra_joins, where_clause, order_col, order_dir, limit + 1
     );
 
     // We need to use a dynamic query approach since sqlx doesn't support fully dynamic bind counts easily
