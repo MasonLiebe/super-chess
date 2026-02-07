@@ -21,7 +21,7 @@ impl EmailService {
         let smtp_username = std::env::var("SMTP_USERNAME").ok();
         let smtp_password = std::env::var("SMTP_PASSWORD").ok();
         let from_address = std::env::var("SMTP_FROM")
-            .unwrap_or_else(|_| "noreply@protochess.local".to_string());
+            .unwrap_or_else(|_| "noreply@customchess.local".to_string());
         let app_url = std::env::var("APP_URL")
             .unwrap_or_else(|_| "http://localhost:5173".to_string());
 
@@ -74,7 +74,7 @@ impl EmailService {
         token: &str,
     ) -> Result<(), String> {
         let link = format!("{}/verify-email?token={}", self.app_url, token);
-        let subject = "Verify your Protochess email";
+        let subject = "Verify your Custom Chess email";
         let body = format!(
             "Hi {},\n\nPlease verify your email by clicking this link:\n{}\n\nThis link expires in 1 hour.\n\nIf you didn't request this, you can ignore this email.",
             username, link
@@ -90,7 +90,7 @@ impl EmailService {
         token: &str,
     ) -> Result<(), String> {
         let link = format!("{}/reset-password?token={}", self.app_url, token);
-        let subject = "Reset your Protochess password";
+        let subject = "Reset your Custom Chess password";
         let body = format!(
             "Hi {},\n\nYou requested a password reset. Click this link to set a new password:\n{}\n\nThis link expires in 1 hour.\n\nIf you didn't request this, you can ignore this email.",
             username, link
