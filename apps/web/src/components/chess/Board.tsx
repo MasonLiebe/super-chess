@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { useGameStore } from '../../stores/gameStore';
-import { useBoardSize } from '../../hooks/useBoardSize';
+import { useBoardSize, type ReservedHeight } from '../../hooks/useBoardSize';
 import { useTouchDrag } from '../../hooks/useTouchDrag';
 import { COLORS } from '../../lib/constants';
 import type { GameState, Piece as PieceType, Turn } from '../../types/chess';
@@ -15,6 +15,7 @@ interface BoardProps {
   onMove?: (from: [number, number], to: [number, number]) => void;
   onRequestMoves?: (x: number, y: number) => void;
   disabled?: boolean;
+  reservedHeight?: number | ReservedHeight;
 }
 
 export function Board({
@@ -27,6 +28,7 @@ export function Board({
   onMove,
   onRequestMoves,
   disabled = false,
+  reservedHeight,
 }: BoardProps) {
   const { movesFrom, selectedSquare, setSelectedSquare, setMovesFrom } = useGameStore();
   const [isDragging, setIsDragging] = useState(false);
@@ -36,7 +38,7 @@ export function Board({
   const { width, height } = gameState;
 
   // Responsive board sizing
-  const { maxBoardSizePx, tileSize, boardWidthPx, boardHeightPx } = useBoardSize(width, height);
+  const { maxBoardSizePx, tileSize, boardWidthPx, boardHeightPx } = useBoardSize(width, height, reservedHeight);
 
   // Touch drag-and-drop for mobile
   const { touchHandlers, touchDragFrom } = useTouchDrag({

@@ -39,7 +39,7 @@ export function Multiplayer() {
 
         {/* Connection status */}
         <div
-          className={`mb-6 p-3 border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] font-bold ${
+          className={`mb-6 p-3 border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] font-bold text-[var(--color-dark)] ${
             connected ? 'bg-[#4ecdc4]' : 'bg-[#ff6b6b]'
           }`}
         >

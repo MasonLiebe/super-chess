@@ -108,7 +108,7 @@ export function CreateRoom() {
 
         {/* Connection status */}
         {!connected && (
-          <div className="mb-6 p-3 border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] font-bold bg-[#ff6b6b]">
+          <div className="mb-6 p-3 border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] font-bold text-[var(--color-dark)] bg-[#ff6b6b]">
             CONNECTING TO SERVER...
           </div>
         )}
@@ -169,7 +169,7 @@ export function CreateRoom() {
                     onClick={() => handleGameSelect(game.id)}
                     className={`w-full p-2 text-left border-2 border-[var(--border-color)] transition-colors ${
                       selectedGameId === game.id
-                        ? 'bg-[#4ecdc4]'
+                        ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
                         : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                     }`}
                   >
@@ -185,7 +185,7 @@ export function CreateRoom() {
                     onClick={() => handleGameSelect('custom')}
                     className={`w-full p-2 text-left border-2 border-[var(--border-color)] transition-colors ${
                       selectedGameId === 'custom'
-                        ? 'bg-[#ffe66d]'
+                        ? 'bg-[#ffe66d] text-[var(--color-dark)]'
                         : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                     }`}
                   >

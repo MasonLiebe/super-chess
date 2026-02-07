@@ -40,8 +40,10 @@ export function Singleplayer() {
   const [isCustomGame, setIsCustomGame] = useState(false);
   const [difficulty, setDifficulty] = useState<DifficultyId>('medium');
   const [difficultyDropdownOpen, setDifficultyDropdownOpen] = useState(false);
+  const [gameDropdownOpen, setGameDropdownOpen] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const gameDropdownRef = useRef<HTMLDivElement>(null);
   const { soundEnabled, toggleSound } = useSettingsStore();
 
   // Check if we're loading a custom game from the editor or a variant
@@ -84,11 +86,14 @@ export function Singleplayer() {
     }
   }, [error]);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDifficultyDropdownOpen(false);
+      }
+      if (gameDropdownRef.current && !gameDropdownRef.current.contains(event.target as Node)) {
+        setGameDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -318,10 +323,10 @@ export function Singleplayer() {
   }, [editorStore, previewState, navigate]);
 
   return (
-    <div className="min-h-screen bg-[var(--bg-page)] p-4 flex flex-col justify-center">
-      <div className="max-w-5xl mx-auto w-full">
+    <div className="h-screen bg-[var(--bg-page)] px-4 pb-4 pt-12 flex flex-col">
+      <div className={`mx-auto w-full flex-1 min-h-0 flex flex-col ${gameStarted ? 'max-w-[560px]' : 'max-w-5xl'}`}>
         {/* Header */}
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-2 mb-4 shrink-0">
           <Link
             to="/"
             className="flex items-center justify-center bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] w-10 h-10 font-bold text-[var(--text-primary)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
@@ -360,9 +365,9 @@ export function Singleplayer() {
         </div>
 
         {/* Game area */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start justify-center">
+        <div className={`flex flex-1 min-h-0 ${gameStarted ? 'flex-col gap-4' : 'flex-col lg:flex-row gap-6 lg:items-center lg:justify-center'}`}>
           {/* Board */}
-          <div className="flex-shrink-0 w-full max-w-[560px] mx-auto lg:mx-0">
+          <div className={`${gameStarted ? 'w-full' : 'flex-shrink-0 w-full max-w-[560px] mx-auto lg:mx-0'}`}>
             {!isReady ? (
               <div className="w-full aspect-square max-w-[560px] bg-[var(--bg-card)] border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] lg:shadow-[8px_8px_0px_var(--shadow-color)] flex items-center justify-center">
                 <div className="text-center">
@@ -380,6 +385,7 @@ export function Singleplayer() {
                 onRequestMoves={handleRequestMoves}
                 onMove={handleMove}
                 disabled={isThinking || !!winner || gameState.toMove !== 0}
+                reservedHeight={{ mobile: 260, desktop: 260 }}
               />
             ) : (
               <Board
@@ -387,57 +393,90 @@ export function Singleplayer() {
                 playerNum={0}
                 flipped={false}
                 disabled={true}
+                reservedHeight={{ mobile: 380, desktop: 130 }}
               />
             )}
           </div>
 
-          {/* Side panel */}
-          <div className="w-full lg:w-72 space-y-2 lg:space-y-4">
+          {/* Info panel */}
+          <div className={`${gameStarted ? 'w-full' : 'w-full lg:w-72'} space-y-2 lg:space-y-4`}>
             {!gameStarted ? (
               <>
-                {/* Game Selection + Difficulty - compact row on mobile */}
-                <div className="flex flex-row lg:flex-col gap-2 lg:gap-4">
-                  <div className="bg-[var(--bg-card)] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-4 flex-1">
-                    <h2 className="font-bold text-[var(--text-primary)] text-xs lg:text-base mb-2 lg:mb-4">SELECT GAME</h2>
-                    <div className="space-y-1 lg:space-y-2 max-h-32 lg:max-h-48 overflow-y-auto pr-1">
-                      {PREBUILT_GAMES.map((game) => (
+                {/* Game Settings Panel */}
+                <div className="bg-[var(--bg-card)] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-4 space-y-3 lg:space-y-4">
+                  <h2 className="font-bold text-[var(--text-primary)] text-xs lg:text-base">GAME SETTINGS</h2>
+                  <div className="flex flex-row lg:flex-col gap-2 lg:gap-4">
+                  {/* Variant Dropdown */}
+                  <div ref={gameDropdownRef} className="relative flex-1 min-w-0">
+                    <span className="font-bold text-[var(--text-secondary)] text-[10px] lg:text-xs block mb-1">PREBUILT VARIANT</span>
+                    {(() => {
+                      const selectedGame = selectedGameId === 'custom'
+                        ? { name: 'Custom Game', description: `${previewState.width}×${previewState.height}`, isCustom: true }
+                        : (() => { const g = PREBUILT_GAMES.find((g) => g.id === selectedGameId)!; return { name: g.name, description: `${g.state.width}×${g.state.height}`, isCustom: false }; })();
+                      return (
                         <button
-                          key={game.id}
-                          onClick={() => handleGameSelect(game.id)}
-                          className={`w-full px-2 py-1 lg:p-2 text-left border border-[var(--border-color)] lg:border-2 transition-colors ${
-                            selectedGameId === game.id
-                              ? 'bg-[#4ecdc4]'
-                              : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
+                          onClick={() => setGameDropdownOpen(!gameDropdownOpen)}
+                          className={`w-full p-2 lg:p-3 border lg:border-3 border-[var(--border-color)] font-bold cursor-pointer flex items-center gap-2 lg:gap-3 transition-all hover:brightness-95 ${
+                            selectedGame.isCustom
+                              ? 'bg-[#ffe66d] text-[var(--color-dark)]'
+                              : 'bg-[#4ecdc4] text-[var(--color-dark)]'
                           }`}
                         >
-                          <div className="font-bold text-xs lg:text-sm">{game.name}</div>
-                          <div className="text-[10px] lg:text-xs text-[var(--text-secondary)]">
-                            {game.state.width}×{game.state.height}
+                          <div className="flex-1 text-left min-w-0">
+                            <div className="text-xs lg:text-base truncate">{selectedGame.name}</div>
+                            <div className="text-[10px] lg:text-xs font-medium opacity-70 hidden lg:block">{selectedGame.description}</div>
                           </div>
+                          <ChevronDown
+                            size={16}
+                            strokeWidth={3}
+                            className={`transition-transform ${gameDropdownOpen ? 'rotate-180' : ''}`}
+                          />
                         </button>
-                      ))}
+                      );
+                    })()}
 
-                      {isCustomGame && (
-                        <button
-                          onClick={() => handleGameSelect('custom')}
-                          className={`w-full px-2 py-1 lg:p-2 text-left border border-[var(--border-color)] lg:border-2 transition-colors ${
-                            selectedGameId === 'custom'
-                              ? 'bg-[#ffe66d]'
-                              : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
-                          }`}
-                        >
-                          <div className="font-bold text-xs lg:text-sm">Custom Game</div>
-                          <div className="text-[10px] lg:text-xs text-[var(--text-secondary)]">
-                            {previewState.width}×{previewState.height}
-                          </div>
-                        </button>
-                      )}
-                    </div>
+                    {gameDropdownOpen && (
+                      <div className="absolute top-full left-0 right-0 mt-1 border lg:border-3 border-[var(--border-color)] bg-[var(--bg-card)] shadow-[4px_4px_0px_var(--shadow-color)] z-10 overflow-hidden max-h-64 overflow-y-auto">
+                        {PREBUILT_GAMES.map((game) => (
+                          <button
+                            key={game.id}
+                            onClick={() => {
+                              handleGameSelect(game.id);
+                              setGameDropdownOpen(false);
+                            }}
+                            className={`w-full p-2 lg:p-3 text-left font-bold flex items-center gap-2 lg:gap-3 transition-colors hover:bg-[var(--bg-card-hover)] ${
+                              selectedGameId === game.id ? 'bg-[#4ecdc4] text-[var(--color-dark)]' : 'text-[var(--text-primary)]'
+                            }`}
+                          >
+                            <div className="flex-1">
+                              <div className="text-xs lg:text-base">{game.name}</div>
+                              <div className={`text-[10px] lg:text-xs font-medium ${selectedGameId === game.id ? 'opacity-70' : 'text-[var(--text-secondary)]'}`}>{game.description}</div>
+                            </div>
+                          </button>
+                        ))}
+                        {isCustomGame && (
+                          <button
+                            onClick={() => {
+                              handleGameSelect('custom');
+                              setGameDropdownOpen(false);
+                            }}
+                            className={`w-full p-2 lg:p-3 text-left font-bold flex items-center gap-2 lg:gap-3 transition-colors hover:bg-[var(--bg-card-hover)] ${
+                              selectedGameId === 'custom' ? 'bg-[#ffe66d] text-[var(--color-dark)]' : 'text-[var(--text-primary)]'
+                            }`}
+                          >
+                            <div className="flex-1">
+                              <div className="text-xs lg:text-base">Custom Game</div>
+                              <div className={`text-[10px] lg:text-xs font-medium ${selectedGameId === 'custom' ? 'opacity-70' : 'text-[var(--text-secondary)]'}`}>{previewState.width}×{previewState.height}</div>
+                            </div>
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
 
                   {/* Difficulty Selection */}
-                  <div className="bg-[var(--bg-card)] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-4 flex-1">
-                    <span className="font-bold text-[var(--text-primary)] text-xs lg:text-base block mb-2 lg:mb-3">AI DIFFICULTY</span>
+                  <div className="flex-1 min-w-0">
+                    <span className="font-bold text-[var(--text-secondary)] text-[10px] lg:text-xs block mb-1">DIFFICULTY</span>
                     <div ref={dropdownRef} className="relative">
                       {(() => {
                         const selected = DIFFICULTY_LEVELS.find((d) => d.id === difficulty)!;
@@ -450,16 +489,16 @@ export function Singleplayer() {
                             <img
                               src={`/images/chess_pieces/black/${selected.piece}.svg`}
                               alt=""
-                              className="w-5 h-5 lg:w-7 lg:h-7 object-contain"
+                              className="hidden lg:block w-5 h-5 lg:w-7 lg:h-7 object-contain"
                             />
-                            <div className="flex-1 text-left">
-                              <div className="text-xs lg:text-base">{selected.name}</div>
-                              <div className="text-[10px] lg:text-xs font-medium opacity-70 hidden sm:block">{selected.description}</div>
+                            <div className="flex-1 text-left min-w-0">
+                              <div className="text-xs lg:text-base truncate">{selected.name}</div>
+                              <div className="text-[10px] lg:text-xs font-medium opacity-70 hidden lg:block">{selected.description}</div>
                             </div>
                             <ChevronDown
                               size={16}
                               strokeWidth={3}
-                              className={`transition-transform ${difficultyDropdownOpen ? 'rotate-180' : ''}`}
+                              className={`flex-shrink-0 transition-transform ${difficultyDropdownOpen ? 'rotate-180' : ''}`}
                             />
                           </button>
                         );
@@ -494,6 +533,31 @@ export function Singleplayer() {
                       )}
                     </div>
                   </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="border-t-2 border-[var(--divider)]" />
+
+                  {/* Custom variant options */}
+                  <div>
+                    <span className="font-bold text-[var(--text-secondary)] text-[10px] lg:text-xs block mb-1">CUSTOM VARIANT</span>
+                    <div className="flex gap-2">
+                      <Link
+                        to="/browse"
+                        className="flex items-center justify-center gap-1.5 flex-1 bg-[#a29bfe] border lg:border-3 border-[var(--border-color)] p-1.5 lg:p-2.5 font-bold text-[10px] lg:text-sm text-[var(--color-dark)] hover:brightness-95 transition-all"
+                      >
+                        <Compass size={12} strokeWidth={2.5} className="flex-shrink-0" />
+                        BROWSE
+                      </Link>
+                      <button
+                        onClick={handleCreateCustomGame}
+                        className="flex items-center justify-center gap-1.5 flex-1 bg-[#ffe66d] border lg:border-3 border-[var(--border-color)] p-1.5 lg:p-2.5 font-bold text-[10px] lg:text-sm text-[var(--color-dark)] hover:brightness-95 transition-all"
+                      >
+                        <PencilRuler size={12} strokeWidth={2.5} className="flex-shrink-0" />
+                        EDITOR
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
                 {isCustomGame && selectedGameId === 'custom' && (
@@ -514,24 +578,6 @@ export function Singleplayer() {
                   <Play size={16} strokeWidth={3} />
                   START GAME
                 </button>
-
-                {/* Browse & Create */}
-                <div className="flex gap-2">
-                  <Link
-                    to="/browse"
-                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#a29bfe] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-3 font-bold text-xs lg:text-sm text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none lg:hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
-                  >
-                    <Compass size={14} strokeWidth={2.5} />
-                    VARIANTS
-                  </Link>
-                  <button
-                    onClick={handleCreateCustomGame}
-                    className="flex items-center justify-center gap-1.5 flex-1 bg-[#ffe66d] border-2 lg:border-4 border-[var(--border-color)] shadow-[2px_2px_0px_var(--shadow-color)] lg:shadow-[4px_4px_0px_var(--shadow-color)] p-2 lg:p-3 font-bold text-xs lg:text-sm text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none lg:hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all"
-                  >
-                    <PencilRuler size={14} strokeWidth={2.5} />
-                    EDITOR
-                  </button>
-                </div>
               </>
             ) : (
               <>

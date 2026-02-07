@@ -169,7 +169,7 @@ export function Room() {
                   : 'bg-[var(--bg-card)]'
               }`}
             >
-              <h2 className="font-bold text-[var(--text-primary)] mb-1">STATUS</h2>
+              <h2 className="font-bold text-[var(--color-dark)] mb-1">STATUS</h2>
               {gameInfo?.winner ? (
                 <p className="text-[var(--color-dark)]">
                   <span className="font-bold">{gameInfo.winner}</span> wins!

@@ -121,7 +121,7 @@ export function AuthBar() {
               <h2 className="text-xl font-black" style={{ color: 'var(--text-primary)' }}>ABOUT THIS SITE</h2>
               <button
                 onClick={() => setShowAbout(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 font-bold text-xl hover:bg-red-400 transition-colors flex items-center justify-center"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 font-bold text-xl text-[var(--color-dark)] hover:bg-red-400 transition-colors flex items-center justify-center"
                 style={{ borderColor: 'var(--border-color)' }}
               >
                 <X size={20} strokeWidth={3} />

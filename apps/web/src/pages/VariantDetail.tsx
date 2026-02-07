@@ -236,7 +236,7 @@ export function VariantDetail() {
                   <div className="flex gap-2">
                     <button
                       onClick={handleSaveEdit}
-                      className="flex-1 bg-[#4ecdc4] border-2 border-[var(--border-color)] p-2 font-bold text-sm"
+                      className="flex-1 bg-[#4ecdc4] border-2 border-[var(--border-color)] p-2 font-bold text-sm text-[var(--color-dark)]"
                     >
                       SAVE
                     </button>
@@ -277,8 +277,8 @@ export function VariantDetail() {
               <div className="flex gap-2">
                 <button
                   onClick={handleLikeToggle}
-                  className={`flex-1 border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold text-[var(--color-dark)] hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all ${
-                    variant.liked ? 'bg-[#ff6b6b]' : 'bg-[var(--bg-card)]'
+                  className={`flex-1 border-4 border-[var(--border-color)] shadow-[4px_4px_0px_var(--shadow-color)] p-3 font-bold hover:translate-x-1 hover:translate-y-1 hover:shadow-[2px_2px_0px_var(--shadow-color)] transition-all ${
+                    variant.liked ? 'bg-[#ff6b6b] text-[var(--color-dark)]' : 'bg-[var(--bg-card)] text-[var(--text-primary)]'
                   }`}
                 >
                   <Heart size={16} fill={variant.liked ? 'currentColor' : 'none'} /> {variant.likeCount}

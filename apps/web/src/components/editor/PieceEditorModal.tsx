@@ -214,7 +214,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
           </div>
           <button
             onClick={onClose}
-            className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl hover:bg-red-400"
+            className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl text-[var(--color-dark)] hover:bg-red-400"
           >
             ×
           </button>
@@ -239,7 +239,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                     step={2}
                     value={gridSize}
                     onChange={(e) => setGridSize(Number(e.target.value))}
-                    className="flex-1 accent-[#4ecdc4]"
+                    className="flex-1"
                   />
                 </div>
 
@@ -345,7 +345,7 @@ export function PieceEditorModal({ pieceType, onClose }: PieceEditorModalProps) 
                   <div className="flex flex-col gap-2">
                     <button
                       onClick={handleSave}
-                      className="px-4 py-2 font-bold text-sm border-2 border-[var(--border-color)] bg-[#4ecdc4] shadow-[3px_3px_0px_var(--shadow-color)]
+                      className="px-4 py-2 font-bold text-sm text-[var(--color-dark)] border-2 border-[var(--border-color)] bg-[#4ecdc4] shadow-[3px_3px_0px_var(--shadow-color)]
                         transition-all duration-100 active:translate-x-[3px] active:translate-y-[3px] active:shadow-none
                         hover:brightness-105"
                     >

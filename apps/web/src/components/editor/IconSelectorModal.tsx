@@ -36,7 +36,7 @@ export function IconSelectorModal({ usedIcons, onSelect, onClose }: IconSelector
           <h2 className="text-xl font-black text-[var(--text-primary)]">Select Piece Icon</h2>
           <button
             onClick={onClose}
-            className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl hover:bg-red-400"
+            className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl text-[var(--color-dark)] hover:bg-red-400"
           >
             ×
           </button>

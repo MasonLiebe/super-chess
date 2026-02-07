@@ -64,6 +64,43 @@ input, textarea, select {
   color: var(--text-primary);
 }
 
+/* Range slider styling */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  background: var(--divider);
+  outline: none;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #4ecdc4;
+  border: 3px solid var(--border-color);
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: #4ecdc4;
+  border: 3px solid var(--border-color);
+  border-radius: 0;
+  cursor: pointer;
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  background: var(--divider);
+  border: 2px solid var(--border-color);
+}
+
 /* Scrollbar styling */
 * {
   scrollbar-width: thin;

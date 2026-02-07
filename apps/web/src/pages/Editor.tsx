@@ -193,7 +193,7 @@ export function Editor() {
                     max={BOARD_SIZE.MAX}
                     value={width}
                     onChange={(e) => setWidth(Number(e.target.value))}
-                    className="w-full h-2 bg-[var(--divider)] rounded-lg appearance-none cursor-pointer accent-[#4ecdc4]"
+                    className="w-full"
                   />
                 </div>
 
@@ -207,7 +207,7 @@ export function Editor() {
                     max={BOARD_SIZE.MAX}
                     value={height}
                     onChange={(e) => setHeight(Number(e.target.value))}
-                    className="w-full h-2 bg-[var(--divider)] rounded-lg appearance-none cursor-pointer accent-[#4ecdc4]"
+                    className="w-full"
                   />
                 </div>
 
@@ -226,7 +226,7 @@ export function Editor() {
                       }}
                       className={`px-3 py-1 text-sm font-bold border-2 border-[var(--border-color)] ${
                         width === w && height === h
-                          ? 'bg-[#4ecdc4]'
+                          ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
                           : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                       }`}
                     >
@@ -246,7 +246,7 @@ export function Editor() {
                   onClick={() => setCurrentTool('placePiece')}
                   className={`w-full p-2 text-center font-medium border-2 border-[var(--border-color)] ${
                     currentTool === 'placePiece'
-                      ? 'bg-[#4ecdc4]'
+                      ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
                       : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
@@ -256,7 +256,7 @@ export function Editor() {
                   onClick={() => setCurrentTool('toggleTile')}
                   className={`w-full p-2 text-center font-medium border-2 border-[var(--border-color)] ${
                     currentTool === 'toggleTile'
-                      ? 'bg-[#4ecdc4]'
+                      ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
                       : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
@@ -299,7 +299,7 @@ export function Editor() {
                   onClick={() => setSelectedOwner(0)}
                   className={`flex-1 p-2 font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-2 ${
                     selectedOwner === 0
-                      ? 'bg-[#4ecdc4]'
+                      ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
                       : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
@@ -310,7 +310,7 @@ export function Editor() {
                   onClick={() => setSelectedOwner(1)}
                   className={`flex-1 p-2 font-bold border-2 border-[var(--border-color)] flex items-center justify-center gap-2 ${
                     selectedOwner === 1
-                      ? 'bg-[#4ecdc4]'
+                      ? 'bg-[#4ecdc4] text-[var(--color-dark)]'
                       : 'bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)]'
                   }`}
                 >
@@ -438,7 +438,7 @@ export function Editor() {
                   transition-all active:translate-x-[3px] active:translate-y-[3px] active:shadow-none
                   ${configuredPieces.length >= MAX_CUSTOM_PIECES
                     ? 'bg-[var(--bg-disabled)] text-[var(--text-disabled)] cursor-not-allowed'
-                    : 'bg-[#ffe66d] hover:brightness-105'
+                    : 'bg-[#ffe66d] text-[var(--color-dark)] hover:brightness-105'
                   }`}
               >
                 <span className="flex items-center justify-center gap-1.5"><Plus size={18} strokeWidth={3} /> CREATE NEW PIECE</span>
@@ -474,7 +474,7 @@ export function Editor() {
               <h2 className="text-xl font-black text-[var(--text-primary)]">HOW TO USE</h2>
               <button
                 onClick={() => setShowHelp(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl text-[var(--color-dark)] hover:bg-red-400 flex items-center justify-center"
               >
                 <X size={20} strokeWidth={3} />
               </button>
@@ -517,7 +517,7 @@ export function Editor() {
               <h2 className="text-xl font-black text-[var(--text-primary)]">START GAME</h2>
               <button
                 onClick={() => setShowStartOptions(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl hover:bg-red-400 flex items-center justify-center"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl text-[var(--color-dark)] hover:bg-red-400 flex items-center justify-center"
               >
                 <X size={20} strokeWidth={3} />
               </button>
@@ -550,7 +550,7 @@ export function Editor() {
               <h2 className="text-xl font-black text-[var(--text-primary)]">PUBLISH VARIANT</h2>
               <button
                 onClick={() => setShowPublishModal(false)}
-                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl hover:bg-red-400"
+                className="w-10 h-10 bg-[#ff6b6b] border-2 border-[var(--border-color)] font-bold text-xl text-[var(--color-dark)] hover:bg-red-400"
               >
                 x
               </button>
